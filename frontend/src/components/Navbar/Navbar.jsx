@@ -4,7 +4,7 @@ import "./Navbar.css";
 export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg custom-navbar fixed-top">
-      <div className="container">
+      <div className="container-fluid px-4">
 
         {/* Logo */}
         <a className="navbar-brand d-flex align-items-center gap-2" href="#">
@@ -20,6 +20,9 @@ export default function Navbar() {
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#popdropNav"
+          aria-controls="popdropNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
