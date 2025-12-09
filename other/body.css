@@ -1,0 +1,157 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+.hero-section h1 {
+  margin-top: 0;
+}
+.showcase-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 140px;
+  background: linear-gradient(180deg, #fdf1ff, #ffe6e0, #fff6f0);
+}
+
+.hero-section {
+  padding: 220px 20px 50px;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 78px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #7b2ff7;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-family: "Poppins", "Inter", sans-serif;
+}
+
+.hero-title span {
+  background: linear-gradient(90deg, #7b2ff7, #ff5b3d);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.hero-subtext {
+  font-size: 22px;
+  color: #555;
+  margin-top: 8px;
+}
+
+.showcase-box {
+  width: 100%;
+  padding: 60px 20px;
+  position: relative;
+}
+
+.showcase-box .inner {
+  max-width: 90%;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 70px 60px;
+  border-radius: 36px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  position: relative;
+  z-index: 2;
+  top: -50px;
+}
+
+.showcase-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 70%;
+  /* background: #ffe0d6; */
+  border-radius: 36px;
+  top: 120px;
+  z-index: 1;
+}
+
+.tagline {
+  color: #8e3dff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.showcase-title {
+  font-size: 48px;
+  font-weight: 800;
+  margin-top: 8px;
+}
+
+.showcase-desc {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #555;
+}
+
+.learn-more {
+  display: inline-block;
+  margin-top: 20px;
+  color: #f65b3b;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.popup-flow {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.popup-img {
+  width: 75%;
+  max-width: 360px;
+  border-radius: 22px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+}
+
+.popup-img:hover {
+  transform: translateY(-6px);
+}
+
+.img-left {
+  position: relative;
+  left: -40px;
+  top: -10px;
+}
+
+.arrow-line {
+  position: absolute;
+  width: 140px;
+  height: 8px;
+  background: #f65b3b;
+  top: 45%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  z-index: 0;
+}
+
+@media (max-width: 992px) {
+  .hero-title {
+    font-size: 50px;
+  }
+
+  .showcase-box .inner {
+    padding: 40px 25px;
+  }
+
+  .img-left {
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    margin: 0 auto;
+  }
+
+  .arrow-line {
+    display: none;
+  }
+
+  .popup-flow {
+    margin-top: 40px;
+  }
+}
