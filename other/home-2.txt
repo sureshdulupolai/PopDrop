@@ -1,0 +1,129 @@
+Perfect — tumhe **individual badge prompts** chahiye, ek-ek badge alag generate karne ke liye, **no background**, **flat UI**, **modern SaaS look**, **purple–orange–pink palette**, **subtle gradients + light borders**, **icon + ribbon base**.
+
+Niche main har badge ke liye **separate, ready-to-copy Gemini prompts** de raha hoon.
+Bas copy → paste → generate.
+
+---
+
+# ✅ **1) Single Badge Prompt (Template)**
+
+*(Isko tum baaki sab badges ke liye reuse kar sakte ho, bass title change kar dena)*
+
+### **Universal Single-Badge Prompt**
+
+```
+Generate a single clean, modern award badge in a flat UI SaaS style.
+Title: **{TITLE HERE}**
+Requirements:
+- No background (transparent background)
+- One badge only (do not include multiple badges)
+- Color palette: purple, pink, and orange
+- Subtle gradients, soft shadows, light borders
+- Include a small, minimal icon that matches the award theme
+- Ribbon-like base under the badge
+- High-quality, minimalistic, professional SaaS design
+- Style: flat UI + soft minimal gradients
+```
+
+---
+
+# 🎖️ **2) Ready Prompts for Each Badge (One-by-One)**
+
+## ⭐ **Badge 1 — Top Open-Source Tool 2025**
+
+```
+Generate a single clean, modern award badge in a flat UI SaaS style.
+Title: "Top Open-Source Tool 2025"
+- Transparent background
+- Purple + pink + orange minimal gradient palette
+- Light border, soft shadow
+- Add a simple open-source icon (brackets or code symbol)
+- Ribbon-like base
+- Very clean, professional, SaaS-style badge
+```
+
+---
+
+## ⭐ **Badge 2 — Developer's Choice**
+
+```
+Generate a single clean, modern award badge in a flat UI SaaS style.
+Title: "Developer's Choice"
+- Transparent background
+- Purple + pink + orange aesthetic
+- Minimal star or hand-picked icon
+- Light border, subtle gradient
+- Ribbon-like base, clean feel
+```
+
+---
+
+## ⭐ **Badge 3 — Fastest Integration**
+
+```
+Generate a single clean, modern award badge in a flat UI SaaS style.
+Title: "Fastest Integration"
+- Transparent background
+- Purple + orange gradient tones
+- Add a speed or lightning-bolt icon
+- Ribbon base
+- Very sleek, minimal, professional SaaS badge
+```
+
+---
+
+## ⭐ **Badge 4 — Most Loved Templates**
+
+```
+Generate a single clean, modern award badge in a flat UI SaaS style.
+Title: "Most Loved Templates"
+- Transparent background
+- Purple + pink palette
+- Minimal heart icon
+- Light borders and soft gradient
+- Ribbon-style base at the bottom
+```
+
+---
+
+## ⭐ **Badge 5 — Community Favorite**
+
+```
+Generate a single clean, modern award badge in a flat UI SaaS style.
+Title: "Community Favorite"
+- Transparent background
+- Purple–pink–orange soft gradient
+- Add a community/people icon
+- Light border, minimal look
+- Ribbon-like base for the award feel
+```
+
+---
+
+# 📌 **3) Bonus — Logo Badge Prompt**
+
+Tumne mention kiya:
+
+```
+<img src="logo1.png" class="brand-logo">
+<img src="logo2.png" class="brand-logo">
+```
+
+Toh agar tum Gemini se **logo-based award badge** banana chahte ho, yeh prompt use karo:
+
+### **Logo Badge Prompt (For logo1.png / logo2.png)**
+
+```
+Create a single flat UI award-style badge using the uploaded logo.
+- Use the logo as the main center icon
+- Transparent background
+- Purple, pink, and orange minimal gradient palette
+- Light border, soft shadow
+- Ribbon-like base
+- Clean, modern SaaS look
+- Keep the badge minimal and premium
+```
+
+---
+
+Agar chaho toh main tumhare liye **6–7 more professional variations** bhi bana dunga.
