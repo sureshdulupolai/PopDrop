@@ -1,0 +1,117 @@
+/* PAGE STRUCTURE */
+    .full-height {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+
+    /* LEFT SIDE SECTION */
+    .left-section {
+      height: 100vh;
+      background: linear-gradient(180deg, #fdf1ff, #ffe6e0, #fff6f0);
+      padding: 60px 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .left-title {
+      font-weight: 800;
+      font-size: 42px;
+      line-height: 1.2;
+      color: #333;
+    }
+
+    .left-title span {
+      background: linear-gradient(90deg, #bf4dff, #ff4b2b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .left-btn {
+        background: #f65b3b;
+        color: #fff;
+        padding: 12px 26px;
+        border-radius: 10px;
+        font-weight: 600;
+        margin-top: 25px;
+        box-shadow: 0 6px 14px rgba(246, 91, 59, 0.35);
+        border: none;
+        transition: 0.3s;
+        width: 220px; /* ✔ fixed width on desktop */
+        }
+
+    .left-btn:hover {
+        background: #ff6b47;
+        box-shadow: 0 8px 18px rgba(246, 91, 59, 0.45);
+    }
+
+    /* Mobile Responsive Fix */
+    @media (max-width: 576px) {
+        .left-btn {
+            width: auto;     /* ✔ auto width on small screens */
+            padding: 12px 20px;
+        }
+    }
+
+    /* LOGIN BOX */
+    .login-box {
+      max-width: 420px;
+      width: 100%;
+    }
+
+    /* CUSTOM INPUT FIELDS */
+    .form-control {
+      border-radius: 8px !important;
+      border: 1.8px solid #ddd;
+      padding: 10px 14px;
+      transition: 0.25s;
+      box-shadow: none !important;
+    }
+
+    .form-control:focus {
+      border-color: #f65b3b !important;
+      box-shadow: 0 0 0 4px rgba(246, 91, 59, 0.20) !important;
+    }
+
+    .login-btn {
+      background: #f65b3b;
+      color: white;
+      border-radius: 8px;
+      padding: 11px;
+      width: 100%;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      transition: 0.25s ease;
+      box-shadow:
+        0 4px 10px rgba(0,0,0,0.18),
+        inset 0 2px 4px rgba(255,255,255,0.25),
+        inset 0 -2px 6px rgba(0,0,0,0.25);
+    }
+
+    .login-btn:hover {
+      background: #ff6b47;
+      box-shadow:
+        0 6px 14px rgba(0,0,0,0.25),
+        inset 0 2px 4px rgba(255,255,255,0.3),
+        inset 0 -3px 8px rgba(0,0,0,0.3);
+    }
+
+    .back-btn {
+      border: 2px solid #f65b3b;
+      color: #f65b3b;
+      border-radius: 8px;
+      padding: 11px 20px;
+      font-weight: 600;
+      background: transparent;
+      transition: 0.3s ease;
+      width: 100%;
+    }
+
+    .back-btn:hover {
+      background: #ffe7e2;
+    }
+    .img-size{
+        border-radius: 22px !important;
+    }

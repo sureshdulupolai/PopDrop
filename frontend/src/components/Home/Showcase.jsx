@@ -1,5 +1,5 @@
-import "./Showcase.css";
-import popup1 from "../../assets/popup1.png";
+import "./Home.css";
+import whiteHome from "../../assets/white_home.png"; // <-- updated image path
 
 export default function Showcase() {
   return (
@@ -7,13 +7,16 @@ export default function Showcase() {
       {/* HERO SECTION WRAPPER */}
       <div className="hero-wrapper">
         <section className="hero-section text-center">
+
           <h1 className="hero-title">
-            popdrop, <span>supercharged</span>
+            darg-drop, <span>supercharged</span>
           </h1>
 
-          <p className="hero-subtext">
-            Create high-performing popups in minutes. One platform, hundreds of use cases.
+          <p className="hero-subtext mt-3">
+            A modern, open-source popup library with beautifully crafted templates.
+            Copy, paste, and customize popups for any website instantly.
           </p>
+
         </section>
       </div>
 
@@ -25,23 +28,26 @@ export default function Showcase() {
 
               {/* LEFT CONTENT */}
               <div className="col-lg-6">
-                <p className="tagline">SMART DISCOUNT POPUP</p>
+
+                <p className="tagline">PREMIUM POPUP TEMPLATE</p>
 
                 <h2 className="showcase-title">
-                  Achieve 15–20% opt-in <br /> rates with smarter popups
+                  Create stunning popups <br />
+                  without writing everything from scratch
                 </h2>
 
                 <p className="showcase-desc">
-                  Maximize email and SMS list growth with an advanced popup formula
-                  designed to maximize both list growth & sales.
+                  PopDrop offers a curated library of clean, responsive popup layouts.
+                  Choose a style, copy the code in HTML, Bootstrap or React, and
+                  customize it freely — all open-source and free forever.
                 </p>
 
-                <a href="#" className="learn-more">See how it works →</a>
+                <a href="#" className="learn-more">Browse all templates →</a>
               </div>
 
               {/* RIGHT IMAGE */}
               <div className="col-lg-6 position-relative popup-flow">
-                <img src={popup1} className="popup-img img-left" alt="Popup" />
+                <img src={whiteHome} className="popup-img img-left" alt="Popup" />
               </div>
 
             </div>

@@ -1,18 +1,23 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User, UserProfile
+from .utils import send_otp_email
 import random
 
-
-# ---------------------------------------------------------
+# -------------------------
 # SIGNUP SERIALIZER
-# ---------------------------------------------------------
+# -------------------------
 class SignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    
+
     class Meta:
         model = User
         fields = ["email", "fullname", "mobile", "password"]
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already exists")
+        return value
 
     def create(self, validated_data):
         # Create user
@@ -23,24 +28,25 @@ class SignupSerializer(serializers.ModelSerializer):
             password=validated_data["password"]
         )
 
-        # Create Profile
+        # Create profile
         profile = UserProfile.objects.create(user=user)
 
         # Generate OTP
         otp = str(random.randint(100000, 999999))
         profile.set_otp(otp)
 
+        # Send OTP via email
+        send_otp_email(user.email, otp)
+
         return {
             "user_id": user.id,
             "email": user.email,
             "fullname": user.fullname,
-            "otp": otp  # optional, if you want to show OTP in response
         }
 
-
-# ---------------------------------------------------------
+# -------------------------
 # LOGIN SERIALIZER
-# ---------------------------------------------------------
+# -------------------------
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -49,22 +55,22 @@ class LoginSerializer(serializers.Serializer):
         email = data.get("email")
         password = data.get("password")
 
-        # Check user
         user = authenticate(email=email, password=password)
-
         if not user:
             raise serializers.ValidationError("Invalid email or password")
 
         if not user.is_active:
             raise serializers.ValidationError("Account disabled")
 
-        # Check profile block
         if hasattr(user, "profile") and user.profile.is_blocked:
             raise serializers.ValidationError("User is blocked by admin")
 
         data["user"] = user
         return data
 
+# -------------------------
+# USER PROFILE SERIALIZER
+# -------------------------
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
@@ -80,6 +86,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "created_at"
         ]
 
+# -------------------------
+# USER DETAIL SERIALIZER
+# -------------------------
 class UserDetailSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(read_only=True)
 

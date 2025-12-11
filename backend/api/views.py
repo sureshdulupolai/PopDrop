@@ -1,31 +1,30 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User
 from rest_framework.generics import ListAPIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer
+from .models import User
+from .utils import send_otp_email
+import random
 
-# --------------------------
+# -------------------------
 # SIGNUP API
-# --------------------------
+# -------------------------
 class SignupView(APIView):
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.save()
             return Response({"status": True, "data": data}, status=status.HTTP_201_CREATED)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-# --------------------------
+# -------------------------
 # LOGIN API
-# --------------------------
+# -------------------------
 class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
-        
         if serializer.is_valid():
             user = serializer.validated_data["user"]
 
@@ -48,7 +47,9 @@ class LoginView(APIView):
 
         return Response(serializer.errors, status=400)
 
-
+# -------------------------
+# USER DETAIL VIEW
+# -------------------------
 class UserDetailView(APIView):
     def get(self, request, user_id):
         try:
@@ -58,7 +59,61 @@ class UserDetailView(APIView):
 
         serializer = UserDetailSerializer(user)
         return Response(serializer.data)
-    
+
 class UserListView(ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserDetailSerializer
+
+# -------------------------
+# OTP VERIFY VIEW
+# -------------------------
+class VerifyOtpView(APIView):
+    def post(self, request):
+        user_id = request.data.get("user_id")
+        otp_input = request.data.get("otp")
+
+        try:
+            user = User.objects.get(id=user_id)
+            profile = user.profile
+        except User.DoesNotExist:
+            return Response({"status": False, "error": "User not found"}, status=404)
+
+        if profile.otp_expired():
+            return Response({"status": False, "error": "OTP expired"}, status=400)
+
+        if profile.otp != otp_input:
+            return Response({"status": False, "error": "Invalid OTP"}, status=400)
+
+        profile.is_verified = True
+        profile.otp = None
+        profile.save()
+
+        # JWT after OTP verified
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "status": True,
+            "message": "OTP verified successfully",
+            "token": {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token)
+            }
+        }, status=200)
+
+# -------------------------
+# RESEND OTP VIEW
+# -------------------------
+class ResendOtpView(APIView):
+    def post(self, request):
+        user_id = request.data.get("user_id")
+        try:
+            user = User.objects.get(id=user_id)
+            profile = user.profile
+        except User.DoesNotExist:
+            return Response({"status": False, "error": "User not found"}, status=404)
+
+        otp = str(random.randint(100000, 999999))
+        profile.set_otp(otp)
+        send_otp_email(user.email, otp)
+
+        return Response({"status": True, "message": "OTP resent successfully"}, status=200)

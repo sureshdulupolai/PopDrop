@@ -1,0 +1,127 @@
+/* Background gradient */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #fff1f5, #ffe6e0, #fff6f0);
+}
+
+/* Center wrapper */
+.otp-wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Glass card */
+.otp-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 40px 35px;
+  border-radius: 20px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.otp-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Back text */
+.back-text {
+  font-size: 14px;
+  color: #444;
+  display: block;
+  text-align: left;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.back-text:hover {
+  color: #f65b3b;
+}
+
+/* Title and subtitle */
+.otp-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.otp-subtext {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* OTP inputs */
+.otp-input-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.otp-input {
+  width: 50px;
+  height: 60px;
+  font-size: 24px;
+  text-align: center;
+  border: 2px solid #ff8b6a;
+  border-radius: 12px;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+.otp-input:focus {
+  border-color: #f65b3b;
+  box-shadow: 0 0 12px rgba(246, 91, 59, 0.35);
+}
+
+/* Verify button */
+.verify-btn {
+  width: 100%;
+  padding: 14px 0;
+  background: #f65b3b;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.verify-btn:hover {
+  background: #ff6b47;
+  box-shadow: 0 8px 20px rgba(246, 91, 59, 0.45);
+}
+
+/* Resend OTP */
+.resend-text {
+  margin-top: 18px;
+  font-size: 14px;
+  color: #444;
+}
+
+.resend-link-btn {
+  border: none;
+  background: none;
+  color: #f65b3b;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.resend-link-btn:disabled {
+  color: #bbb;
+  cursor: not-allowed;
+}
+.resend-link-btn:hover:not(:disabled) {
+  text-decoration: underline;
+}
