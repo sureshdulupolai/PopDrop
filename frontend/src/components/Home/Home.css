@@ -64,6 +64,24 @@ html, body {
   width: 100%;
   display: flex;
   justify-content: center;
+  background-color: white;
+  position: relative; /* IMPORTANT */
+  overflow: hidden;   /* Clean edges */
+}
+
+.half-white-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  background-color: #FFECE6 !important;
+  z-index: 1;
+}
+
+.showcase-box .inner {
+  position: relative;
+  z-index: 2;
 }
 
 .showcase-box .inner {
@@ -108,6 +126,7 @@ html, body {
     margin-left: 140px !important;
   }
 }
+
 
 /* ==========================================
    TRUST SECTION
@@ -192,7 +211,7 @@ html, body {
 /* */
 
 .editor-showcase {
-    background: linear-gradient(180deg, #f7eaff, #ffe7e0, #ffeef5);
+    background: linear-gradient(180deg, #f7eaff, #ffe7e0, #ffeef5) !important;
 }
 
 .editor-title {

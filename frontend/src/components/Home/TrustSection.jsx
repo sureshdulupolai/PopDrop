@@ -8,7 +8,7 @@ import logo2 from "../../assets/logo2.png";
 
 export default function TrustSection() {
   return (
-    <section className="trust-section py-5">
+    <section className="trust-section py-5 bg-white">
       <div className="container">
 
         <div className="row align-items-center">

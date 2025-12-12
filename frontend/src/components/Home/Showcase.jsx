@@ -23,7 +23,10 @@ export default function Showcase() {
       {/* WHITE PREMIUM BOX WRAPPER */}
       <div className="showcase-wrapper">
         <section className="showcase-box">
-          <div className="inner">
+
+          <div className="half-white-bg"></div>
+
+          <div className="inner mb-4">
             <div className="row g-5 align-items-center">
 
               {/* LEFT CONTENT */}

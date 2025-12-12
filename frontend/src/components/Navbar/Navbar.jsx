@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import "./Navbar.css";
 
@@ -11,12 +11,12 @@ export default function Navbar({ isLoggedIn, onLogout }) {
       <div className="container-fluid px-4">
 
         {/* Logo */}
-        <a className="navbar-brand d-flex align-items-center gap-2" href="/">
+        <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
           <div className="logo-wrapper">
             <img src={logo} alt="PopDrop" className="logo-img" />
           </div>
           <span className="fw-semibold brand-name">PopDrop</span>
-        </a>
+        </Link>
 
         {/* Mobile Toggle */}
         <button

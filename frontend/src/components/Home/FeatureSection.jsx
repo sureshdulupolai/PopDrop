@@ -8,7 +8,7 @@ import imgCart from "../../assets/a-cart.png";
 
 const FeatureSection = () => {
   return (
-    <section className="feature-section py-5">
+    <section className="feature-section py-5 bg-white">
       <div className="container">
         
         <h2 className="section-title text-center mb-5">
