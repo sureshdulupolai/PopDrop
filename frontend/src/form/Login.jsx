@@ -5,22 +5,29 @@ import logo from "../assets/logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
-
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ✅ Already logged-in user ko direct profile
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    if (token) navigate("/dashboard");
+    const expiry = localStorage.getItem("expiry");
+    const now = new Date().getTime();
+    if (token && expiry && now < expiry) {
+      navigate("/profile", { replace: true });
+    }
   }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
+
     setError("");
     setLoading(true);
 
@@ -28,11 +35,18 @@ const Login = () => {
       const res = await loginUser({ email, password });
       const { token, user } = res.data;
 
+      // ✅ Save auth info with 3 years expiry
+      const now = new Date().getTime();
       localStorage.setItem("access_token", token.access);
       localStorage.setItem("refresh_token", token.refresh);
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("expiry", now + 3*365*24*60*60*1000);
 
-      navigate("/dashboard");
+      // ✅ Update Navbar instantly
+      setIsLoggedIn(true);
+
+      // ✅ Soft navigation
+      navigate("/profile", { replace: true });
     } catch (err) {
       setError("Invalid email or password.");
     } finally {

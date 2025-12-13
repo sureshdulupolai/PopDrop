@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Reviews</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+
+    body {
+      background: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px 0;
+    }
+
+    /* PAGE HEADING */
+    .page-title {
+      text-align: center;
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 40px;
+      background: linear-gradient(90deg,#FF6A3D,#FF52B2);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    /* REVIEW CARD */
+    .review-card {
+      background: #fff7f4;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 26px rgba(0,0,0,0.08);
+      border: 1px solid #f2d4c9;
+      transition: 0.25s ease;
+      height: 260px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .review-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.16);
+    }
+
+    .user-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .username {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .stars {
+      color: #ff8a47;
+      font-size: 16px;
+      margin-top: 2px;
+    }
+
+    .review-text {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.45;
+      margin-top: 10px;
+      height: 55px;
+      overflow: hidden;
+      transition: height 0.3s ease;
+    }
+
+    .review-text.expanded {
+      height: auto;
+    }
+
+    .read-toggle {
+      font-size: 13px;
+      color: #ff6a3d;
+      margin-top: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .review-date {
+      font-size: 12px;
+      color: #777;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2 class="page-title">What Our Customers Say</h2>
+
+  <div class="container">
+    <div class="row g-4" id="reviewsGrid"></div>
+  </div>
+
+
+  <script>
+    // SAMPLE DUMMY DATA (20 ITEMS)
+    const reviews = [
+      {
+        name: "John Doe",
+        img: "https://randomuser.me/api/portraits/men/11.jpg",
+        rating: 5,
+        date: "12 Dec 2025",
+        text: "Amazing experience! The UI is clean, fast and easy to navigate. I really enjoyed the smooth animations and the premium feel of PopDrop."
+      },
+      {
+        name: "Sophia Allen",
+        img: "https://randomuser.me/api/portraits/women/22.jpg",
+        rating: 4,
+        date: "11 Dec 2025",
+        text: "Very good service but delivery timing should be improved. Otherwise everything else is perfect and beautiful."
+      },
+      {
+        name: "Michael Brown",
+        img: "https://randomuser.me/api/portraits/men/32.jpg",
+        rating: 5,
+        date: "10 Dec 2025",
+        text: "Super clean UI and insanely fast features. Loved the responsive layout and UX details. Definitely recommended!"
+      }
+    ];
+
+    // ADD MORE (AUTO CLONE TO MAKE 20 ITEMS)
+    while (reviews.length < 20) {
+      reviews.push({...reviews[reviews.length % 3]});
+    }
+
+
+    const grid = document.getElementById("reviewsGrid");
+
+    reviews.forEach((r, index) => {
+      const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
+
+      const card = `
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+          <div class="review-card">
+            <div class="d-flex align-items-center gap-3">
+              <img src="${r.img}" class="user-img">
+              <div>
+                <p class="username">${r.name}</p>
+                <div class="stars">${stars}</div>
+              </div>
+            </div>
+
+            <p class="review-text" id="text${index}">
+              ${r.text}
+            </p>
+
+            <span class="read-toggle" onclick="toggleText(${index})">Read more</span>
+
+            <p class="review-date">Posted on: ${r.date}</p>
+          </div>
+        </div>
+      `;
+
+      grid.innerHTML += card;
+    });
+
+
+    // EXPAND/DROPUP READ MORE SCRIPT
+    function toggleText(i) {
+      const text = document.getElementById(`text${i}`);
+      const btn = text.nextElementSibling;
+
+      if (text.classList.contains("expanded")) {
+        text.classList.remove("expanded");
+        btn.innerText = "Read more";
+      } else {
+        text.classList.add("expanded");
+        btn.innerText = "Read less";
+      }
+    }
+  </script>
+
+</body>
+</html>

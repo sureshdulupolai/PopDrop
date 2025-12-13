@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Profile</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+body{
+  background:#f4f6fa;
+  font-family:Inter,sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Card */
+.profile-card{
+  width:420px;
+  background:#fff;
+  border-radius:22px;
+  padding:32px;
+  position:relative;
+  box-shadow:0 12px 40px rgba(0,0,0,.08);
+}
+.profile-card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  z-index:-1;
+  border-radius:24px;
+  background:linear-gradient(120deg,#ff9a9e,#fad0c4,#a1c4fd,#c2e9fb,#fbc2eb);
+  filter:blur(6px);
+}
+
+/* Image */
+.profile-image-wrapper{
+  position:relative;
+  width:120px;
+  margin:auto;
+}
+.profile-img{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid #fff;
+}
+.image-edit{
+  position:absolute;
+  bottom:6px;
+  right:6px;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#000;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+/* Verified */
+.verified-badge{
+  margin-top:12px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:#e6fff2;
+  color:#0d8f57;
+  font-size:13px;
+  padding:6px 14px;
+  border-radius:20px;
+}
+
+/* Fields */
+.field{margin-top:22px;}
+.field label{font-size:12px;color:#888;}
+.field input{
+  width:100%;
+  border:none;
+  border-bottom:2px solid #e5e5e5;
+  padding:6px 2px;
+  font-size:15px;
+  background:transparent;
+  outline:none;
+}
+.field input.readonly{border-bottom-color:transparent;}
+.field input.editing{border-bottom-color:#000;}
+
+/* Save */
+.save-btn{
+  margin-top:26px;
+  width:100%;
+  padding:12px;
+  border-radius:30px;
+  border:none;
+  background:#000;
+  color:#fff;
+  display:none;
+}
+
+/* Modal */
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.modal-box{
+  background:#fff;
+  padding:28px;
+  border-radius:18px;
+  width:340px;
+  text-align:center;
+}
+
+/* Toast */
+.toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:12px 22px;
+  border-radius:30px;
+  color:#fff;
+  display:none;
+}
+.toast.success{background:#0d8f57;}
+.toast.error{background:#000;}
+</style>
+</head>
+
+<body>
+
+<div class="profile-card">
+
+  <div class="text-center">
+    <div class="profile-image-wrapper">
+      <img class="profile-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+      <div class="image-edit" onclick="enableEdit(true)">
+        <i class="bi bi-pencil"></i>
+      </div>
+    </div>
+
+    <div class="verified-badge">
+      <i class="bi bi-patch-check-fill"></i> Verified
+    </div>
+  </div>
+
+  <form>
+    <input type="file" id="image" hidden>
+
+    <div class="field">
+      <label>Full Name</label>
+      <input id="fullname" class="readonly" value="Suresh Polai" readonly onclick="enableEdit(this)">
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input value="demo@email.com" readonly onclick="showInfo('Email cannot be changed')">
+    </div>
+
+    <div class="field">
+      <label>Mobile</label>
+      <input id="mobile" class="readonly" value="9876543210" readonly onclick="enableEdit(this)">
+    </div>
+
+    <button class="save-btn" id="saveBtn" onclick="saveProfile(event)">Save Changes</button>
+  </form>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal-box">
+    <h6 id="modalTitle"></h6>
+    <p class="text-muted" id="modalText"></p>
+    <button class="btn btn-dark btn-sm mt-3" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+<div class="toast success" id="successToast"></div>
+<div class="toast error" id="errorToast"></div>
+
+<script>
+let nextUpdateTime = new Date(Date.now() - 1000);
+
+function enableEdit(el){
+  if(new Date() < nextUpdateTime){
+    showModal("Update Locked","You can update after "+nextUpdateTime.toLocaleString());
+    return;
+  }
+  if(el===true) image.click();
+  el.readOnly=false;
+  el.classList.remove("readonly");
+  el.classList.add("editing");
+  el.focus();
+  saveBtn.style.display="block";
+}
+
+function saveProfile(e){
+  e.preventDefault();
+  if(!fullname.value.trim() || !mobile.value.trim()){
+    showError("Please fill all fields");
+    return;
+  }
+
+  // Reset fields
+  [fullname,mobile].forEach(i=>{
+    i.readOnly=true;
+    i.classList.remove("editing");
+    i.classList.add("readonly");
+  });
+
+  saveBtn.style.display="none";
+  nextUpdateTime = new Date(Date.now()+6*60*60*1000);
+  showSuccess("Profile updated successfully");
+}
+
+function showModal(title,text){
+  modalTitle.innerText=title;
+  modalText.innerText=text;
+  modal.style.display="flex";
+}
+function closeModal(){modal.style.display="none";}
+function showSuccess(msg){
+  successToast.innerText=msg;
+  successToast.style.display="block";
+  setTimeout(()=>successToast.style.display="none",2500);
+}
+function showError(msg){
+  errorToast.innerText=msg;
+  errorToast.style.display="block";
+  setTimeout(()=>errorToast.style.display="none",2500);
+}
+function showInfo(msg){
+  showModal("Info",msg);
+}
+</script>
+
+</body>
+</html>

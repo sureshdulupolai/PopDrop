@@ -6,8 +6,7 @@ import FeatureSection from './FeatureSection';
 import PremiumSection from './PremiumSection';
 import ReviewSlider from './ReviewSlider';
 
-function HomePageHere() {
-
+function HomePageHere({ isLoggedIn }) {
   return (
     <>
       <Showcase />
@@ -15,7 +14,7 @@ function HomePageHere() {
       <EditorShowcase />
       <PopdropExperience />
       <FeatureSection />
-      <PremiumSection />
+      <PremiumSection isLoggedIn={isLoggedIn} />
       <ReviewSlider />
     </>
   )

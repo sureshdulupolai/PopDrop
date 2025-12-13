@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "./Navbar.css";
 
 export default function Navbar({ isLoggedIn, onLogout }) {
   const navigate = useNavigate();
 
   return (
+    <>
     <nav className="navbar navbar-expand-lg custom-navbar fixed-top">
       <div className="container-fluid px-4">
 
@@ -44,23 +46,79 @@ export default function Navbar({ isLoggedIn, onLogout }) {
             <li className="nav-item"><a className="nav-link" href="#">Resources</a></li>
           </ul>
 
-          {/* Right Buttons */}
+          {/* Right Actions */}
           <div className="right-buttons d-flex align-items-center gap-3 mt-3 mt-lg-0">
+
             {!isLoggedIn ? (
               <>
-                <button className="btn" onClick={() => navigate("/login")}>Log in</button>
-                <button className="btn get-btn px-4 py-2" onClick={() => navigate("/signup")}>Get PopDrop Free</button>
+                <button
+                  className="btn"
+                  onClick={() => navigate("/login")}
+                >
+                  Log in
+                </button>
+
+                <button
+                  className="btn get-btn px-4 py-2"
+                  onClick={() => navigate("/signup")}
+                >
+                  Get PopDrop Free
+                </button>
               </>
             ) : (
               <>
-                <button className="btn login-btn" onClick={onLogout}>Logout</button>
-                <button className="btn get-btn px-4 py-2" onClick={() => navigate("/dashboard")}>Dashboard</button>
+                {/* Profile Icon */}
+                <button
+                  className="btn profile-icon-btn"
+                  onClick={() => navigate("/profile")} // Profile page ka path
+                  title="Profile"
+                >
+                  <i className="bi bi-person-circle fs-5 fw-bold"></i>
+                </button>
+
+                {/* Logout Icon */}
+                <button
+                  className="btn logout-icon-btn"
+                  onClick={onLogout}
+                  title="Logout"
+                >
+                  <i className="bi bi-box-arrow-right fs-5 fw-bold"></i>
+                </button>
               </>
             )}
+
           </div>
 
         </div>
       </div>
     </nav>
+
+    <style>
+      {`
+.dashboard-icon-btn,
+.profile-icon-btn,
+.logout-icon-btn {
+  background: transparent;
+  color: #1e293b; /* dark gray */
+  border-radius: 8px;
+  padding: 6px 10px;
+  transition: all 0.2s ease;
+}
+
+.dashboard-icon-btn:hover,
+.profile-icon-btn:hover {
+  background: #e0e7ff; /* soft blue hover */
+  color: #4338ca;
+}
+
+.logout-icon-btn:hover {
+  background: #fee2e2; /* soft red hover */
+  color: #b91c1c;
+}
+
+
+      `}
+    </style>
+    </>
   );
 }
