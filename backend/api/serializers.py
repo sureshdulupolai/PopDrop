@@ -102,6 +102,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 # PROFILE SERIALIZER
 # -------------------------
 class ProfileSerializer(serializers.ModelSerializer):
+    # READ from User model
     email = serializers.EmailField(source="user.email", read_only=True)
     fullname = serializers.CharField(source="user.fullname")
     mobile = serializers.CharField(source="user.mobile")
@@ -119,24 +120,33 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
 
     def update(self, instance, validated_data):
+        # user data
         user_data = validated_data.pop("user", {})
 
         # cooldown check
         if not instance.can_update_profile():
-            raise serializers.ValidationError(
-                "Profile update not allowed yet"
-            )
+            raise serializers.ValidationError({
+                "detail": "Profile update not allowed yet",
+                "next_allowed_at": instance.next_profile_update_allowed_at
+            })
 
-        # Update user table
-        instance.user.fullname = user_data.get("fullname", instance.user.fullname)
-        instance.user.mobile = user_data.get("mobile", instance.user.mobile)
+        # update USER table
+        instance.user.fullname = user_data.get(
+            "fullname", instance.user.fullname
+        )
+        instance.user.mobile = user_data.get(
+            "mobile", instance.user.mobile
+        )
         instance.user.save()
 
-        # Update profile table
-        instance.category = validated_data.get("category", instance.category)
+        # update PROFILE table
+        instance.category = validated_data.get(
+            "category", instance.category
+        )
+
         if validated_data.get("profile_image"):
             instance.profile_image = validated_data.get("profile_image")
 
-        instance.update_cooldown(days=14)
+        instance.update_cooldown(hours=2)
         instance.save()
         return instance

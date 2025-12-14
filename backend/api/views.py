@@ -5,9 +5,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer
-from .models import User
+from .models import User, UserProfile
 from .utils import send_otp_email
 import random
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # -------------------------
 # SIGNUP API
@@ -124,15 +125,20 @@ class ResendOtpView(APIView):
 # -------------------------
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get(self, request):
-        profile = request.user.profile
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
 
     def put(self, request):
-        profile = request.user.profile
-        serializer = ProfileSerializer(profile, data=request.data, partial=True)
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
+        serializer = ProfileSerializer(
+            profile,
+            data=request.data,
+            partial=True
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({
