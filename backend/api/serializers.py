@@ -20,7 +20,6 @@ class SignupSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        # Create user
         user = User.objects.create_user(
             email=validated_data["email"],
             fullname=validated_data["fullname"],
@@ -28,14 +27,10 @@ class SignupSerializer(serializers.ModelSerializer):
             password=validated_data["password"]
         )
 
-        # Create profile
         profile = UserProfile.objects.create(user=user)
 
-        # Generate OTP
         otp = str(random.randint(100000, 999999))
         profile.set_otp(otp)
-
-        # Send OTP via email
         send_otp_email(user.email, otp)
 
         return {
@@ -58,10 +53,8 @@ class LoginSerializer(serializers.Serializer):
         user = authenticate(email=email, password=password)
         if not user:
             raise serializers.ValidationError("Invalid email or password")
-
         if not user.is_active:
             raise serializers.ValidationError("Account disabled")
-
         if hasattr(user, "profile") and user.profile.is_blocked:
             raise serializers.ValidationError("User is blocked by admin")
 
@@ -105,7 +98,9 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "profile"
         ]
 
-
+# -------------------------
+# PROFILE SERIALIZER
+# -------------------------
 class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     fullname = serializers.CharField(source="user.fullname")

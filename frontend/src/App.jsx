@@ -11,26 +11,19 @@ import PrivateRoute from "./routes/PrivateRoute";
 import Login from "./form/Login";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
 
-  // ✅ Page load pe login check
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    const expiry = localStorage.getItem("expiry");
-    const now = new Date().getTime();
-    if (token && expiry && now < expiry) {
-      setIsLoggedIn(true);
-    } else {
-      localStorage.clear();
-      setIsLoggedIn(false);
-    }
+    const refresh = localStorage.getItem("refresh_token");
+    setIsLoggedIn(!!refresh);
   }, []);
 
-  // ✅ Logout handler
+  if (isLoggedIn === null) return <div>Loading...</div>;
+
   const handleLogout = () => {
     localStorage.clear();
     setIsLoggedIn(false);
-    window.location.href = "/"; // clean redirect
+    window.location.href = "/";
   };
 
   return (
@@ -42,11 +35,15 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<OtpVerifyHere />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/profile" element={
-          <PrivateRoute isLoggedIn={isLoggedIn}>
-            <Profile />
-          </PrivateRoute>
-        }/>
+
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
       </Routes>
 
       <Footer />

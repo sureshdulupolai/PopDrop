@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
+from datetime import timedelta
 import datetime
 from django.core.validators import MinValueValidator, MaxValueValidator
-
 
 # USER MANAGER
 class UserManager(BaseUserManager):
@@ -88,13 +88,26 @@ class UserProfile(models.Model):
         return timezone.now() > self.otp_created_at + datetime.timedelta(minutes=5)
 
     # ------- Profile update timer -------
-    def update_cooldown(self, days=14):
+    # def update_cooldown(self, days=2):
+    #     now = timezone.now()
+    #     self.profile_last_updated = now
+    #     self.next_profile_update_allowed_at = now + datetime.timedelta(days=days)
+    #     self.save()
+
+    # def can_update_profile(self):
+    #     if not self.next_profile_update_allowed_at:
+    #         return True
+    #     return timezone.now() >= self.next_profile_update_allowed_at
+
+    def update_cooldown(self, hours=2):
+        """Set next_profile_update_allowed_at X hours from now"""
         now = timezone.now()
         self.profile_last_updated = now
-        self.next_profile_update_allowed_at = now + datetime.timedelta(days=days)
+        self.next_profile_update_allowed_at = now + timedelta(hours=hours)
         self.save()
 
     def can_update_profile(self):
+        """Check if profile update is allowed"""
         if not self.next_profile_update_allowed_at:
             return True
         return timezone.now() >= self.next_profile_update_allowed_at

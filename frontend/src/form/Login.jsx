@@ -14,15 +14,19 @@ const Login = ({ setIsLoggedIn }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ Already logged-in user ko direct profile
+  // ✅ Already logged-in user: direct profile
   useEffect(() => {
     const token = localStorage.getItem("access_token");
+    const refresh = localStorage.getItem("refresh_token");
     const expiry = localStorage.getItem("expiry");
-    const now = new Date().getTime();
-    if (token && expiry && now < expiry) {
+    const now = Date.now();
+
+    // If access token expired but refresh exists, try to stay logged in
+    if ((token && expiry && now < expiry) || refresh) {
+      setIsLoggedIn(true);
       navigate("/profile", { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, setIsLoggedIn]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,17 +39,13 @@ const Login = ({ setIsLoggedIn }) => {
       const res = await loginUser({ email, password });
       const { token, user } = res.data;
 
-      // ✅ Save auth info with 3 years expiry
-      const now = new Date().getTime();
+      const now = Date.now();
       localStorage.setItem("access_token", token.access);
       localStorage.setItem("refresh_token", token.refresh);
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("expiry", now + 3*365*24*60*60*1000);
+      localStorage.setItem("expiry", now + 3 * 365 * 24 * 60 * 60 * 1000); // 3 years
 
-      // ✅ Update Navbar instantly
       setIsLoggedIn(true);
-
-      // ✅ Soft navigation
       navigate("/profile", { replace: true });
     } catch (err) {
       setError("Invalid email or password.");

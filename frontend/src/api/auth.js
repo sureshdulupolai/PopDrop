@@ -1,8 +1,6 @@
-import axios from "axios";
+import api from "./api";
 
-export const signupUser = (data) => axios.post("http://localhost:8000/auth/signup/", data);
-export const loginUser = (data) => axios.post("http://localhost:8000/auth/login/", data);
-export const verifyOtp = (data) => axios.post("http://localhost:8000/auth/verify-otp/", data);
-
-// Add this if missing:
-export const resendOtp = (data) => axios.post("http://localhost:8000/auth/resend-otp/", data);
+export const signupUser = (data) => api.post("/auth/signup/", data);
+export const loginUser = (data) => api.post("/auth/login/", data);
+export const verifyOtp = (data) => api.post("/auth/otp/verify/", data);
+export const resendOtp = (data) => api.post("/auth/otp/resend/", data);

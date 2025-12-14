@@ -2,12 +2,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer
 from .models import User
 from .utils import send_otp_email
 import random
-from rest_framework.permissions import IsAuthenticated
 
 # -------------------------
 # SIGNUP API
@@ -79,21 +79,17 @@ class VerifyOtpView(APIView):
         except User.DoesNotExist:
             return Response({"status": False, "error": "User not found"},status=404)
 
-        # OTP expired
         if profile.otp_expired():
             return Response({"status": False, "error": "OTP expired"},status=400)
 
-        # OTP mismatch
         if profile.otp != otp_input:
             return Response({"status": False, "error": "Invalid OTP"},status=400)
 
-        # ✅ OTP VERIFIED
         profile.is_verified = True
         profile.otp = None
         profile.otp_created_at = None
         profile.save(update_fields=["is_verified", "otp", "otp_created_at"])
 
-        # JWT token
         refresh = RefreshToken.for_user(user)
 
         return Response({
@@ -104,7 +100,6 @@ class VerifyOtpView(APIView):
                 "access": str(refresh.access_token)
             }
         }, status=200)
-
 
 # -------------------------
 # RESEND OTP VIEW
@@ -124,7 +119,9 @@ class ResendOtpView(APIView):
 
         return Response({"status": True, "message": "OTP resent successfully"}, status=200)
 
-
+# -------------------------
+# PROFILE VIEW
+# -------------------------
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -135,11 +132,7 @@ class ProfileView(APIView):
 
     def put(self, request):
         profile = request.user.profile
-        serializer = ProfileSerializer(
-            profile,
-            data=request.data,
-            partial=True
-        )
+        serializer = ProfileSerializer(profile, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({

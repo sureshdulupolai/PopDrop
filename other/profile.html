@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Profile</title>
+<title>Premium Profile</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -17,26 +17,26 @@ body{
   justify-content:center;
 }
 
-/* Card */
+/* ================= CARD ================= */
 .profile-card{
   width:420px;
   background:#fff;
-  border-radius:22px;
-  padding:32px;
+  border-radius:26px;
+  padding:34px;
   position:relative;
-  box-shadow:0 12px 40px rgba(0,0,0,.08);
+  box-shadow:0 25px 60px rgba(0,0,0,.1);
 }
 .profile-card::before{
   content:"";
   position:absolute;
   inset:-2px;
   z-index:-1;
-  border-radius:24px;
-  background:linear-gradient(120deg,#ff9a9e,#fad0c4,#a1c4fd,#c2e9fb,#fbc2eb);
-  filter:blur(6px);
+  border-radius:28px;
+  background:linear-gradient(135deg,#ff9a9e,#a1c4fd,#fbc2eb);
+  filter:blur(10px);
 }
 
-/* Image */
+/* ================= IMAGE ================= */
 .profile-image-wrapper{
   position:relative;
   width:120px;
@@ -46,15 +46,14 @@ body{
   width:120px;
   height:120px;
   border-radius:50%;
-  object-fit:cover;
-  border:4px solid #fff;
+  border:2px solid #000;
 }
 .image-edit{
   position:absolute;
   bottom:6px;
   right:6px;
-  width:34px;
-  height:34px;
+  width:36px;
+  height:36px;
   border-radius:50%;
   background:#000;
   color:#fff;
@@ -64,20 +63,20 @@ body{
   cursor:pointer;
 }
 
-/* Verified */
+/* ================= VERIFIED ================= */
 .verified-badge{
-  margin-top:12px;
+  margin-top:14px;
   display:inline-flex;
   align-items:center;
   gap:6px;
-  background:#e6fff2;
+  background:#e8fff3;
   color:#0d8f57;
   font-size:13px;
-  padding:6px 14px;
-  border-radius:20px;
+  padding:7px 16px;
+  border-radius:22px;
 }
 
-/* Fields */
+/* ================= FIELDS ================= */
 .field{margin-top:22px;}
 .field label{font-size:12px;color:#888;}
 .field input{
@@ -90,51 +89,113 @@ body{
   outline:none;
 }
 .field input.readonly{border-bottom-color:transparent;}
-.field input.editing{border-bottom-color:#000;}
+.email-input{border:none!important}
 
-/* Save */
+/* ================= SAVE ================= */
 .save-btn{
-  margin-top:26px;
+  margin-top:28px;
   width:100%;
-  padding:12px;
+  padding:13px;
   border-radius:30px;
-  border:none;
-  background:#000;
-  color:#fff;
+  font-size:15px;
+  border:1.5px solid #f65b3b;
+  background:transparent;
+  color:#f65b3b;
+  font-weight:500;
   display:none;
+  transition:all .25s ease;
 }
 
-/* Modal */
-.modal-bg{
+.save-btn:hover{
+  background:#f65b3b;
+  color:#fff;
+}
+
+
+/* ================= POPUP BG ================= */
+.popup-bg{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.45);
+  background:rgba(0,0,0,.55);
   display:none;
   align-items:center;
   justify-content:center;
   z-index:999;
 }
-.modal-box{
+
+/* ================= PREMIUM POPUP CARD ================= */
+.popup-card{
+  width:320px;
   background:#fff;
-  padding:28px;
-  border-radius:18px;
-  width:340px;
+  border-radius:16px;
+  overflow:hidden;
   text-align:center;
+  animation:pop .3s ease;
+  padding:0;
 }
 
-/* Toast */
-.toast{
-  position:fixed;
-  bottom:30px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:12px 22px;
-  border-radius:30px;
-  color:#fff;
-  display:none;
+@keyframes pop{
+  from{transform:scale(.85);opacity:0}
+  to{transform:scale(1);opacity:1}
 }
-.toast.success{background:#0d8f57;}
-.toast.error{background:#000;}
+
+/* Top color strip */
+.popup-header{height:70px;}
+
+/* Icon circle */
+.popup-icon{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:#fff;
+  margin:-30px auto 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  box-shadow:0 10px 25px rgba(0,0,0,.18);
+}
+
+/* Content */
+.popup-body{padding:18px 20px 22px;}
+.popup-body h5{margin-top:12px;}
+.popup-body p{color:#777;font-size:14px;margin-top:6px;}
+.popup-body button{
+  margin-top:16px;
+  padding:7px 24px;
+  border-radius:20px;
+}
+
+/* TYPES */
+.success .popup-header{background:#2ecc71;}
+.success .popup-icon{color:#2ecc71;}
+
+.error .popup-header{background:#ff4d4f;}
+.error .popup-icon{color:#ff4d4f;}
+
+.warning .popup-header{background:#f4b400;}
+.warning .popup-icon{color:#f4b400;}
+
+.info .popup-header{background:#1a73e8;}
+.info .popup-icon{color:#1a73e8;}
+
+/* ================= CUSTOM POPUP BUTTON ================= */
+.popup-btn{
+  margin-top:16px;
+  padding:7px 26px;
+  border-radius:20px;
+  font-size:14px;
+  background:transparent;
+  color:#f65b3b;
+  border:1.5px solid #f65b3b;
+  transition:all .25s ease;
+}
+
+.popup-btn:hover{
+  background:#f65b3b;
+  color:#fff;
+}
+
 </style>
 </head>
 
@@ -145,7 +206,7 @@ body{
   <div class="text-center">
     <div class="profile-image-wrapper">
       <img class="profile-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
-      <div class="image-edit" onclick="enableEdit(true)">
+      <div class="image-edit" onclick="showPopup('info','Edit Photo','Profile photo update coming soon')">
         <i class="bi bi-pencil"></i>
       </div>
     </div>
@@ -156,8 +217,6 @@ body{
   </div>
 
   <form>
-    <input type="file" id="image" hidden>
-
     <div class="field">
       <label>Full Name</label>
       <input id="fullname" class="readonly" value="Suresh Polai" readonly onclick="enableEdit(this)">
@@ -165,7 +224,8 @@ body{
 
     <div class="field">
       <label>Email</label>
-      <input value="demo@email.com" readonly onclick="showInfo('Email cannot be changed')">
+      <input class="email-input" value="demo@email.com" readonly
+        onclick="showPopup('warning','Email Locked','Email cannot be changed')">
     </div>
 
     <div class="field">
@@ -177,71 +237,54 @@ body{
   </form>
 </div>
 
-<!-- Modal -->
-<div class="modal-bg" id="modal">
-  <div class="modal-box">
-    <h6 id="modalTitle"></h6>
-    <p class="text-muted" id="modalText"></p>
-    <button class="btn btn-dark btn-sm mt-3" onclick="closeModal()">OK</button>
+<!-- ================= POPUP ================= -->
+<div class="popup-bg" id="popupBg">
+  <div class="popup-card" id="popupCard">
+    <div class="popup-header"></div>
+    <div class="popup-icon" id="popupIcon"></div>
+    <div class="popup-body">
+      <h5 id="popupTitle"></h5>
+      <p id="popupText"></p>
+      <button class="popup-btn" onclick="closePopup()">Okay</button>
+    </div>
   </div>
 </div>
 
-<div class="toast success" id="successToast"></div>
-<div class="toast error" id="errorToast"></div>
-
 <script>
-let nextUpdateTime = new Date(Date.now() - 1000);
-
 function enableEdit(el){
-  if(new Date() < nextUpdateTime){
-    showModal("Update Locked","You can update after "+nextUpdateTime.toLocaleString());
-    return;
-  }
-  if(el===true) image.click();
   el.readOnly=false;
   el.classList.remove("readonly");
-  el.classList.add("editing");
-  el.focus();
   saveBtn.style.display="block";
+  el.focus();
 }
 
 function saveProfile(e){
   e.preventDefault();
-  if(!fullname.value.trim() || !mobile.value.trim()){
-    showError("Please fill all fields");
-    return;
-  }
-
-  // Reset fields
   [fullname,mobile].forEach(i=>{
     i.readOnly=true;
-    i.classList.remove("editing");
     i.classList.add("readonly");
   });
-
   saveBtn.style.display="none";
-  nextUpdateTime = new Date(Date.now()+6*60*60*1000);
-  showSuccess("Profile updated successfully");
+  showPopup('success','Success','Profile updated successfully');
 }
 
-function showModal(title,text){
-  modalTitle.innerText=title;
-  modalText.innerText=text;
-  modal.style.display="flex";
+function showPopup(type,title,text){
+  popupBg.style.display="flex";
+  popupCard.className="popup-card "+type;
+  popupTitle.innerText=title;
+  popupText.innerText=text;
+
+  const icons={
+    success:'bi-check-lg',
+    error:'bi-x-lg',
+    warning:'bi-exclamation-lg',
+    info:'bi-info-lg'
+  };
+  popupIcon.innerHTML=`<i class="bi ${icons[type]}"></i>`;
 }
-function closeModal(){modal.style.display="none";}
-function showSuccess(msg){
-  successToast.innerText=msg;
-  successToast.style.display="block";
-  setTimeout(()=>successToast.style.display="none",2500);
-}
-function showError(msg){
-  errorToast.innerText=msg;
-  errorToast.style.display="block";
-  setTimeout(()=>errorToast.style.display="none",2500);
-}
-function showInfo(msg){
-  showModal("Info",msg);
+
+function closePopup(){
+  popupBg.style.display="none";
 }
 </script>
 
