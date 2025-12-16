@@ -9,7 +9,7 @@ import OtpVerifyHere from "./form/OtpVerify";
 import Profile from "./pages/ProfilePage";
 import PrivateRoute from "./routes/PrivateRoute";
 import Login from "./form/Login";
-import CustomerReviews from "./components/reviews/ReviewPage";
+import CustomerReviews from "./pages/ReviewPage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);

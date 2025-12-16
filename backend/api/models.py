@@ -116,19 +116,9 @@ class UserProfile(models.Model):
         return f"{self.user.email} Profile"
 
 class CustomerReview(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="reviews"
-    )
-    description = models.TextField(
-        max_length=150,
-        validators=[MaxLengthValidator(150)]
-    )
-    rating = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        default=5
-    )
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="reviews")
+    description = models.TextField(max_length=150,validators=[MaxLengthValidator(150)])
+    rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)],default=5)
     is_visible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

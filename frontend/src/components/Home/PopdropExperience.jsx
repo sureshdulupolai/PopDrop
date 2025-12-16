@@ -96,7 +96,7 @@ export default function PopdropExperience() {
   ================================== */
   const rightContent = {
     Templates: (
-      <div className="exp-card">
+      <div className="exp-card mt-3">
         <div className="exp-card-header"><span>Popular Template Sets</span></div>
 
         <div className="exp-item"><span className="exp-index">1</span>
@@ -230,7 +230,7 @@ export default function PopdropExperience() {
     <>
       {/* ------ TOP HERO ------ */}
       <section className="popdrop-top-hero text-center py-3 mt-5 bg-white">
-        <div className="container">
+        <div className="container mt-4">
           <h1 className="popdrop-main-heading">More customization,</h1>
           <h1 className="popdrop-secondary-heading">more creativity, less effort</h1>
           <p className="popdrop-main-subtext">

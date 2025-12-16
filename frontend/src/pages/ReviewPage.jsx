@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getReviews, createReview, deleteReview } from "../../api/reviews";
+import { getReviews, createReview, deleteReview } from "../api/reviews";
 import { useNavigate } from "react-router-dom";
 
 const CustomerReviews = ({ isLoggedIn }) => {

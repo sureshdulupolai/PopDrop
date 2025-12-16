@@ -8,7 +8,7 @@ export default function EditorShowcase() {
         <div className="row align-items-center">
 
           {/* LEFT CONTENT */}
-          <div className="col-lg-6 mb-5 mb-lg-0">
+          <div className="col-lg-6 mb-lg-0">
 
             <h2 className="editor-title">
               Build stunning popups instantly with our no-code editor
