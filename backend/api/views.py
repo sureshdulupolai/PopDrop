@@ -129,7 +129,10 @@ class ProfileView(APIView):
 
     def get(self, request):
         profile, _ = UserProfile.objects.get_or_create(user=request.user)
-        serializer = ProfileSerializer(profile)
+        serializer = ProfileSerializer(
+            profile,
+            context={"request": request}
+        )
         return Response(serializer.data)
 
     def put(self, request):
