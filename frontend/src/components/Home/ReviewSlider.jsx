@@ -1,16 +1,38 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { getReviews } from "../../api/reviews";
+import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
 export default function ReviewSlider() {
   const trackRef = useRef(null);
+  const [reviews, setReviews] = useState([]);
+  const navigate = useNavigate();
+
   let pos = 0;
   let speed = 0.5;
   let hover = false;
 
+  /* ================= FETCH REVIEWS ================= */
   useEffect(() => {
-    const track = trackRef.current;
+    async function fetchReviews() {
+      try {
+        const res = await getReviews();
+        setReviews(res.data || []);
+      } catch (err) {
+        console.error("Failed to load reviews", err);
+      }
+    }
 
-    // Duplicate content for infinite loop
+    fetchReviews();
+  }, []);
+
+  /* ================= SLIDER LOGIC ================= */
+  useEffect(() => {
+    if (!reviews.length) return;
+
+    const track = trackRef.current;
+    if (!track) return;
+
     track.innerHTML += track.innerHTML;
 
     function move() {
@@ -27,62 +49,52 @@ export default function ReviewSlider() {
 
     move();
 
-    // Hover pause
     track.addEventListener("mouseenter", () => (hover = true));
     track.addEventListener("mouseleave", () => (hover = false));
-  }, []);
+  }, [reviews]);
+
+  /* ================= STAR RENDER ================= */
+  const renderStars = (count) => {
+    return "★★★★★☆☆☆☆☆".slice(5 - count, 10 - count);
+  };
+
+  /* ================= NO REVIEWS → HIDE ================= */
+  if (reviews.length === 0) return null;
 
   return (
     <section className="pd-review-section">
       <div className="container">
         <div className="pd-review-header">
           <h2>
-            400+ <span>★★★★★</span> ratings on Shopify
+            {reviews.length}+ <span>★★★★★</span> ratings on Shopify
           </h2>
         </div>
       </div>
 
-      {/* Slider Wrapper */}
+      {/* SLIDER */}
       <div className="pd-review-slider">
         <div className="pd-review-track" ref={trackRef}>
-          {/* CARD 1 */}
-          <div className="pd-review-card">
-            <h3>The Queen of Tarts</h3>
-            <p className="pd-stars">★★★★★</p>
-            <p>
-              Great, easy-to-use app that helped my customers place their first
-              important order. Fantastic support!
-            </p>
-          </div>
-
-          {/* CARD 2 */}
-          <div className="pd-review-card">
-            <h3>Fuller's Flips</h3>
-            <p className="pd-stars">★★★★★</p>
-            <p>I started getting conversions from day one. Setup was instant and smooth.</p>
-          </div>
-
-          {/* CARD 3 */}
-          <div className="pd-review-card">
-            <h3>Topperswap</h3>
-            <p className="pd-stars">★★★★★</p>
-            <p>Clean design, user-friendly templates, and support responds instantly!</p>
-          </div>
-
-          {/* CARD 4 */}
-          <div className="pd-review-card">
-            <h3>Sunny’s Crafts</h3>
-            <p className="pd-stars">★★★★★</p>
-            <p>Boosted email signups and checkout conversions. Highly recommended!</p>
-          </div>
+          {reviews.map((review) => (
+            <div className="pd-review-card" key={review.id}>
+              <h3>{review.user_name}</h3>
+              <p className="pd-stars">{renderStars(review.rating)}</p>
+              <p>{review.description}</p>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="container text-center mt-4">
-        <a className="pd-more-reviews" href="#">
-          See more reviews →
-        </a>
-      </div>
+      {/* SEE MORE (only if > 6 reviews) */}
+      {reviews.length > 6 && (
+        <div className="container text-center mt-4">
+          <button
+            className="pd-more-reviews"
+            onClick={() => navigate("/reviews")}
+          >
+            See more reviews →
+          </button>
+        </div>
+      )}
     </section>
   );
 }

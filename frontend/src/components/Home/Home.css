@@ -616,7 +616,7 @@ html, body {
 }
 
 .pd-stars {
-  color: #ffb800;
+  color: #ffb800 !important;
   font-size: 15px;
   margin-bottom: 12px;
 }
