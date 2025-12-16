@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User, UserProfile
+from .models import User, UserProfile, CustomerReview
 from .utils import send_otp_email
 import random
 
@@ -150,3 +150,23 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance.update_cooldown(hours=2)
         instance.save()
         return instance
+
+class CustomerReviewSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source="user.fullname", read_only=True)
+    is_mine = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CustomerReview
+        fields = [
+            "id",
+            "user_name",
+            "description",
+            "rating",
+            "created_at",
+            "is_mine",
+        ]
+        read_only_fields = ["created_at"]
+
+    def get_is_mine(self, obj):
+        request = self.context.get("request")
+        return request and obj.user == request.user

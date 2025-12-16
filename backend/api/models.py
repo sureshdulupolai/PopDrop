@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.utils import timezone
 from datetime import timedelta
 import datetime
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, MaxLengthValidator
 
 # USER MANAGER
 class UserManager(BaseUserManager):
@@ -116,19 +116,33 @@ class UserProfile(models.Model):
         return f"{self.user.email} Profile"
 
 class CustomerReview(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="reviews",help_text="The user who wrote this review")
-    description = models.TextField(default="No description provided.",help_text="Write your review here")
-    rating = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)],help_text="Rating must be between 0 and 5 stars",default=0)
-    is_visible = models.BooleanField(default=True,help_text="If disabled, this review will be hidden from public view")
-    created_at = models.DateTimeField(auto_now_add=True,help_text="Date and time when the review was created")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="reviews"
+    )
+    description = models.TextField(
+        max_length=150,
+        validators=[MaxLengthValidator(150)]
+    )
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        default=5
+    )
+    is_visible = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = "Review"
-        verbose_name_plural = "Reviews"
         ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user"],
+                name="one_review_per_user"
+            )
+        ]
 
     def __str__(self):
-        return f"Review by {self.user.email} - {self.rating}⭐"
+        return f"{self.user.email} - {self.rating}⭐"
 
 
 class Category(models.Model):

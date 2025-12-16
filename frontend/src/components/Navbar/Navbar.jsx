@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -38,12 +37,9 @@ export default function Navbar({ isLoggedIn, onLogout }) {
 
           {/* Left Menu */}
           <ul className="navbar-nav left-menu gap-lg-4 align-items-lg-center">
-            <li className="nav-item"><a className="nav-link" href="#">Product</a></li>
             <li className="nav-item"><a className="nav-link" href="#">Templates</a></li>
-            <li className="nav-item"><a className="nav-link" href="#">Use Case Library</a></li>
-            <li className="nav-item"><a className="nav-link" href="#">Pricing</a></li>
+            <li className="nav-item"><Link className="nav-link" to="/review">Review</Link></li>
             <li className="nav-item"><a className="nav-link" href="#">Company</a></li>
-            <li className="nav-item"><a className="nav-link" href="#">Resources</a></li>
           </ul>
 
           {/* Right Actions */}

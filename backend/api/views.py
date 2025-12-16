@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer
-from .models import User, UserProfile
+from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer, CustomerReviewSerializer
+from .models import User, UserProfile, CustomerReview
 from .utils import send_otp_email
 import random
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -146,3 +146,64 @@ class ProfileView(APIView):
             "message": "Profile updated successfully",
             "data": serializer.data
         })
+    
+class ReviewListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_review = CustomerReview.objects.filter(
+            user=request.user,
+            is_visible=True
+        ).first()
+
+        other_reviews = CustomerReview.objects.filter(
+            is_visible=True
+        ).exclude(user=request.user)
+
+        data = []
+
+        if user_review:
+            data.append(
+                CustomerReviewSerializer(
+                    user_review,
+                    context={"request": request}
+                ).data
+            )
+
+        data += CustomerReviewSerializer(
+            other_reviews,
+            many=True,
+            context={"request": request}
+        ).data
+
+        return Response(data)
+
+    def post(self, request):
+        if CustomerReview.objects.filter(user=request.user).exists():
+            return Response(
+                {"detail": "You have already submitted a review"},
+                status=400
+            )
+
+        serializer = CustomerReviewSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+
+        return Response(serializer.data, status=201)
+
+class ReviewDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        review = CustomerReview.objects.filter(user=request.user).first()
+        if not review:
+            return Response(
+                {"detail": "Review not found"},
+                status=404
+            )
+
+        review.delete()
+        return Response(status=204)
