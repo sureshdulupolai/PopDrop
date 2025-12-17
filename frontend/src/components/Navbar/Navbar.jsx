@@ -50,10 +50,10 @@ export default function Navbar({ isLoggedIn, onLogout }) {
                 </button>
 
                 <div className="custom-dropdown-menu">
-                  <Link to="/templates/code" className="dropdown-item">
+                  <Link to="/templates/gallery" className="dropdown-item">
                     <i className="bi bi-code-slash"></i>
                     <div className="content-div">
-                      <strong>Code</strong>
+                      <strong>Gallery</strong>
                       <span className="ms-2">Developer ready templates</span>
                     </div>
                   </Link>

@@ -5,272 +5,202 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Template View</title>
 
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
-    body {
-      background-color: #f8f9fa;
+    body { background:#f8f9fa; }
+
+    .soft-card {
+      background:#fff;
+      border-radius:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.08);
     }
 
-    /* Rainbow border effect (soft) */
-    .rainbow-border {
-      border-radius: 16px;
-      padding: 2px;
-      background: linear-gradient(135deg,
-        #a5b4fc,
-        #fbcfe8,
-        #99f6e4,
-        #fde68a,
-        #c7d2fe
-      );
+    .back-btn {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 14px;
+      border-radius:30px;
+      background:#eef2ff;
+      color:#4338ca;
+      font-weight:500;
+      text-decoration:none;
     }
 
-    .rainbow-inner {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 24px;
+    .creator-box {
+      display:flex;
+      align-items:center;
+      gap:12px;
     }
 
-    /* Title section (NO border) */
-    .title-section h3 {
-      font-size: 28px;
-      font-weight: 700;
+    .creator-box img {
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      object-fit:cover;
     }
 
-    /* Preview */
+    .verified {
+      color:#2563eb;
+      font-size:14px;
+    }
+
     .preview-wrapper {
-      background: #0f172a;
-      border-radius: 12px;
-      padding: 30px;
-      display: flex;
-      justify-content: center;
-      gap: 30px;
+      background:#0f172a;
+      border-radius:14px;
+      padding:30px;
+      display:flex;
+      justify-content:center;
+      gap:30px;
     }
 
-    .desktop-preview {
-      width: 70%;
-      border-radius: 8px;
-    }
+    .desktop-preview { width:70%; border-radius:10px; }
+    .mobile-preview { width:22%; border-radius:18px; background:#000; padding:6px; }
 
-    .mobile-preview {
-      width: 22%;
-      border-radius: 18px;
-      background: #000;
-      padding: 6px;
-    }
-
-    /* Code block */
     .code-box {
-      background: #0b1220;
-      color: #e5e7eb;
-      border-radius: 12px;
-      padding: 20px;
-      position: relative;
-      font-family: monospace;
-      font-size: 14px;
+      background:#0b1220;
+      color:#e5e7eb;
+      border-radius:12px;
+      padding:20px;
+      font-family:monospace;
+      position:relative;
     }
 
     .copy-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
+      position:absolute;
+      top:12px;
+      right:12px;
     }
 
-    /* Rating + actions */
-    .rating-box {
-      max-width: 520px;
-      margin: auto;
-      text-align: center;
-      padding: 30px 20px;
+    .stat-box {
+      text-align:center;
+      padding:20px;
+      border-radius:14px;
+      background:#f8fafc;
+    }
+
+    .stat-box i {
+      font-size:22px;
     }
 
     .star-rating i {
-      font-size: 32px;
-      color: #cbd5e1;
-      cursor: pointer;
-      transition: transform 0.15s ease, color 0.15s ease;
+      font-size:34px;
+      color:#cbd5e1;
+      cursor:pointer;
     }
 
-    .star-rating i.active {
-      color: #fbbf24;
-    }
+    .star-rating i.active { color:#fbbf24; }
 
-    .star-rating i:hover {
-      transform: scale(1.15);
-    }
-
-    .meta-actions {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 18px;
-    }
-
-    .meta-actions span {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #475569;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    /* Back button */
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #4f46e5;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .back-btn:hover {
-      text-decoration: underline;
-    }
-
-    /* Verified badge */
-    .verified {
-      color: #2563eb;
-      font-size: 16px;
-      margin-left: 6px;
-    }
   </style>
 </head>
 <body>
 
-  <section class="py-4">
-    <div class="container">
+<section class="py-4">
+  <div class="container">
 
-      <!-- Back button -->
-      <a href="#" class="back-btn mb-3 d-inline-block">
-        <i class="bi bi-arrow-left"></i> Back to templates
+    <!-- Top bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <a href="#" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Back
       </a>
 
-      <!-- Title (no border) -->
-      <div class="title-section mb-4">
-        <h3>
-          Business Landing Template
-          <i class="bi bi-patch-check-fill verified"></i>
-        </h3>
-        <p class="text-muted mb-0">Free responsive website template</p>
-      </div>
-
-      <!-- Preview -->
-      <div class="rainbow-border mb-5">
-        <div class="rainbow-inner">
-          <div class="preview-wrapper">
-            <img src="https://picsum.photos/900/500?random=10" class="desktop-preview" alt="Desktop Preview">
-            <img src="https://picsum.photos/300/600?random=11" class="mobile-preview" alt="Mobile Preview">
+      <div class="creator-box">
+        <img src="https://i.pravatar.cc/100?img=12">
+        <div>
+          <div class="fw-semibold">
+            Rahul Sharma
+            <i class="bi bi-patch-check-fill verified"></i>
           </div>
+          <small class="text-muted">Posted 2 days ago</small>
         </div>
       </div>
+    </div>
 
-      <!-- Code -->
-      <div class="rainbow-border mb-4">
-        <div class="rainbow-inner">
-          <h5 class="fw-semibold mb-3">Template Code</h5>
-          <div class="code-box">
-            <button class="btn btn-sm btn-outline-light copy-btn" id="copyBtn">Copy</button>
-<pre id="codeText"><code>&lt;section class="hero"&gt;
+    <!-- Title -->
+    <div class="mb-4">
+      <h2 class="fw-bold mb-1">Business Landing Template</h2>
+      <p class="text-muted">
+        Free responsive landing page template for startups & businesses
+      </p>
+    </div>
+
+    <!-- Preview -->
+    <div class="soft-card p-4 mb-5">
+      <div class="preview-wrapper">
+        <img src="https://picsum.photos/900/500?random=10" class="desktop-preview">
+        <img src="https://picsum.photos/300/600?random=11" class="mobile-preview">
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-4">
+        <div class="stat-box">
+          <i class="bi bi-heart-fill text-danger"></i>
+          <div class="fs-4 fw-bold">124</div>
+          <small class="text-muted">Likes</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-box">
+          <i class="bi bi-star-fill text-warning"></i>
+          <div class="fs-4 fw-bold">4.6 / 5</div>
+          <small class="text-muted">Average Rating</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-box">
+          <i class="bi bi-people-fill text-primary"></i>
+          <div class="fs-4 fw-bold">2.1k</div>
+          <small class="text-muted">Followers</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Code -->
+    <div class="soft-card p-4 mb-5">
+      <h5 class="fw-semibold mb-3">Template Code</h5>
+      <div class="code-box">
+        <button class="btn btn-sm btn-outline-light copy-btn">Copy</button>
+<pre><code>&lt;section class="hero"&gt;
   &lt;h1&gt;Grow your business&lt;/h1&gt;
   &lt;p&gt;Modern landing page layout&lt;/p&gt;
 &lt;/section&gt;</code></pre>
-          </div>
-        </div>
       </div>
-
-      <!-- Description -->
-      <div class="rainbow-border mb-5">
-        <div class="rainbow-inner">
-          <h6 class="fw-semibold mb-2">Description</h6>
-          <p class="text-muted mb-0">
-            This business landing template is designed for startups and companies who want a clean,
-            responsive and conversion-focused website.
-          </p>
-        </div>
-      </div>
-
-      <!-- Rating + Like + Subscribe -->
-      <div class="rainbow-border mb-5">
-        <div class="rainbow-inner">
-          <div class="rating-box bg-white rounded-4">
-            <h5 class="fw-semibold mb-1">Community Feedback</h5>
-            <p class="text-muted small mb-4">Rate, like or follow this template</p>
-
-            <!-- Stars -->
-            <div class="star-rating mb-4">
-              <i class="bi bi-star" data-value="1"></i>
-              <i class="bi bi-star" data-value="2"></i>
-              <i class="bi bi-star" data-value="3"></i>
-              <i class="bi bi-star" data-value="4"></i>
-              <i class="bi bi-star" data-value="5"></i>
-            </div>
-
-            <!-- Stats row -->
-            <div class="d-flex justify-content-center gap-5 flex-wrap mb-4">
-              <div class="text-center">
-                <i class="bi bi-heart-fill text-danger fs-4"></i>
-                <div class="fw-bold fs-5" id="likeCount">124</div>
-                <small class="text-muted">Likes</small>
-              </div>
-
-              <div class="text-center">
-                <i class="bi bi-star-fill text-warning fs-4"></i>
-                <div class="fw-bold fs-5">4.6 / 5</div>
-                <small class="text-muted">Avg Rating</small>
-              </div>
-
-              <div class="text-center">
-                <i class="bi bi-people-fill text-primary fs-4"></i>
-                <div class="fw-bold fs-5">2.1k</div>
-                <small class="text-muted">Followers</small>
-              </div>
-            </div>
-
-            <!-- Subscribe button -->
-            <button class="btn btn-primary px-4 rounded-pill">
-              <i class="bi bi-bell-fill me-1"></i> Subscribe for updates
-            </button>
-          </div>
-        </div>
-      </div>
-
-        </div>
-      </div>
-      </div>
-
     </div>
-  </section>
 
-  <script>
-    // Copy button logic
-    const copyBtn = document.getElementById('copyBtn');
-    const codeText = document.getElementById('codeText').innerText;
+    <!-- Description -->
+    <div class="soft-card p-4 mb-5">
+      <h6 class="fw-semibold mb-2">Description</h6>
+      <p class="text-muted mb-0">
+        This template is designed for startups & companies who want a
+        conversion-focused, modern and responsive website.
+      </p>
+    </div>
 
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(codeText).then(() => {
-        copyBtn.textContent = 'Copied';
-        setTimeout(() => copyBtn.textContent = 'Copy', 2000);
-      });
-    });
+    <!-- Rating + Subscribe -->
+    <div class="soft-card p-5 text-center">
+      <h5 class="fw-semibold mb-1">Community Feedback</h5>
+      <p class="text-muted small mb-4">Rate & follow this creator</p>
 
-    // Star rating logic
-    const stars = document.querySelectorAll('.star-rating i');
-    stars.forEach((star, index) => {
-      star.addEventListener('click', () => {
-        stars.forEach((s, i) => {
-          s.classList.toggle('active', i <= index);
-          s.classList.toggle('bi-star-fill', i <= index);
-          s.classList.toggle('bi-star', i > index);
-        });
-      });
-    });
-  </script>
+      <div class="star-rating mb-4">
+        <i class="bi bi-star"></i>
+        <i class="bi bi-star"></i>
+        <i class="bi bi-star"></i>
+        <i class="bi bi-star"></i>
+        <i class="bi bi-star"></i>
+      </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+      <button class="btn btn-primary px-5 rounded-pill">
+        <i class="bi bi-bell-fill me-1"></i> Subscribe for updates
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

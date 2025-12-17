@@ -10,6 +10,7 @@ import Profile from "./pages/ProfilePage";
 import PrivateRoute from "./routes/PrivateRoute";
 import Login from "./form/Login";
 import CustomerReviews from "./pages/ReviewPage";
+import TemplateGallery from "./components/post/TemplateGallery";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -37,6 +38,7 @@ function App() {
         <Route path="/verify-otp" element={<OtpVerifyHere />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/review" element={<CustomerReviews isLoggedIn={setIsLoggedIn} />} />
+        <Route path="/templates/gallery" element={<TemplateGallery isLoggedIn={isLoggedIn} />} />
         <Route
           path="/profile"
           element={
