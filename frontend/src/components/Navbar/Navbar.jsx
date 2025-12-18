@@ -4,9 +4,10 @@ import logo from "../../assets/logo.png";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./Navbar.css";
 
-export default function Navbar({ isLoggedIn, onLogout }) {
+export default function Navbar({ isLoggedIn, onLogout, userRole }) {
   const navigate = useNavigate();
   const [showTemplates, setShowTemplates] = useState(false);
+  console.log(userRole);
 
   return (
     <>
@@ -58,13 +59,15 @@ export default function Navbar({ isLoggedIn, onLogout }) {
                     </div>
                   </Link>
 
-                  <Link to="/templates/upload" className="dropdown-item">
-                    <i className="bi bi-cloud-upload"></i>
-                    <div className="content-div">
-                      <strong>Upload</strong>
-                      <span className="ms-2">Upload & customize instantly</span>
-                    </div>
-                  </Link>
+                  {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
+                    <Link to="/templates/upload" className="dropdown-item">
+                      <i className="bi bi-cloud-upload"></i>
+                      <div className="content-div">
+                        <strong>Upload</strong>
+                        <span className="ms-2">Upload & customize instantly</span>
+                      </div>
+                    </Link>
+                  )}
 
                   <Link to="/templates/subscription" className="dropdown-item">
                     <i className="bi bi-credit-card"></i>

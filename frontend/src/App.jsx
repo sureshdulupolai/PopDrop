@@ -14,10 +14,18 @@ import TemplateGallery from "./components/post/TemplateGallery";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     const refresh = localStorage.getItem("refresh_token");
+    const user = localStorage.getItem("user");
+
     setIsLoggedIn(!!refresh);
+
+    if (user) {
+      const parsedUser = JSON.parse(user);
+      setUserRole(parsedUser.category);
+    }
   }, []);
 
   if (isLoggedIn === null) return <div>Loading...</div>;
@@ -25,12 +33,18 @@ function App() {
   const handleLogout = () => {
     localStorage.clear();
     setIsLoggedIn(false);
+    setUserRole(null);
     window.location.href = "/";
   };
 
   return (
     <>
-      <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      {/* ✅ YAHI MAIN FIX */}
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        onLogout={handleLogout}
+        userRole={userRole}
+      />
 
       <Routes>
         <Route path="/" element={<HomePageHere isLoggedIn={isLoggedIn} />} />
@@ -38,12 +52,11 @@ function App() {
         <Route path="/signup/designer" element={<Signup role="designer" />} />
         <Route path="/signup/developer" element={<Signup role="developer" />} />
 
-        {/* invalid signup paths */}
-        {/* <Route path="/signup/*" element={<NotFound />} /> */}
         <Route path="/verify-otp" element={<OtpVerifyHere />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/review" element={<CustomerReviews isLoggedIn={setIsLoggedIn} />} />
-        <Route path="/templates/gallery" element={<TemplateGallery isLoggedIn={isLoggedIn} />} />
+        <Route path="/review" element={<CustomerReviews />} />
+        <Route path="/templates/gallery" element={<TemplateGallery />} />
+
         <Route
           path="/profile"
           element={

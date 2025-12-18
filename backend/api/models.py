@@ -132,4 +132,4 @@ class CustomerReview(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user.email} - {self.rating}⭐"
+        return f"{self.user.email} - ⭐{self.rating}"

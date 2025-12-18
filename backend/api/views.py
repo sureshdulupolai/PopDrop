@@ -30,9 +30,12 @@ class LoginView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data["user"]
 
-            # Generate JWT
             refresh = RefreshToken.for_user(user)
 
+            category = None
+            if hasattr(user, "profile"):
+                category = user.profile.category
+            
             return Response({
                 "status": True,
                 "message": "Login successful",
@@ -43,7 +46,8 @@ class LoginView(APIView):
                 "user": {
                     "id": user.id,
                     "email": user.email,
-                    "fullname": user.fullname
+                    "fullname": user.fullname,
+                    "category": category
                 }
             }, status=200)
 
