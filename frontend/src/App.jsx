@@ -34,7 +34,12 @@ function App() {
 
       <Routes>
         <Route path="/" element={<HomePageHere isLoggedIn={isLoggedIn} />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={<Signup role="normal" />} />
+        <Route path="/signup/designer" element={<Signup role="designer" />} />
+        <Route path="/signup/developer" element={<Signup role="developer" />} />
+
+        {/* invalid signup paths */}
+        {/* <Route path="/signup/*" element={<NotFound />} /> */}
         <Route path="/verify-otp" element={<OtpVerifyHere />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/review" element={<CustomerReviews isLoggedIn={setIsLoggedIn} />} />

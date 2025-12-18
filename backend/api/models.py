@@ -113,7 +113,7 @@ class UserProfile(models.Model):
         return timezone.now() >= self.next_profile_update_allowed_at
 
     def __str__(self):
-        return f"{self.user.email} Profile"
+        return f"Gmail: {self.user.email}"
 
 class CustomerReview(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="reviews")

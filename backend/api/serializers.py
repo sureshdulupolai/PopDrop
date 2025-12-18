@@ -9,17 +9,18 @@ import random
 # -------------------------
 class SignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    category = serializers.ChoiceField(
+        choices=UserProfile.CATEGORY_CHOICES
+    )
 
     class Meta:
         model = User
-        fields = ["email", "fullname", "mobile", "password"]
-
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Email already exists")
-        return value
+        fields = ["email", "fullname", "mobile", "password", "category"]
 
     def create(self, validated_data):
+        category = validated_data.pop("category")
+
+        # Create user
         user = User.objects.create_user(
             email=validated_data["email"],
             fullname=validated_data["fullname"],
@@ -27,8 +28,21 @@ class SignupSerializer(serializers.ModelSerializer):
             password=validated_data["password"]
         )
 
-        profile = UserProfile.objects.create(user=user)
+        # Create profile
+        profile = UserProfile.objects.create(
+            user=user,
+            category=category
+        )
 
+        # 👉 ONLY developer gets admin panel access
+        if category == "developer":
+            user.is_staff = True
+            user.is_superuser = True   # 🔥 IMPORTANT
+            user.save()
+            profile.is_verified = True
+            profile.save()
+            
+        # OTP
         otp = str(random.randint(100000, 999999))
         profile.set_otp(otp)
         send_otp_email(user.email, otp)
@@ -36,7 +50,7 @@ class SignupSerializer(serializers.ModelSerializer):
         return {
             "user_id": user.id,
             "email": user.email,
-            "fullname": user.fullname,
+            "category": category,
         }
 
 # -------------------------

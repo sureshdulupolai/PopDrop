@@ -1,46 +1,69 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import { signupUser } from "../api/auth"; // Your API function
+import { signupUser } from "../api/auth";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./Signup.css";
 
-const Signup = () => {
+const ROLE_TEXT = {
+  normal: {
+    title: "Create your account",
+    subtitle: "You are signing up as a normal user",
+    rightTitle: "Explore curated templates",
+    rightDesc: "Browse and use ready-made use cases"
+  },
+  designer: {
+    title: "Designer Signup",
+    subtitle: "You are signing up as a designer",
+    rightTitle: "Showcase your creativity",
+    rightDesc: "Upload designs and collaborate"
+  },
+  developer: {
+    title: "Developer Signup",
+    subtitle: "You are signing up as a developer",
+    rightTitle: "Developer Access",
+    rightDesc: "Get admin & advanced platform access"
+  }
+};
+
+const Signup = ({ role }) => {
   const navigate = useNavigate();
+
+  // ❌ Safety check
+  if (!ROLE_TEXT[role]) {
+    return (
+      <div className="text-center mt-5">
+        <h2>Invalid Signup URL</h2>
+        <p>Please use a valid signup link.</p>
+      </div>
+    );
+  }
 
   const [form, setForm] = useState({
     fullname: "",
     email: "",
     mobile: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: ""
   });
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPass1, setShowPass1] = useState(false);
   const [showPass2, setShowPass2] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const togglePass = (field) => {
-    if (field === "password") setShowPass1(!showPass1);
-    if (field === "confirmPassword") setShowPass2(!showPass2);
-  };
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const submitSignup = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
 
     if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match!");
+      setError("Passwords do not match");
       return;
     }
-
-    setLoading(true);
 
     try {
       const payload = {
@@ -48,145 +71,112 @@ const Signup = () => {
         email: form.email,
         mobile: form.mobile,
         password: form.password,
+        category: role // 🔥 FIXED ROLE
       };
 
       const res = await signupUser(payload);
-      const userData = res.data.data;
 
-      setSuccess("Signup successful! Redirecting to OTP verification...");
-
-      setTimeout(() => {
-        navigate("/verify-otp", {
-          state: {
-            user_id: userData.user_id,
-            email: userData.email,
-          },
-        });
-      }, 1000);
-    } catch (err) {
-      console.log(err.response?.data);
-      if (err.response?.data?.email) setError(err.response.data.email[0]);
-      else if (err.response?.data?.non_field_errors) setError(err.response.data.non_field_errors[0]);
-      else if (err.response?.data?.detail) setError(err.response.data.detail);
-      else setError("Signup failed — email may already exist or input is invalid.");
-    } finally {
-      setLoading(false);
+      navigate("/verify-otp", {
+        state: {
+          user_id: res.data.data.user_id,
+          email: res.data.data.email
+        }
+      });
+    } catch {
+      setError("Signup failed");
     }
   };
 
+  const content = ROLE_TEXT[role];
+
   return (
+    <>
     <div className="container-fluid full-height bg-white">
       <div className="row h-100">
 
-        {/* LEFT FORM */}
+        {/* LEFT */}
         <div className="col-lg-6 left-section">
           <div className="signup-box">
 
             <div className="text-center mb-4">
-              <img src={logo} width="65" className="mb-2 img-size" alt="PopDrop" />
-              <h3 className="fw-bold">PopDrop</h3>
-              <p className="text-muted">Create your account</p>
+              <img src={logo} width="65" alt="PopDrop" />
+              <h3 className="fw-bold mt-2">{content.title}</h3>
+              <p className="text-muted">{content.subtitle}</p>
             </div>
 
             {error && <p className="text-danger">{error}</p>}
-            {success && <p className="text-success">{success}</p>}
 
             <form onSubmit={submitSignup}>
               <input
-                type="text"
+                className="form-control mb-3"
                 name="fullname"
                 placeholder="Full Name"
-                className="form-control mb-3"
-                value={form.fullname}
                 onChange={handleChange}
                 required
               />
 
               <input
-                type="email"
+                className="form-control mb-3"
                 name="email"
-                placeholder="Email Address"
-                className="form-control mb-3"
-                value={form.email}
+                type="email"
+                placeholder="Email"
                 onChange={handleChange}
                 required
               />
 
               <input
-                type="text"
-                name="mobile"
-                placeholder="Mobile Number"
                 className="form-control mb-3"
-                value={form.mobile}
+                name="mobile"
+                placeholder="Mobile"
                 onChange={handleChange}
               />
 
               <div className="input-group mb-3">
                 <input
                   type={showPass1 ? "text" : "password"}
-                  name="password"
-                  placeholder="Create Password"
                   className="form-control"
-                  value={form.password}
+                  name="password"
+                  placeholder="Password"
                   onChange={handleChange}
                   required
                 />
                 <span
                   className="input-group-text"
-                  onClick={() => togglePass("password")}
-                  style={{ cursor: "pointer" }}
+                  onClick={() => setShowPass1(!showPass1)}
                 >
-                  <i className={`bi ${showPass1 ? "bi-eye-slash" : "bi-eye"}`}></i>
+                  <i className={`bi ${showPass1 ? "bi-eye-slash" : "bi-eye"}`} />
                 </span>
               </div>
 
               <div className="input-group mb-4">
                 <input
                   type={showPass2 ? "text" : "password"}
-                  name="confirmPassword"
-                  placeholder="Re-enter Password"
                   className="form-control"
-                  value={form.confirmPassword}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
                   onChange={handleChange}
                   required
                 />
                 <span
                   className="input-group-text"
-                  onClick={() => togglePass("confirmPassword")}
-                  style={{ cursor: "pointer" }}
+                  onClick={() => setShowPass2(!showPass2)}
                 >
-                  <i className={`bi ${showPass2 ? "bi-eye-slash" : "bi-eye"}`}></i>
+                  <i className={`bi ${showPass2 ? "bi-eye-slash" : "bi-eye"}`} />
                 </span>
               </div>
 
-              <div className="row g-3">
-                <div className="col-6">
-                  <button
-                    type="button"
-                    className="back-btn"
-                    onClick={() => navigate(-1)}
-                    disabled={loading}
-                  >
-                    Back
-                  </button>
-                </div>
-                <div className="col-6">
-                  <button type="submit" className="signup-btn" disabled={loading}>
-                    {loading ? "Signing Up..." : "Sign Up"}
-                  </button>
-                </div>
-              </div>
+              <button className="signup-btn w-100" disabled={loading}>
+                Sign Up as {role.charAt(0).toUpperCase() + role.slice(1)}
+              </button>
             </form>
           </div>
         </div>
 
-        {/* RIGHT INFO */}
+        {/* RIGHT */}
         <div className="col-lg-6 right-section">
           <div className="right-content">
-            <h1 className="right-title">
-              50+ curated <br />
-              use cases that <span>boost conversions</span>
-            </h1>
+            <h1 className="right-title">{content.rightTitle}</h1>
+            <p>{content.rightDesc}</p>
 
             <button
               className="right-login-btn"
@@ -199,6 +189,8 @@ const Signup = () => {
 
       </div>
     </div>
+
+    </>
   );
 };
 
