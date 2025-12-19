@@ -5,10 +5,12 @@ import PopdropExperience from './PopdropExperience';
 import FeatureSection from './FeatureSection';
 import PremiumSection from './PremiumSection';
 import ReviewSlider from './ReviewSlider';
+import Snowfall from "react-snowfall";
 
 function HomePageHere({ isLoggedIn }) {
   return (
     <>
+      <Snowfall color="#82C3D9" />
       <Showcase />
       <TrustSection />
       <EditorShowcase />
