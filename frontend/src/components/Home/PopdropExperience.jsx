@@ -229,7 +229,7 @@ export default function PopdropExperience() {
   return (
     <>
       {/* ------ TOP HERO ------ */}
-      <section className="popdrop-top-hero text-center py-3 mt-5 bg-white">
+      <section className="popdrop-top-hero text-center py-3 bg-white">
         <div className="container mt-4">
           <h1 className="popdrop-main-heading">More customization,</h1>
           <h1 className="popdrop-secondary-heading">more creativity, less effort</h1>
