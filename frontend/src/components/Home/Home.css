@@ -5,6 +5,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: "Outfit", sans-serif;
+  background-color: white !important;
 }
 
 /* ==========================================
@@ -12,7 +13,7 @@ html, body {
 ========================================== */
 .hero-wrapper {
   background: linear-gradient(180deg, #fdf1ff, #ffe6e0, #fff6f0);
-  padding-bottom: 150px;
+  padding-bottom: 200px;
 }
 
 .hero-section {
@@ -57,16 +58,15 @@ html, body {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: -120px;
+  transform: translateY(-180px); /* <-- MAIN MAGIC */
+  z-index: 10;
 }
 
 .showcase-box {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  background-color: white;
-  position: relative; /* IMPORTANT */
-  overflow: hidden;   /* Clean edges */
+  max-width: 1280px;
+  margin: 0 auto; /* CENTER MAGIC */
+  padding: 0 24px;
 }
 
 .half-white-bg {
@@ -75,22 +75,25 @@ html, body {
   left: 0;
   width: 100%;
   height: 25%;
-  background-color: #FFECE6 !important;
+  /* background-color: #FFECE6 !important; */
   z-index: 1;
 }
 
 .showcase-box .inner {
-  position: relative;
-  z-index: 2;
+  background: #ffffff !important;
+  border-radius: 36px;
+  padding: 80px 70px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.08);
 }
 
+
 .showcase-box .inner {
-  max-width: 90%;
-  background: #fff;
-  padding: 70px 60px;
-  border-radius: 36px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+  background: #ffffff;
+  border-radius: 40px;
+  padding: 80px 72px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.08);
 }
+
 
 .popup-img {
   width: 75%;
@@ -125,6 +128,10 @@ html, body {
   .img-left {
     margin-left: 140px !important;
   }
+}
+
+.page-white-bg {
+  background: #ffffff;
 }
 
 
