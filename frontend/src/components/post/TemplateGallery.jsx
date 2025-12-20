@@ -118,7 +118,7 @@ const TemplateGallery = ({ isLoggedIn }) => {
       </section>
 
       {/* CARDS */}
-      <section className="py-5">
+      <section className="py-5 ownbg-color">
         <div className="container">
           {loading && (
             <p className="text-center text-muted">Loading templates...</p>
@@ -189,14 +189,17 @@ const TemplateGallery = ({ isLoggedIn }) => {
       {/* UI ONLY CSS */}
       <style>{`
         body {
-          background-color: #f8f9fa;
+          background-color: #f8f9fa !important;
         }
 
         .gallery-header {
           margin-top: 68px !important;
-          background: #ffffff;
+          background: #ffffff !important;
           border-bottom: 1px solid #e5e7eb;
         }
+          .ownbg-color{
+          background-color: #f8f9fa !important;
+          }
 
         /* SEARCH */
         .search-box {
