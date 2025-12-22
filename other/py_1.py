@@ -1,81 +1,110 @@
 import requests
 from datetime import date
 
-# https://ipapi.co/json/
-# user = data["results"][0]
 
 class OtherManagement:
+    @staticmethod
     def todaydate():
         return date.today().strftime("%Y-%m-%d")
+
+    def response(self, success, message, status_code=200, data=None):
+        return {
+            "success": success,
+            "message": message,
+            "status_code": status_code,
+            "data": data
+        }
 
 class APIManagement(OtherManagement):
     BlockCount = 0
 
-    def __init__(self, Log: list, PrivateCode: list | None = None,LimitSet: bool = True, BlockOn: int = 3):
+    def __init__(
+        self,
+        Log: list,
+        PrivateCode: list | None = None,
+        LimitSet: bool = True,
+        BlockOn: int = 3
+    ):
         self.Log = Log
-        self.LogCount = [0 for _ in self.Log]
-        self.OtherCount = {"2025-12-19": 5, "2025-12-20": 10}
+        self.Pc = PrivateCode or []
         self.LS = LimitSet
+        self.SetBlock = BlockOn
+        self.OtherCount = {}
 
-        if self.LS:
-            self.SetBlock = BlockOn
-            self.Pc = PrivateCode or []
+    def _get(self, url: str, Login: str):
 
-        def _get(self, url: str, Login: str):
-            if Login in self.Log:
-                return requests.get(url).json()
+        # Privileged user
+        if Login in self.Log:
+            data = requests.get(url).json()
+            return self.response(True, "Privileged access", 200, data)
 
-            if not self.LS:
-                return requests.get(url).json()
+        # Limit disabled
+        if not self.LS:
+            data = requests.get(url).json()
+            return self.response(True, "Limit disabled", 200, data)
 
-            if APIManagement.BlockCount < self.SetBlock:
-                td = OtherManagement.todaydate()
-                self.OtherCount[td] = self.OtherCount.get(td, 0) + 1
-                APIManagement.BlockCount += 1
-                return {"details": "Hiting Api Not Allowed"}
+        # Block condition
+        if APIManagement.BlockCount >= self.SetBlock:
+            return self.response(False, "API limit exceeded", 429)
 
-            return {"details": "Set TimeOut Block For EveryOne"}
+        # Allowed hit
+        today = self.todaydate()
+        self.OtherCount[today] = self.OtherCount.get(today, 0) + 1
+        APIManagement.BlockCount += 1
 
-        def _unblock(self, code: str | None = None, reset: int | None = None):
-            if not self.LS:
-                return {"details": "Unblock feature disabled"}
+        data = requests.get(url).json()
+        return self.response(True,f"Hit {APIManagement.BlockCount}/{self.SetBlock}",200,data)
 
-            if code is None or code not in self.Pc:
-                return {"details": "Can't Access, Auth is Missing"}
 
-            if reset is not None:
-                self.SetBlock = reset
-                APIManagement.BlockCount = 0
-                return {"details": f"Successfully Reset API Limit to {reset}"}
+    def _unblock(self, code: str | None = None, reset: int | None = None):
 
-            if APIManagement.BlockCount >= self.SetBlock:
-                APIManagement.BlockCount = 0
-                return {"details": "Successfully UnBlocked API Again"}
-            else:
-                return {"details": f"Already Unblocked, {self.SetBlock - APIManagement.BlockCount} hits left"}
+        if not self.LS:
+            return self.response(False, "Unblock disabled", 400)
 
-API = APIManagement(Log=['Admin', 'Developer'], PrivateCode=["101", "102"])
+        if code not in self.Pc:
+            return self.response(False, "Invalid auth code", 401)
+
+        if reset is not None:
+            self.SetBlock = reset
+            APIManagement.BlockCount = 0
+            return self.response(True, f"Limit reset to {reset}", 200)
+
+        APIManagement.BlockCount = 0
+        return self.response(True, "API unblocked", 200)
+
+    def status(self, res: dict, code: bool = True):
+        status_code = res.get("status_code")
+        status_map = {
+            200: "SUCCESS",
+            429: "FAILED",
+            401: "AUTH_ERROR",
+            400: "BAD_REQUEST"
+        }
+        if code:
+            return status_code
+        return status_map.get(status_code, "UNKNOWN")
+
+API = APIManagement(
+    Log=["Admin", "Developer"],
+    PrivateCode=["101", "102"]
+)
 url = "https://randomuser.me/api/?results=5"
-get_data = API._get(url, Login="User")
-print(get_data)
-print(API.OtherCount)
+res = API._get(url, Login="User")
 
-print("2.")
-get_data = API._get(url, Login="User")
-print(get_data)
-print(API.OtherCount)
+# for i in range(1, 5):
+#     print(f"\n{i}.")
+#     res = API._get(url, Login="User")
+#     print(API.status(res))
+#     print(API.OtherCount)
 
-print("3.")
-get_data = API._get(url, Login="User")
-print(get_data)
-print(API.OtherCount)
+# print("\nUNBLOCK")
+# print(API.status(API._unblock(code="101")))
+# print(API.status(API._unblock(code="101", reset=5)))
+# print(API.status(API._unblock(code="101"), code=False))
 
-print("4.")
-get_data = API._get(url, Login="User")
-print(get_data)
-print(API.OtherCount)
 
-print("5.")
-print(API._unblock(code="101"))
-print(API._unblock(code="101", reset=5))
-print(API._unblock(code="101"))
+if API.status(res) == 200:
+    data = res.get("data")
+    print(data)
+else:
+    print(res.get("message"))
