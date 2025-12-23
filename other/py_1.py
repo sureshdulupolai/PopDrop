@@ -84,13 +84,19 @@ class APIManagement(OtherManagement):
             return status_code
         return status_map.get(status_code, "UNKNOWN")
 
-API = APIManagement(
-    Log=["Admin", "Developer"],
-    PrivateCode=["101", "102"]
-)
-url = "https://randomuser.me/api/?results=5"
-res = API._get(url, Login="User")
+API = APIManagement(Log=["Admin", "Developer"],PrivateCode=["101", "102"])
 
+def FunctionCall(request):
+    res = API._get(request, Login="User")
+    if API.status(res) == 200:
+        data = res.get("data")
+        print(data)
+    else:
+        print(res.get("message"))
+
+FunctionCall(request="https://randomuser.me/api/?results=5")
+
+# -------------------------------------------------------------------------------
 # for i in range(1, 5):
 #     print(f"\n{i}.")
 #     res = API._get(url, Login="User")
@@ -101,10 +107,3 @@ res = API._get(url, Login="User")
 # print(API.status(API._unblock(code="101")))
 # print(API.status(API._unblock(code="101", reset=5)))
 # print(API.status(API._unblock(code="101"), code=False))
-
-
-if API.status(res) == 200:
-    data = res.get("data")
-    print(data)
-else:
-    print(res.get("message"))
