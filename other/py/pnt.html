@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>System Warning</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f2027;
+            overflow: hidden;
+        }
+
+        /* FULL BACKGROUND IMAGE */
+        .bg-image {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        /* DARK OVERLAY */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(15,32,39,0.9), rgba(32,58,67,0.9), rgba(44,83,100,0.9));
+            z-index: -1;
+        }
+
+        /* CARD */
+        .warning-card {
+            background: rgba(0, 0, 0, 0.75);
+            border: 2px solid #f1c40f;
+            border-radius: 14px;
+            padding: 35px 30px;
+            max-width: 520px;
+            width: 90%;
+            text-align: center;
+            background-color: rgb(14, 14, 14);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.8);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .warning-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .warning-icon {
+            font-size: 52px;
+            color: #f1c40f;
+        }
+
+        .warning-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #f1c40f;
+            letter-spacing: 1px;
+        }
+
+        .error-code {
+            margin-top: 10px;
+            font-size: 17px;
+            color: #ff7675;
+            font-weight: 600;
+        }
+
+        .warning-text {
+            margin-top: 18px;
+            font-size: 16px;
+            line-height: 1.7;
+            color: #eaeaea;
+        }
+
+        .btn-home {
+            margin-top: 28px;
+            padding: 12px 34px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: #000;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Image -->
+    <img src="full_body.jpg" alt="Warning Background" class="bg-image">
+
+    <!-- Dark Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Warning Card -->
+    <div class="warning-card">
+        <div class="warning-header">
+            <div class="warning-icon">⚠️</div>
+            <div class="warning-title">WARNING</div>
+        </div>
+
+        <div class="error-code">ERROR CODE: {{CODE}}</div>
+
+        <p class="warning-text">
+            {{MESSAGE}}
+        </p>
+
+        <button class="btn-home" onclick="window.location.href='{{HOME}}'">
+            Go Back Home
+        </button>
+    </div>
+
+</body>
+</html>
