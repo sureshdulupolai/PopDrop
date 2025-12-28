@@ -1,4 +1,4 @@
-from py_1 import APIManagement
+from APISecurity import APIManagement
 
 API = APIManagement()
 
@@ -39,8 +39,11 @@ def main(request):
         API.PageNotFound(message=res.get("error"), code=res.get("status_code"), home="https://google.com")
         return
 
-    data = res.get('data')
-    # print(API.schema_generate(data)) # check tha schema here
+    data = API.speed()
+    print(data)
+    
+    print("-" * 100)
+    print(API.schema_generate(data)) # check tha schema here, format work when its already deformate, like speed(formats=false)
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":

@@ -1,0 +1,52 @@
+9️⃣ API Comparison Tool (🔥 Rare Feature)
+Compare two API responses:
+/users (today) vs /users (yesterday)
+
+Show difference:
+
+Added fields
+Removed fields
+Changed type
+
+
+
+2️⃣ RATE LIMITING (ANTI-SPAM / DDOS PROTECTION)
+🧠 Idea:
+Ek user → kitni requests per minute allowed?
+
+Limit: 100 requests / 60 sec (set agar, defult mai agar limit pura ho jata h, no access varna last call)
+
+
+Agar cross kare:
+
+{
+  "error": "Too Many Requests",
+  "retry_after": "30 seconds"
+}
+
+🔥 Benefit:
+Server overload se bachaata hai
+Abuse detect hota hai
+
+
+
+9️⃣ API VERSION LOCKING
+Prevent breaking change:
+
+/api/v1/users
+/api/v2/users
+
+User must upgrade manually.
+
+
+
+🚀 1. API BEHAVIOR PROFILING (Very Powerful)
+Normal response time: 120ms
+Current response: 1500ms ⚠️
+
+🔥 Use case:
+Slow API detection
+Silent backend issues
+
+
+full get form db but show which field is requered less use ko serilazer, create one time and take data according to needs

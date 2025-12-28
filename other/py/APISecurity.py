@@ -1,9 +1,11 @@
 import requests
 import json
 import os
+import time
 import webbrowser
 from datetime import datetime
 from schema import SchemaGenerator
+from APIBehavior import APIBehaviorProfiler
 
 # ================= HISTORY MANAGER =================
 class HistoryManager:
@@ -55,6 +57,7 @@ class APIManagement:
 
     def __init__(self):
         self.history = HistoryManager()
+        self.profiler = APIBehaviorProfiler()
         self.UserTrack = {}
 
     def _track_user(self, username):
@@ -67,32 +70,41 @@ class APIManagement:
 
     def call_api(self, url, user="Guest"):
         self._track_user(user)
+        start = time.time()
 
         try:
             res = requests.get(url, timeout=10)
             res.raise_for_status()
 
-            self.history.add(url)
+            elapsed = round((time.time() - start) * 1000, 2)
+
+            self._last_speed = self.profiler.track(url, elapsed)
 
             return {
                 "success": True,
-                "url": url,
                 "status_code": res.status_code,
-                "data": res.json() if "application/json" in res.headers.get("Content-Type", "") else None,
-                "message": "API Call Successful",
-                "error": None
+                "data": res.json(),
+                "message": "API Call Successful"
             }
 
         except Exception as e:
-            status_code = getattr(e.response, "status_code", 500) if hasattr(e, "response") else 500
+            elapsed = round((time.time() - start) * 1000, 2)
+            self._last_speed = self.profiler.track(url, elapsed)
+
             return {
                 "success": False,
-                "url": url,
-                "status_code": status_code,
-                "data": None,
-                "message": str(e),
+                "status_code": getattr(e.response, "status_code", 500),
                 "error": str(e)
             }
+
+    def speed(self, formate=False):
+        if not self._last_speed:
+            return {
+                "error": "No API call made yet"
+            }
+        elif formate == True:
+            return json.dumps(self._last_speed, indent=2, ensure_ascii=False)
+        return self._last_speed
 
     # Status helper
     def status(self, res: dict, code: bool = True):
