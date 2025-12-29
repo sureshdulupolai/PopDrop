@@ -6,6 +6,7 @@ import webbrowser
 from datetime import datetime
 from schema import SchemaGenerator
 from APIBehavior import APIBehaviorProfiler
+from Detector import AnomalyDetector
 
 # ================= HISTORY MANAGER =================
 class HistoryManager:
@@ -58,6 +59,7 @@ class APIManagement:
     def __init__(self):
         self.history = HistoryManager()
         self.profiler = APIBehaviorProfiler()
+        self.anomaly = AnomalyDetector()
         self.UserTrack = {}
 
     def _track_user(self, username):
@@ -69,7 +71,14 @@ class APIManagement:
             self.UserTrack[username]["last_seen"] = now
 
     def call_api(self, url, user="Guest"):
-        self._track_user(user)
+        # 🚫 Check if blocked
+        if self.anomaly.is_blocked(user):
+            return {"success": False,"status_code": 429,"error": "User temporarily blocked due to suspicious activity"}
+
+        # Track request rate
+        if not self.anomaly.register_request(user):
+            return {"success": False,"status_code": 429,"error": "Too many requests"}
+
         start = time.time()
 
         try:
@@ -77,25 +86,15 @@ class APIManagement:
             res.raise_for_status()
 
             elapsed = round((time.time() - start) * 1000, 2)
-
             self._last_speed = self.profiler.track(url, elapsed)
 
-            return {
-                "success": True,
-                "status_code": res.status_code,
-                "data": res.json(),
-                "message": "API Call Successful"
-            }
+            return {"success": True,"status_code": res.status_code,"data": res.json()}
 
         except Exception as e:
-            elapsed = round((time.time() - start) * 1000, 2)
-            self._last_speed = self.profiler.track(url, elapsed)
+            self.anomaly.register_failure(user)
 
-            return {
-                "success": False,
-                "status_code": getattr(e.response, "status_code", 500),
-                "error": str(e)
-            }
+            return {"success": False,"status_code": getattr(e.response, "status_code", 500),"error": str(e)}
+
 
     def speed(self, formate=False):
         if not self._last_speed:
