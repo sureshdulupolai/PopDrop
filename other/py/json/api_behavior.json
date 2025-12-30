@@ -1,12 +1,28 @@
 {
     "dummyjson.com/products": {
-        "count": 1,
-        "avg_time": 1591.76,
-        "last_time": 1591.76,
+        "count": 5,
+        "avg_time": 1435.43,
+        "last_time": 1281.71,
         "alerts": [
             {
                 "time": "2025-12-30 22:10:34",
                 "message": "\u26a0 Slow response (1592 ms)"
+            },
+            {
+                "time": "2025-12-30 23:01:20",
+                "message": "\u26a0 Slow response (1617 ms)"
+            },
+            {
+                "time": "2025-12-30 23:02:46",
+                "message": "\u26a0 Slow response (1293 ms)"
+            },
+            {
+                "time": "2025-12-30 23:06:17",
+                "message": "\u26a0 Slow response (1393 ms)"
+            },
+            {
+                "time": "2025-12-30 23:06:41",
+                "message": "\u26a0 Slow response (1282 ms)"
             }
         ]
     },
