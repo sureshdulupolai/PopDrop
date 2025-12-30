@@ -7,12 +7,17 @@ from datetime import datetime
 from schema import SchemaGenerator
 from APIBehavior import APIBehaviorProfiler
 from Detector import AnomalyDetector
+from endpoints import EndPoint
 
 # ================= HISTORY MANAGER =================
 class HistoryManager:
-    FILE = "api_history.json"
+    def __init__(self, db_file=None):
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        json_folder = os.path.join(BASE_DIR, "json")
+        os.makedirs(json_folder, exist_ok=True)  # Ensure folder exists
 
-    def __init__(self):
+        self.FILE = db_file or os.path.join(json_folder, "api_history.json")
+        
         self.data = {"index": -1, "history": []}
         self._load()
 
@@ -54,9 +59,11 @@ class HistoryManager:
         return self.data["history"][self.data["index"]]["url"]
 
 # ================= API MANAGEMENT =================
-class APIManagement:
+DEFAULT_USER_ID = "__anonymous__"
 
-    def __init__(self):
+class APIManagement:
+    def __init__(self, user_id = None, ePoint = []):
+        self.EndPoint = EndPoint(EndList=ePoint, user_id=user_id if user_id else DEFAULT_USER_ID)
         self.history = HistoryManager()
         self.profiler = APIBehaviorProfiler()
         self.anomaly = AnomalyDetector()
@@ -71,30 +78,34 @@ class APIManagement:
             self.UserTrack[username]["last_seen"] = now
 
     def call_api(self, url, user="Guest"):
-        # 🚫 Check if blocked
-        if self.anomaly.is_blocked(user):
-            return {"success": False,"status_code": 429,"error": "User temporarily blocked due to suspicious activity"}
+        if self.EndPoint.ePoint(url):
 
-        # Track request rate
-        if not self.anomaly.register_request(user):
-            return {"success": False,"status_code": 429,"error": "Too many requests"}
+            # 🚫 Block check
+            if self.anomaly.is_blocked(user):
+                return {"success": False,"status_code": 429,"error": "User temporarily blocked due to suspicious activity"}
 
-        start = time.time()
+            # Rate limit check
+            if not self.anomaly.register_request(user):
+                return {"success": False,"status_code": 429,"error": "Too many requests"}
 
-        try:
-            res = requests.get(url, timeout=10)
-            res.raise_for_status()
+            start = time.time()
 
-            elapsed = round((time.time() - start) * 1000, 2)
-            self._last_speed = self.profiler.track(url, elapsed)
+            try:
+                res = requests.get(url, timeout=10)
+                res.raise_for_status()
 
-            return {"success": True,"status_code": res.status_code,"data": res.json()}
+                elapsed = round((time.time() - start) * 1000, 2)
+                self._last_speed = self.profiler.track(url, elapsed)
+                self.history.add(url)
 
-        except Exception as e:
-            self.anomaly.register_failure(user)
+                return {"success": True,"status_code": res.status_code,"data": res.json()}
 
-            return {"success": False,"status_code": getattr(e.response, "status_code", 500),"error": str(e)}
+            except Exception as e:
+                self.anomaly.register_failure(user)
 
+                return {"success": False,"status_code": getattr(e.response, "status_code", 500),"error": str(e)}
+
+        return {"success": False, "status_code": 404, "error": "Invalid endpoint"}
 
     def speed(self, formate=False):
         if not self._last_speed:

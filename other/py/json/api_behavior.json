@@ -1,0 +1,19 @@
+{
+    "dummyjson.com/products": {
+        "count": 1,
+        "avg_time": 1591.76,
+        "last_time": 1591.76,
+        "alerts": [
+            {
+                "time": "2025-12-30 22:10:34",
+                "message": "\u26a0 Slow response (1592 ms)"
+            }
+        ]
+    },
+    "jsonplaceholder.typicode.com/users": {
+        "count": 1,
+        "avg_time": 1185.47,
+        "last_time": 1185.47,
+        "alerts": []
+    }
+}

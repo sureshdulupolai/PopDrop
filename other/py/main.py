@@ -1,37 +1,11 @@
 from APISecurity import APIManagement
+from listED import ENDPOINTS
 
-API = APIManagement()
-
-# def main(request):
-#     # path = "https://uselessfacts.jsph.pl/random.json?language=en"
-#     path="https://sresh"
-#     res = API.call_api(path, user=request['user'])
-#     if res.get('status') != 200 and res.get('success') != True:
-#         API.PageNotFound()
-
-#         print(res)
-
-# main(
-#     request={
-#         "path" : "localhost:8000",
-#         "user" : "developer"
-#     }
-# )
-
-# # main(
-# #     request={
-# #         "path" : "localhost:8000",
-# #         "user" : "user"
-# #     }
-# # )
-
-# # main(
-# #     request={
-# #         "path" : "localhost:8000",
-# #         "user" : "developer"
-# #     }
-# # )
-
+API = APIManagement(
+    ePoint=ENDPOINTS,
+    user_id=None
+    # user_id="user1011"
+)
 
 def APICall(request, user: str = "user"):
     res = API.call_api(request, user=user)
@@ -41,7 +15,8 @@ def APICall(request, user: str = "user"):
     return res
 
 def main(request, user: str = "user"):
-    data = APICall(request=request, user=user)['data']
+    data = APICall(request=request, user=user)
+    print(data)
     print(API.schema_generate(data))
     # data = API.speed()
     # print(data)
@@ -49,14 +24,8 @@ def main(request, user: str = "user"):
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":
-    # main(
-    #     request={
-    #         "path":,
-    #         "user": "developer"
-    #     }
-    # )
 
-    lst = [("https://dummyjson.com/products", None), ("https://jsonplaceholder.typicode.com/users", None)]
+    lst = [("https://dummyjson.com/productsss", None), ("https://jsonplaceholder.typicode.com/usersss", None)]
     for i in lst:
         # print(i[0], i[1])
         main(request=i[0], user=i[1])

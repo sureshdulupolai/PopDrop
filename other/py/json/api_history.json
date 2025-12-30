@@ -1,0 +1,13 @@
+{
+    "index": 1,
+    "history": [
+        {
+            "url": "https://dummyjson.com/products",
+            "time": "2025-12-30 22:10:34"
+        },
+        {
+            "url": "https://jsonplaceholder.typicode.com/users",
+            "time": "2025-12-30 22:10:35"
+        }
+    ]
+}
