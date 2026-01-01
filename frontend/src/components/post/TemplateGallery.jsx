@@ -150,7 +150,7 @@ const TemplateGallery = ({ isLoggedIn }) => {
             {posts.map((p) => (
               <div key={p.id} className="col-xl-3 col-lg-4 col-md-6">
                 <div className="card template-card h-100">
-                  <img src={p.desktop_image} alt={p.title} />
+                  <img src={`http://localhost:8000/${p.desktop_image}`} alt={p.desktop_image} />
                   <div className="card-body d-flex flex-column">
                     <h6 className="fw-semibold">{p.title}</h6>
 
@@ -169,7 +169,9 @@ const TemplateGallery = ({ isLoggedIn }) => {
                     </div>
 
                     <p className="text-muted small">
-                      {p.category || "Uncategorized"}
+                      {p.description
+                        ? p.description.split(" ").slice(0, 8).join(" ") + "..."
+                        : "No description available"}
                     </p>
 
                     <button

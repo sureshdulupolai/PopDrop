@@ -7,7 +7,6 @@ import "./Navbar.css";
 export default function Navbar({ isLoggedIn, onLogout, userRole }) {
   const navigate = useNavigate();
   const [showTemplates, setShowTemplates] = useState(false);
-  console.log(userRole);
 
   return (
     <>

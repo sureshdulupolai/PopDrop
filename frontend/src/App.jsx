@@ -11,6 +11,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 import Login from "./form/Login";
 import CustomerReviews from "./pages/ReviewPage";
 import TemplateGallery from "./components/post/TemplateGallery";
+import UploadTemplate from "./components/post/UploadTemplate";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -56,6 +57,7 @@ function App() {
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/review" element={<CustomerReviews />} />
         <Route path="/templates/gallery" element={<TemplateGallery />} />
+        <Route path="/templates/upload" element={<UploadTemplate />} />
 
         <Route
           path="/profile"

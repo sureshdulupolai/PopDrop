@@ -6,6 +6,7 @@ from .views import (
     RatePostView,
     CopyTemplateView,
     ToggleSubscribeView,
+    UploadTemplateView,
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path("posts/<int:post_id>/rate/", RatePostView.as_view()),
     path("posts/<int:post_id>/copy/", CopyTemplateView.as_view()),
     path("users/<int:user_id>/subscribe/", ToggleSubscribeView.as_view()),
+    path("upload/", UploadTemplateView.as_view(), name="upload-template"),
 ]

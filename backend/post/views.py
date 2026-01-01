@@ -4,6 +4,7 @@ from django.db.models import Avg, Count, Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from .models import Post, Category, PostReview, UserSubscription
 from api.models import User
@@ -77,6 +78,31 @@ class PostDetailView(APIView):
             PostDetailSerializer(post, context={"request": request}).data
         )
 
+class UploadTemplateView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request):
+        if not request.FILES:
+            return Response({"error": "No files uploaded"}, status=400)
+
+        post = Post.objects.create(
+            user=request.user,
+            title=request.data.get("title"),
+            description=request.data.get("description"),
+            category_id=request.data.get("category"),
+            code_content=request.data.get("code_content"),
+            desktop_image=request.FILES.get("desktop_image"),
+            mobile_image=request.FILES.get("mobile_image"),
+            is_visible=True,
+            is_approved=False,
+        )
+
+        return Response({
+            "success": True,
+            "message": "Template uploaded successfully",
+            "id": post.id
+        })
 
 # ---------- RATE POST ----------
 class RatePostView(APIView):

@@ -139,10 +139,13 @@ const Profile = () => {
               src={
                 profile.profile_image instanceof File
                   ? URL.createObjectURL(profile.profile_image)
-                  : profile.profile_image ||
-                    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                  : profile.profile_image
+                  ? profile.profile_image.startsWith("http")
+                    ? profile.profile_image
+                    : `http://localhost:8000${profile.profile_image}`
+                  : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
               }
-              alt="profile"
+              alt="profile-image"
             />
             {!profile.is_blocked && (
               <label className="avatar-edit">

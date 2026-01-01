@@ -39,12 +39,12 @@ class PostCardSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "category",
+            "description",
             "creator",
             "created_at",
             "desktop_image",
             "avg_rating",
         ]
-
 
 class PostDetailSerializer(serializers.ModelSerializer):
     user = CreatorSerializer(read_only=True)
