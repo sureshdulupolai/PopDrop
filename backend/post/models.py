@@ -44,14 +44,12 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        # First save to get ID
-        if not self.pk:
-            super().save(*args, **kwargs)
+        is_new = self.pk is None
 
-        # Generate slug only once
-        if not self.slug:
-            base = f"{self.title}-{self.category.name}-{self.id}"
-            self.slug = slugify(base)
+        super().save(*args, **kwargs)  # ALWAYS SAVE FIRST
+
+        if is_new and not self.slug:
+            self.slug = slugify(f"{self.title}-{self.category.name}-{self.id}")
             super().save(update_fields=["slug"])
 
     def __str__(self):
@@ -67,10 +65,6 @@ class PostReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("post", "user")
-
 
     class Meta:
         unique_together = ("post", "user")

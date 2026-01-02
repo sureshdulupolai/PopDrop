@@ -59,7 +59,7 @@ function App() {
         <Route path="/review" element={<CustomerReviews />} />
         <Route path="/templates/gallery" element={<TemplateGallery />} />
         <Route path="/templates/upload" element={<UploadTemplate />} />
-        <Route path="/template/:id" element={<TemplateDetail />} />
+        <Route path="/template/:slug" element={<TemplateDetail />} />
 
         <Route
           path="/profile"

@@ -1,0 +1,4 @@
+Modern Portfolio Landing Page
+A clean and responsive personal portfolio landing page built using HTML, CSS, and JavaScript.
+Perfect for developers, designers, and freelancers to showcase their skills, projects, and contact information.
+Fully responsive layout with smooth animations and modern UI design.

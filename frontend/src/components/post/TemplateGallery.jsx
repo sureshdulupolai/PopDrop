@@ -176,7 +176,7 @@ const TemplateGallery = ({ isLoggedIn }) => {
 
                     <button
                       className="btn btn-outline-primary mt-auto"
-                      onClick={() => navigate(`/template/${p.id}`)}
+                      onClick={() => navigate(`/template/${p.slug}`)}
                     >
                       View Template
                     </button>

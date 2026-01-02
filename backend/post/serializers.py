@@ -43,6 +43,7 @@ class PostCardSerializer(serializers.ModelSerializer):
             "created_at",
             "desktop_image",
             "avg_rating",
+            "slug",
         ]
 
 class PostDetailSerializer(serializers.ModelSerializer):
@@ -59,6 +60,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
             "desktop_image", "mobile_image",
             "like_count", "view_count",
             "avg_rating", "review_count",
+            "copy_count",
             "is_liked", "user"
         ]
 

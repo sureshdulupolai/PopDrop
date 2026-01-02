@@ -61,12 +61,12 @@ class PostListView(APIView):
 class PostDetailView(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request, post_id):
+    def get(self, request, slug):
         post = get_object_or_404(
             Post,
-            id=post_id,
+            slug=slug,
             is_visible=True,
-            is_approved=True
+            # is_approved=True
         )
 
         Post.objects.filter(id=post.id).update(
