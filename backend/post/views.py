@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .models import Post, Category, PostReview, UserSubscription
+from .models import Post, Category, PostReview, UserSubscription, PostLike
 from api.models import User
 from .serializers import (
     PostDetailSerializer,
@@ -22,8 +22,7 @@ class CategoryListView(APIView):
     def get(self, request):
         categories = Category.objects.annotate(
             post_count=Count("posts")
-        ).order_by("name")
-
+        )
         return Response(CategorySerializer(categories, many=True).data)
 
 
@@ -137,6 +136,7 @@ class CopyTemplateView(APIView):
         return Response({"copied": True})
 
 
+
 # ---------- SUBSCRIBE ----------
 class ToggleSubscribeView(APIView):
     permission_classes = [IsAuthenticated]
@@ -144,16 +144,13 @@ class ToggleSubscribeView(APIView):
     def post(self, request, user_id):
         creator = get_object_or_404(User, id=user_id)
 
-        if creator == request.user:
-            return Response({"error": "Not allowed"}, status=400)
-
-        qs = UserSubscription.objects.filter(
+        obj = UserSubscription.objects.filter(
             subscriber=request.user,
             subscribed_to=creator
         )
 
-        if qs.exists():
-            qs.delete()
+        if obj.exists():
+            obj.delete()
             subscribed = False
         else:
             UserSubscription.objects.create(
@@ -163,3 +160,28 @@ class ToggleSubscribeView(APIView):
             subscribed = True
 
         return Response({"subscribed": subscribed})
+
+
+class ToggleLikeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, id=post_id)
+
+        like = PostLike.objects.filter(post=post, user=request.user)
+
+        if like.exists():
+            like.delete()
+            post.like_count -= 1
+            liked = False
+        else:
+            PostLike.objects.create(post=post, user=request.user)
+            post.like_count += 1
+            liked = True
+
+        post.save()
+
+        return Response({
+            "liked": liked,
+            "like_count": post.like_count
+        })
