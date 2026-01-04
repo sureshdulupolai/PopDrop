@@ -43,6 +43,7 @@ const Login = ({ setIsLoggedIn }) => {
       localStorage.setItem("access_token", token.access);
       localStorage.setItem("refresh_token", token.refresh);
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user_id", user.id);
       localStorage.setItem("expiry", now + 3 * 365 * 24 * 60 * 60 * 1000); // 3 years
 
       setIsLoggedIn(true);

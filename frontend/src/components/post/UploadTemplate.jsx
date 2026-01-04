@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import privateApi from "../../api/axiosPrivate";
+import { useNavigate } from "react-router-dom";
 
 const UploadTemplate = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     title: "",
@@ -15,6 +17,14 @@ const UploadTemplate = () => {
 
   const [desktop, setDesktop] = useState(null);
   const [mobile, setMobile] = useState(null);
+
+  useEffect(() => {
+    const refresh = localStorage.getItem("refresh_token");
+
+    if (!refresh) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
 
   useEffect(() => {
     privateApi.get("/pop/categories/").then((res) => {

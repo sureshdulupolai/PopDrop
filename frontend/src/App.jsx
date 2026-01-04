@@ -56,7 +56,7 @@ function App() {
 
         <Route path="/verify-otp" element={<OtpVerifyHere />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/review" element={<CustomerReviews />} />
+        <Route path="/review" element={<CustomerReviews isLoggedIn={isLoggedIn} />} />
         <Route path="/templates/gallery" element={<TemplateGallery />} />
         <Route path="/templates/upload" element={<UploadTemplate />} />
         <Route path="/template/:slug" element={<TemplateDetail />} />

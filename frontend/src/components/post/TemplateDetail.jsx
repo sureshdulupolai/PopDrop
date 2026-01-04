@@ -10,11 +10,16 @@ export default function TemplateDetail() {
   const [hoverRating, setHoverRating] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const [copied, setCopied] = useState(false);   // ✅ THIS WAS MISSING
+  const [copied, setCopied] = useState(false);
   const [copyCount, setCopyCount] = useState(0);
   const [copyDisabled, setCopyDisabled] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subLoading, setSubLoading] = useState(false);
 
-  // 🔐 AUTH CHECK
+  const currentUserId = localStorage.getItem("user_id")
+    ? Number(localStorage.getItem("user_id"))
+    : null;
+
   const checkAuth = () => {
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -33,7 +38,9 @@ export default function TemplateDetail() {
         const res = await privateApi.get(`/pop/posts/${slug}/`);
         setPost(res.data);
         setCopyCount(res.data.copy_count || 0);
+        console.log("Fetched post:", res.data);
       } catch (err) {
+        console.error("Failed to fetch post:", err);
         navigate("/login", { replace: true });
       } finally {
         setLoading(false);
@@ -43,29 +50,45 @@ export default function TemplateDetail() {
     fetchPost();
   }, [slug]);
 
-
-    useEffect(() => {
-      const lastCopyTime = localStorage.getItem(`copy_${post?.id}`);
-
-      if (lastCopyTime) {
-        const diff = Date.now() - Number(lastCopyTime);
-
-        if (diff < 5 * 60 * 1000) {
-          setCopyDisabled(true);
-
-          // auto-enable after remaining time
-          setTimeout(() => {
-            setCopyDisabled(false);
-            localStorage.removeItem(`copy_${post.id}`);
-          }, 5 * 60 * 1000 - diff);
-        }
+  // 📋 COPY COOLDOWN
+  useEffect(() => {
+    if (!post) return;
+    const lastCopyTime = localStorage.getItem(`copy_${post.id}`);
+    if (lastCopyTime) {
+      const diff = Date.now() - Number(lastCopyTime);
+      if (diff < 5 * 60 * 1000) {
+        setCopyDisabled(true);
+        setTimeout(() => {
+          setCopyDisabled(false);
+          localStorage.removeItem(`copy_${post.id}`);
+        }, 5 * 60 * 1000 - diff);
       }
-    }, [post]);
+    }
+  }, [post]);
+
+  // 🔔 SUBSCRIBE STATUS (clean single effect)
+  useEffect(() => {
+    if (!post || !currentUserId || currentUserId === post.user.id) return;
+
+    const fetchSubscription = async () => {
+      try {
+        const res = await privateApi.get(
+          `/pop/users/${post.user.id}/subscribe-status/`
+        );
+        console.log("Subscription status:", res.data.subscribed);
+        setIsSubscribed(res.data.subscribed);
+      } catch (err) {
+        console.error("Failed to fetch subscription status", err);
+        setIsSubscribed(post.user.is_subscribed || false);
+      }
+    };
+
+    fetchSubscription();
+  }, [post, currentUserId]);
 
   // ❤️ LIKE
   const handleLike = async () => {
     if (!checkAuth()) return;
-
     try {
       const res = await privateApi.post(`/pop/posts/${post.id}/like/`);
       setPost((prev) => ({
@@ -73,25 +96,26 @@ export default function TemplateDetail() {
         like_count: res.data.like_count,
         is_liked: res.data.liked,
       }));
-    } catch {}
+    } catch (err) {
+      console.error("Like failed", err);
+    }
   };
 
   // ⭐ RATE
   const handleRating = async (value) => {
     if (!checkAuth()) return;
-
     try {
       await privateApi.post(`/pop/posts/${post.id}/rate/`, { rating: value });
       setPost((prev) => ({ ...prev, avg_rating: value }));
-    } catch {}
+    } catch (err) {
+      console.error("Rating failed", err);
+    }
   };
 
   // 📋 COPY
   const handleCopy = async () => {
     if (!post?.code_content || copyDisabled) return;
-
     try {
-      // Copy to clipboard
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(post.code_content);
       } else {
@@ -105,28 +129,61 @@ export default function TemplateDetail() {
         document.body.removeChild(textArea);
       }
 
-      // Backend update
-      await privateApi.post(`/pop/posts/${post.id}/copy/`);
-
-      // Save timestamp
+      setCopyCount((prev) => prev + 1);
+      privateApi.post(`/pop/posts/${post.id}/copy/`);
       localStorage.setItem(`copy_${post.id}`, Date.now());
 
       setCopied(true);
       setCopyDisabled(true);
-
       setTimeout(() => {
         setCopied(false);
         setCopyDisabled(false);
         localStorage.removeItem(`copy_${post.id}`);
       }, 5 * 60 * 1000);
-
     } catch (err) {
       console.error("Copy failed", err);
     }
   };
 
+  // 🔔 SUBSCRIBE BUTTON
+  const handleSubscribe = async () => {
+    if (!checkAuth() || subLoading) return;
+    try {
+      setSubLoading(true);
+      const res = await privateApi.post(
+        `/pop/users/${post.user.id}/subscribe/`
+      );
+      setIsSubscribed(res.data.subscribed);
+
+      // update followers count
+      setPost((prev) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          followers_count: res.data.subscribed
+            ? prev.user.followers_count + 1
+            : prev.user.followers_count - 1,
+        },
+      }));
+    } catch (err) {
+      console.error("Subscribe failed", err);
+    } finally {
+      setSubLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1); // go back
+    } else {
+      navigate("/templates/gallery"); // default fallback
+    }
+  };
+
   if (loading) return <div className="loading">Loading...</div>;
-  if (!post) return null;
+  if (!post) return <div>No post found</div>;
+
+  console.log("Render: post.user.id=", post.user.id, "currentUserId=", currentUserId);
 
   return (
     <>
@@ -136,13 +193,17 @@ export default function TemplateDetail() {
           {/* HEADER */}
           <div className="top-bar">
           <div className="left-bar">
-            <Link to="/" className="back-btn">← Back</Link>
+            <button onClick={handleBack} className="back-btn">
+              ← Back
+            </button>
           </div>
 
           <div className="right-bar">
+
             <div className="creator-box">
-              <img src={post.user.profile_image} alt={post.user.profile_image} />
-              <div>
+              <img src={post.user.profile_image} alt="creator" />
+
+              <div className="creator-info">
                 <div className="creator-name">
                   {post.user.fullname}
                   {post.user.is_verified && (
@@ -151,7 +212,29 @@ export default function TemplateDetail() {
                 </div>
                 <small>{post.user.followers_count} followers</small>
               </div>
+
+            {post && currentUserId && currentUserId !== post.user.id && (
+              <button
+                className={`subscribe-btn ${isSubscribed ? "subscribed" : ""}`}
+                onClick={handleSubscribe}
+                disabled={subLoading}
+              >
+                {subLoading ? (
+                  <span className="loader"></span>
+                ) : isSubscribed ? (
+                  <>
+                    <i className="bi bi-check-circle-fill"></i> Subscribed
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-plus-lg"></i> Subscribe
+                  </>
+                )}
+              </button>
+            )}
+
             </div>
+
           </div>
         </div>
 
@@ -396,6 +479,63 @@ export default function TemplateDetail() {
 .rating-text {
   font-size: 13px;
   color: #6b7280;
+}
+.creator-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.creator-info {
+  flex: 1;
+}
+
+.subscribe-btn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.subscribe-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
+}
+
+.subscribe-btn.subscribed {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.subscribe-btn.subscribed:hover {
+  background: #d1d5db;
+}
+
+.subscribe-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.loader {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
       `}</style>

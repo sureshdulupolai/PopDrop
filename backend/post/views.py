@@ -144,6 +144,12 @@ class ToggleSubscribeView(APIView):
     def post(self, request, user_id):
         creator = get_object_or_404(User, id=user_id)
 
+        if creator == request.user:
+            return Response(
+                {"error": "You cannot subscribe to yourself"},
+                status=400
+            )
+
         obj = UserSubscription.objects.filter(
             subscriber=request.user,
             subscribed_to=creator
@@ -159,6 +165,18 @@ class ToggleSubscribeView(APIView):
             )
             subscribed = True
 
+        return Response({"subscribed": subscribed})
+
+
+class SubscriptionStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        creator = get_object_or_404(User, id=user_id)
+        subscribed = UserSubscription.objects.filter(
+            subscriber=request.user,
+            subscribed_to=creator
+        ).exists()
         return Response({"subscribed": subscribed})
 
 

@@ -8,15 +8,31 @@ class CreatorSerializer(serializers.ModelSerializer):
     profile_image = serializers.ImageField(source="profile.profile_image", read_only=True)
     is_verified = serializers.BooleanField(source="profile.is_verified", read_only=True)
     followers_count = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ["id", "fullname", "profile_image", "is_verified", "followers_count"]
+        fields = [
+            "id",
+            "fullname",
+            "profile_image",
+            "is_verified",
+            "followers_count",
+            "is_subscribed",
+        ]
 
     def get_followers_count(self, obj):
         return obj.followers.count()
 
+    def get_is_subscribed(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
 
+        return UserSubscription.objects.filter(
+            subscriber=request.user,
+            subscribed_to=obj
+        ).exists()
 
 class CategorySerializer(serializers.ModelSerializer):
     post_count = serializers.IntegerField(read_only=True)
