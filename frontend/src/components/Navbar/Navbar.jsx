@@ -68,7 +68,7 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                     </Link>
                   )}
 
-                  <Link to="/templates/subscription" className="dropdown-item">
+                  <Link to="/template/subscriptions" className="dropdown-item">
                     <i className="bi bi-credit-card"></i>
                     <div className="content-div">
                       <strong>Subscription</strong>

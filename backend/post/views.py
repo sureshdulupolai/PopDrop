@@ -12,6 +12,7 @@ from .serializers import (
     PostDetailSerializer,
     PostCardSerializer,
     CategorySerializer,
+    CreatorSerializer
 )
 
 
@@ -203,3 +204,19 @@ class ToggleLikeView(APIView):
             "liked": liked,
             "like_count": post.like_count
         })
+
+
+class SubscribedCreatorsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        creators = User.objects.filter(
+            followers__subscriber=request.user
+        ).distinct()
+
+        serializer = CreatorSerializer(
+            creators,
+            many=True,
+            context={"request": request}
+        )
+        return Response(serializer.data)

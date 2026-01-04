@@ -13,6 +13,7 @@ import CustomerReviews from "./pages/ReviewPage";
 import TemplateGallery from "./components/post/TemplateGallery";
 import UploadTemplate from "./components/post/UploadTemplate";
 import TemplateDetail from "./components/post/TemplateDetail";
+import SubscribedTemplates from "./components/post/SubscribedTemplates";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -60,6 +61,7 @@ function App() {
         <Route path="/templates/gallery" element={<TemplateGallery />} />
         <Route path="/templates/upload" element={<UploadTemplate />} />
         <Route path="/template/:slug" element={<TemplateDetail />} />
+        <Route path="/template/subscriptions" element={<SubscribedTemplates />} />
 
         <Route
           path="/profile"

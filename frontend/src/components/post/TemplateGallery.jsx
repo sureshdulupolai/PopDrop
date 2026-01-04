@@ -82,13 +82,14 @@ const TemplateGallery = ({ isLoggedIn }) => {
             {/* SEARCH */}
             <form onSubmit={onSearch} className="search-box d-flex">
               <input
-                className="form-control search-input"
+                className="search-input"
                 placeholder="Search templates..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <button className="btn btn-primary search-btn">Search</button>
+              <button className="search-btn">Search</button>
             </form>
+
           </div>
 
           {/* CATEGORIES */}
@@ -204,28 +205,76 @@ const TemplateGallery = ({ isLoggedIn }) => {
           }
 
         /* SEARCH */
-        .search-box {
-          background: #f8fafc;
-          border-radius: 10px;
-          padding: 4px;
-        }
+        /* SEARCH CONTAINER */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 4px;
+  border: 1px solid #e5e7eb;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
 
-        .search-input {
-          width: 300px;
-          height: 36px;
-          border: none;
-          box-shadow: none;
-        }
+.search-box:hover {
+  border-color: #c7d2fe;
+}
 
-        .search-input:focus {
-          box-shadow: none;
-        }
+.search-box:focus-within {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
 
-        .search-btn {
-          height: 36px;
-          padding: 0 18px;
-          font-size: 14px;
-        }
+/* INPUT */
+.search-input {
+  width: 280px;
+  height: 38px;
+  border: none;
+  outline: none;
+  padding: 0 12px;
+  font-size: 14px;
+  background: transparent;
+  color: #0f172a;
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
+}
+
+/* BUTTON */
+.search-btn {
+  height: 38px;
+  padding: 0 20px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-btn:hover {
+  background: #4f46e5 !important;
+}
+
+
+.search-btn:active {
+  transform: scale(0.97);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .search-input {
+    width: 100%;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+}
 
         /* CATEGORY */
         .category-pill {
