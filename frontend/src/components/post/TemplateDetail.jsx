@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import privateApi from "../../api/axiosPrivate";
+import './templateDetail.css';
 
 export default function TemplateDetail() {
   const { slug } = useParams();
@@ -15,6 +16,7 @@ export default function TemplateDetail() {
   const [copyDisabled, setCopyDisabled] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subLoading, setSubLoading] = useState(false);
+  const [userRating, setUserRating] = useState(0);
 
   const currentUserId = localStorage.getItem("user_id")
     ? Number(localStorage.getItem("user_id"))
@@ -38,7 +40,7 @@ export default function TemplateDetail() {
         const res = await privateApi.get(`/pop/posts/${slug}/`);
         setPost(res.data);
         setCopyCount(res.data.copy_count || 0);
-        console.log("Fetched post:", res.data);
+        setUserRating(res.data.user_rating);
       } catch (err) {
         console.error("Failed to fetch post:", err);
         navigate("/login", { replace: true });
@@ -75,7 +77,6 @@ export default function TemplateDetail() {
         const res = await privateApi.get(
           `/pop/users/${post.user.id}/subscribe-status/`
         );
-        console.log("Subscription status:", res.data.subscribed);
         setIsSubscribed(res.data.subscribed);
       } catch (err) {
         console.error("Failed to fetch subscription status", err);
@@ -183,8 +184,6 @@ export default function TemplateDetail() {
   if (loading) return <div className="loading">Loading...</div>;
   if (!post) return <div>No post found</div>;
 
-  console.log("Render: post.user.id=", post.user.id, "currentUserId=", currentUserId);
-
   return (
     <>
       <section className="template-page">
@@ -240,8 +239,8 @@ export default function TemplateDetail() {
 
 
           {/* TITLE */}
-          <div className="title-block">
-            <h2>{post.title}</h2>
+          <div className="title-block mt-4">
+            <h2 className="template-title">{post.title}</h2>
             <p>{post.description}</p>
           </div>
 
@@ -312,7 +311,7 @@ export default function TemplateDetail() {
                     <i
                       key={i}
                       className={`bi ${
-                        i <= (hoverRating || post.avg_rating)
+                        i <= (hoverRating || userRating || post.avg_rating)
                           ? "bi-star-fill active"
                           : "bi-star"
                       }`}
@@ -335,210 +334,6 @@ export default function TemplateDetail() {
 
         </div>
       </section>
-
-      {/* STYLES */}
-      <style>{`
-        .template-page { padding-top:90px; background:#f8fafc; }
-        .top-bar { display:flex; justify-content:space-between; align-items:center; }
-        .back-btn { text-decoration:none; background:#eef2ff; padding:6px 14px; border-radius:20px; color:#4338ca; }
-        .creator-box { display:flex; align-items:center; gap:12px; }
-        .creator-box img { width:42px; height:42px; border-radius:50%; }
-        .verified { color:#2563eb; margin-left:6px; }
-
-        .preview-card { background:#0f172a; padding:30px; border-radius:16px; margin:25px 0; }
-        .preview-wrapper { display:flex; justify-content:center; gap:25px; }
-        .desktop-preview { width:70%; border-radius:12px; background:#fff; padding:2px; }
-        .mobile-preview { width:22%; border-radius:16px; background:#fff; padding:2px; }
-
-        .stats-row {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 16px;
-          margin: 25px 0;
-        }
-
-        /* Tablet */
-        @media (max-width: 900px) {
-          .stats-row {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-
-        /* Mobile */
-        @media (max-width: 480px) {
-          .stats-row {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .stat-box {
-          background: #fff;
-          padding: 16px 10px;
-          border-radius: 14px;
-          text-align: center;
-          cursor: pointer;
-          transition: 0.2s ease;
-        }
-
-        .stat-box:hover {
-          transform: translateY(-2px);
-          // box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-        }
-
-        .code-card { background:#0b1220; color:#e5e7eb; padding:20px; border-radius:16px; position:relative; }
-        .copy-btn { position:absolute; right:15px; top:15px; }
-
-        .code-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.copy-btn {
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: 0.25s ease;
-}
-
-.copy-btn:hover {
-  background: #1d4ed8;
-}
-
-.copy-btn.copied {
-  background: #16a34a;
-}
-
-
-        .rating-stars i { font-size:30px; cursor:pointer; margin:0 4px; color:#cbd5e1; }
-        .rating-stars i:hover { color:#fbbf24; }
-
-        .review-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px;
-  margin-top: 30px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-  text-align: center;
-}
-
-.review-section {
-  padding-bottom: 1px;
-}
-
-
-.review-card h4 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  color: #111827;
-}
-
-.rating-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.stars {
-  display: flex;
-  gap: 10px;
-}
-
-.stars i {
-  font-size: 34px;
-  cursor: pointer;
-  color: #d1d5db;
-  transition: 0.25s ease;
-}
-
-.stars i.active {
-  color: #facc15;
-}
-
-.stars i:hover {
-  transform: scale(1.15);
-}
-
-.rating-info {
-  margin-top: 4px;
-}
-
-.rating-value {
-  font-size: 22px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.rating-text {
-  font-size: 13px;
-  color: #6b7280;
-}
-.creator-box {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.creator-info {
-  flex: 1;
-}
-
-.subscribe-btn {
-  padding: 8px 18px;
-  border-radius: 999px;
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.3s ease;
-}
-
-.subscribe-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
-}
-
-.subscribe-btn.subscribed {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-.subscribe-btn.subscribed:hover {
-  background: #d1d5db;
-}
-
-.subscribe-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-.loader {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #fff;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-      `}</style>
     </>
   );
 }
