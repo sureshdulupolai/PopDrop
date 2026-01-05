@@ -47,7 +47,7 @@ const Login = ({ setIsLoggedIn }) => {
       localStorage.setItem("expiry", now + 3 * 365 * 24 * 60 * 60 * 1000); // 3 years
 
       setIsLoggedIn(true);
-      navigate("/profile", { replace: true });
+      navigate("/", { replace: true });
     } catch (err) {
       setError("Invalid email or password.");
     } finally {

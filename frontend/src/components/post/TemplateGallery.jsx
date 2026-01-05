@@ -66,6 +66,41 @@ const TemplateGallery = ({ isLoggedIn }) => {
     };
   };
 
+  const truncateName = (name, limit = 15) => {
+    if (!name) return "";
+    return name.length > limit ? name.slice(0, limit) + ".." : name;
+  };
+
+  function timeAgo(dateString) {
+    const now = new Date();
+    const past = new Date(dateString);
+    const seconds = Math.floor((now - past) / 1000);
+
+    if (seconds < 60) {
+      return `${seconds} sec ago`;
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) {
+      return `${minutes} min ago`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) {
+      return `${hours} hr ago`;
+    }
+
+    const days = Math.floor(hours / 24);
+    if (days < 365) {
+      return `${days} day${days > 1 ? "s" : ""} ago`;
+    }
+
+    const years = Math.floor(days / 365);
+    return `${years} year${years > 1 ? "s" : ""} ago`;
+  }
+
+
+
   return (
     <>
       {/* HEADER */}
@@ -157,11 +192,13 @@ const TemplateGallery = ({ isLoggedIn }) => {
 
                     <div className="template-meta">
                       <span>
-                        <i className="bi bi-person"></i> {p.creator}
+                        <i className="bi bi-person"></i>{" "}
+                        {truncateName(p.creator, 18)}
                       </span>
-                      <span>
+
+                      <span title={new Date(p.created_at).toDateString()}>
                         <i className="bi bi-clock"></i>{" "}
-                        {new Date(p.created_at).toDateString()}
+                        {timeAgo(p.created_at)}
                       </span>
                     </div>
 

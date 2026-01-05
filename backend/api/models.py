@@ -87,18 +87,20 @@ class UserProfile(models.Model):
 
         prefix = prefix_map.get(self.category, "popdrop-user")
 
+        # 🔥 GLOBAL last public_id (no category filter)
         last_profile = (
-            UserProfile.objects.filter(category=self.category, public_id__isnull=False)
+            UserProfile.objects.filter(public_id__isnull=False)
             .order_by("-id")
             .first()
         )
-
         if last_profile and last_profile.public_id:
-            last_number = int(last_profile.public_id.split("-")[-1])
-            new_number = last_number + 1
+            try:
+                last_number = int(last_profile.public_id.split("-")[-1])
+                new_number = last_number + 1
+            except ValueError:
+                new_number = 1001
         else:
             new_number = 1001
-
         return f"{prefix}-{new_number}"
 
     def save(self, *args, **kwargs):
