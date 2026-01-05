@@ -61,7 +61,9 @@ class UserProfile(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
-
+    public_id = models.CharField(
+        max_length=50, unique=True, blank=True, null=True
+    )
     # OTP fields
     otp = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(null=True, blank=True)
@@ -75,6 +77,34 @@ class UserProfile(models.Model):
     profile_last_updated = models.DateTimeField(null=True, blank=True)
     next_profile_update_allowed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def generate_public_id(self):
+        prefix_map = {
+            "normal": "popdrop-user",
+            "developer": "popdrop-dev",
+            "designer": "popdrop-des",
+        }
+
+        prefix = prefix_map.get(self.category, "popdrop-user")
+
+        last_profile = (
+            UserProfile.objects.filter(category=self.category, public_id__isnull=False)
+            .order_by("-id")
+            .first()
+        )
+
+        if last_profile and last_profile.public_id:
+            last_number = int(last_profile.public_id.split("-")[-1])
+            new_number = last_number + 1
+        else:
+            new_number = 1001
+
+        return f"{prefix}-{new_number}"
+
+    def save(self, *args, **kwargs):
+        if not self.public_id:
+            self.public_id = self.generate_public_id()
+        super().save(*args, **kwargs)
 
     # -------- OTP Utilities --------
     def set_otp(self, otp):

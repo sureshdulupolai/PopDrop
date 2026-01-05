@@ -84,7 +84,7 @@ export default function SubscribedCreators() {
                 <button
                   className="view-btn"
                   onClick={() =>
-                    navigate(`/creator/${c.id}/templates`)
+                    navigate(`/creator/${c.public_id}/templates`)
                   }
                 >
                   View Templates

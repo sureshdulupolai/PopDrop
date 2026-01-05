@@ -264,7 +264,7 @@ export default function TemplateDetail() {
 
             <div className="stat-box">
               <i className="bi bi-star-fill text-warning" />
-              <div>{post.avg_rating}</div>
+              <div>{Number(post.avg_rating).toFixed(1)}</div>
               <small>Rating</small>
             </div>
 
