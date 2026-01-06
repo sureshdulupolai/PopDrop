@@ -220,3 +220,36 @@ class SubscribedCreatorsView(APIView):
             context={"request": request}
         )
         return Response(serializer.data)
+
+class CreatorTemplatesView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, public_id):
+        creator = get_object_or_404(
+            User,
+            profile__public_id=public_id
+        )
+
+        templates = (
+            Post.objects.filter(
+                user=creator,
+                is_visible=True,
+                is_approved=True
+            )
+            .select_related("category")
+            .annotate(avg_rating=Avg("reviews__rating"))
+            .order_by("-created_at")
+        )
+
+        return Response({
+            "creator": CreatorSerializer(
+                creator,
+                context={"request": request}
+            ).data,
+            "template_count": templates.count(),
+            "templates": PostCardSerializer(
+                templates,
+                many=True,
+                context={"request": request}
+            ).data
+        })

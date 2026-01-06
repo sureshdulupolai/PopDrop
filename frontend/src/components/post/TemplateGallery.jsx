@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import publicApi from "../../api/axiosPublic";
+import TemplateCard from "./TemplateCard";
 
 const TemplateGallery = ({ isLoggedIn }) => {
   const [categories, setCategories] = useState([]);
@@ -8,7 +9,6 @@ const TemplateGallery = ({ isLoggedIn }) => {
   const [activeCat, setActiveCat] = useState("all");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     loadCategories();
@@ -65,41 +65,6 @@ const TemplateGallery = ({ isLoggedIn }) => {
       icon: "📦",
     };
   };
-
-  const truncateName = (name, limit = 15) => {
-    if (!name) return "";
-    return name.length > limit ? name.slice(0, limit) + ".." : name;
-  };
-
-  function timeAgo(dateString) {
-    const now = new Date();
-    const past = new Date(dateString);
-    const seconds = Math.floor((now - past) / 1000);
-
-    if (seconds < 60) {
-      return `${seconds} sec ago`;
-    }
-
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) {
-      return `${minutes} min ago`;
-    }
-
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) {
-      return `${hours} hr ago`;
-    }
-
-    const days = Math.floor(hours / 24);
-    if (days < 365) {
-      return `${days} day${days > 1 ? "s" : ""} ago`;
-    }
-
-    const years = Math.floor(days / 365);
-    return `${years} year${years > 1 ? "s" : ""} ago`;
-  }
-
-
 
   return (
     <>
@@ -185,44 +150,11 @@ const TemplateGallery = ({ isLoggedIn }) => {
           <div className="row g-4">
             {posts.map((p) => (
               <div key={p.id} className="col-xl-3 col-lg-4 col-md-6">
-                <div className="card template-card h-100">
-                  <img src={`http://localhost:8000/${p.desktop_image}`} alt={p.desktop_image} />
-                  <div className="card-body d-flex flex-column">
-                    <h6 className="fw-semibold">{p.title}</h6>
-
-                    <div className="template-meta">
-                      <span>
-                        <i className="bi bi-person"></i>{" "}
-                        {truncateName(p.creator, 18)}
-                      </span>
-
-                      <span title={new Date(p.created_at).toDateString()}>
-                        <i className="bi bi-clock"></i>{" "}
-                        {timeAgo(p.created_at)}
-                      </span>
-                    </div>
-
-                    <div className="rating mb-2">
-                      {"★".repeat(Math.round(p.avg_rating || 0))}
-                    </div>
-
-                    <p className="text-muted small">
-                      {p.description
-                        ? p.description.split(" ").slice(0, 8).join(" ") + "..."
-                        : "No description available"}
-                    </p>
-
-                    <button
-                      className="btn btn-outline-primary mt-auto"
-                      onClick={() => navigate(`/template/${p.slug}`)}
-                    >
-                      View Template
-                    </button>
-                  </div>
-                </div>
+                <TemplateCard template={p} />
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
@@ -312,7 +244,6 @@ const TemplateGallery = ({ isLoggedIn }) => {
     width: 100%;
   }
 }
-
         /* CATEGORY */
         .category-pill {
           padding: 6px 14px;
@@ -332,66 +263,6 @@ const TemplateGallery = ({ isLoggedIn }) => {
         .category-pill.active {
           background-color: #4f46e5;
           color: #ffffff;
-        }
-
-        /* CARD */
-        .template-card img {
-          height: 180px;
-          width: 100%;
-          object-fit: cover;
-        }
-
-        .template-card {
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .template-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-        }
-
-        .template-meta {
-          font-size: 12px;
-          color: #64748b;
-          display: flex;
-          gap: 14px;
-          align-items: center;
-          margin-bottom: 6px;
-        }
-
-        /* EMPTY STATE */
-        .empty-state {
-          display: flex;
-          justify-content: center;
-          padding: 80px 20px;
-        }
-
-        .empty-card {
-          background: #ffffff;
-          border-radius: 20px;
-          padding: 55px 45px;
-          text-align: center;
-          max-width: 440px;
-          width: 100%;
-          box-shadow: 0 25px 50px rgba(0,0,0,0.08);
-        }
-
-        .empty-icon {
-          font-size: 48px;
-          margin-bottom: 18px;
-        }
-
-        .empty-card h4 {
-          font-weight: 700;
-          margin-bottom: 12px;
-          color: #0f172a;
-        }
-
-        .empty-card p {
-          color: #64748b;
-          font-size: 14.5px;
-          margin-bottom: 24px;
-          line-height: 1.6;
         }
       `}</style>
     </>

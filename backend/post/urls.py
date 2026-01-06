@@ -9,7 +9,8 @@ from .views import (
     UploadTemplateView,
     ToggleLikeView,
     SubscriptionStatusView,
-    SubscribedCreatorsView
+    SubscribedCreatorsView,
+    CreatorTemplatesView
 )
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
     path("posts/<int:post_id>/like/", ToggleLikeView.as_view()),
     path("users/<int:user_id>/subscribe-status/", SubscriptionStatusView.as_view()),
     path("users/subscriptions/", SubscribedCreatorsView.as_view()),
+    path("creator/<str:public_id>/templates/", CreatorTemplatesView.as_view()),
 ]

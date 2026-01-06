@@ -3,8 +3,8 @@ from django.db.models import Avg
 from .models import Post, Category, UserSubscription, PostReview
 from api.models import User
 
-
 class CreatorSerializer(serializers.ModelSerializer):
+    public_id = serializers.CharField(source="profile.public_id", read_only=True)
     profile_image = serializers.ImageField(source="profile.profile_image", read_only=True)
     is_verified = serializers.BooleanField(source="profile.is_verified", read_only=True)
     followers_count = serializers.SerializerMethodField()
@@ -15,6 +15,7 @@ class CreatorSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "fullname",
+            "public_id",
             "profile_image",
             "is_verified",
             "followers_count",
@@ -33,6 +34,7 @@ class CreatorSerializer(serializers.ModelSerializer):
             subscriber=request.user,
             subscribed_to=obj
         ).exists()
+
 
 class CategorySerializer(serializers.ModelSerializer):
     post_count = serializers.IntegerField(read_only=True)

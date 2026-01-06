@@ -14,7 +14,7 @@ import TemplateGallery from "./components/post/TemplateGallery";
 import UploadTemplate from "./components/post/UploadTemplate";
 import TemplateDetail from "./components/post/TemplateDetail";
 import SubscribedTemplates from "./components/post/SubscribedTemplates";
-import SubscribedCreators from "./components/post/SubscribedTemplates";
+import CreatorTemplates from "./components/post/CreatorTemplates";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -43,7 +43,6 @@ function App() {
 
   return (
     <>
-      {/* ✅ YAHI MAIN FIX */}
       <Navbar
         isLoggedIn={isLoggedIn}
         onLogout={handleLogout}
@@ -55,7 +54,6 @@ function App() {
         <Route path="/signup" element={<Signup role="normal" />} />
         <Route path="/signup/designer" element={<Signup role="designer" />} />
         <Route path="/signup/developer" element={<Signup role="developer" />} />
-
         <Route path="/verify-otp" element={<OtpVerifyHere />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/review" element={<CustomerReviews isLoggedIn={isLoggedIn} />} />
@@ -63,16 +61,8 @@ function App() {
         <Route path="/templates/upload" element={<UploadTemplate />} />
         <Route path="/template/:slug" element={<TemplateDetail />} />
         <Route path="/template/subscriptions" element={<SubscribedTemplates />} />
-        <Route path="/creator/:publicId/templates" element={<SubscribedCreators />} />
-
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/creator/:publicId/templates" element={<CreatorTemplates />} />
+        <Route path="/profile" element={<PrivateRoute> <Profile /> </PrivateRoute>} />
       </Routes>
 
       <Footer />
