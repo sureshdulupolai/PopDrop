@@ -75,6 +75,16 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                       <span className="ms-2">Subscriber content</span>
                     </div>
                   </Link>
+
+                  {isLoggedIn && (
+                    <Link to="/my/templates" className="dropdown-item">
+                      <i className="bi bi-person-circle"></i>
+                      <div className="content-div">
+                        <strong>My Profile</strong>
+                        <span className="ms-2">View & manage your account</span>
+                      </div>
+                    </Link>
+                  )}
                 </div>
               </li>
 

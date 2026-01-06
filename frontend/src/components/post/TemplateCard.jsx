@@ -1,6 +1,12 @@
 import { useNavigate } from "react-router-dom";
 
-export default function TemplateCard({ template, showCreator = true, absoluteImage = false }) {
+export default function TemplateCard({
+  template,
+  showCreator = true,
+  absoluteImage = false,
+  isOwner = false,
+  onDelete
+ }) {
   const navigate = useNavigate();
 
   const truncate = (text, limit = 18) =>
@@ -56,13 +62,33 @@ export default function TemplateCard({ template, showCreator = true, absoluteIma
             : "No description available"}
         </p>
 
-        <button
-          className="btn btn-outline-primary mt-auto"
-          onClick={() => navigate(`/template/${template.slug}`)}
-        >
-          View Template
-        </button>
+        {/* 🔥 ACTIONS */}
+          {isOwner ? (
+            <div className="template-actions">
+              <button
+                className="action-btn edit-btn"
+                onClick={() => navigate(`/template/${template.slug}/edit`)}
+              >
+                ✏️ Edit
+              </button>
+
+              <button
+                className="action-btn delete-btn"
+                onClick={() => onDelete(template)}
+              >
+                🗑 Delete
+              </button>
+            </div>
+          ) : (
+            <button
+              className="btn btn-outline-primary mt-auto"
+              onClick={() => navigate(`/template/${template.slug}`)}
+            >
+              View Template
+            </button>
+          )}
       </div>
+      
     </div>
     <style>
       {`
@@ -92,6 +118,42 @@ export default function TemplateCard({ template, showCreator = true, absoluteIma
   color: #facc15; /* yellow (tailwind yellow-400) */
   font-size: 15px;
   letter-spacing: 1px;
+}
+.template-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+/* EDIT */
+.edit-btn {
+  border: 1.5px solid #e2e8f0;
+  color: #0f172a;
+}
+
+.edit-btn:hover {
+  background: #f1f5f9;
+}
+
+/* DELETE */
+.delete-btn {
+  border: 1.5px solid #fecaca;
+  color: #dc2626;
+}
+
+.delete-btn:hover {
+  background: #fee2e2;
 }
 
       `}

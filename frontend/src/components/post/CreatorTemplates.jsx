@@ -37,7 +37,7 @@ export default function CreatorTemplates() {
       <section className="creator-page">
         {/* ================= CREATOR PROFILE ================= */}
         {creator && (
-          <div className="creator-profile">
+          <div className="creator-profile mb-4">
             <img
               src={creator.profile_image}
               alt={creator.fullname}
@@ -138,7 +138,7 @@ export default function CreatorTemplates() {
         .creator-name-row {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 0px;
           flex-wrap: wrap;
         }
 
@@ -152,7 +152,7 @@ export default function CreatorTemplates() {
         .creator-username {
           font-size: 13px;
           color: #64748b;
-          margin: 4px 0 6px;
+          margin: 4px 0 3px;
         }
 
         .creator-meta {

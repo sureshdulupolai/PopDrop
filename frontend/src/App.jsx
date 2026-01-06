@@ -15,6 +15,7 @@ import UploadTemplate from "./components/post/UploadTemplate";
 import TemplateDetail from "./components/post/TemplateDetail";
 import SubscribedTemplates from "./components/post/SubscribedTemplates";
 import CreatorTemplates from "./components/post/CreatorTemplates";
+import MyTemplates from "./components/post/MyTemplates";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -63,6 +64,8 @@ function App() {
         <Route path="/template/subscriptions" element={<SubscribedTemplates />} />
         <Route path="/creator/:publicId/templates" element={<CreatorTemplates />} />
         <Route path="/profile" element={<PrivateRoute> <Profile /> </PrivateRoute>} />
+        <Route path="/template/:slug/edit" element={<UploadTemplate edit />} />
+        <Route path="/my/templates" element={<MyTemplates />} />
       </Routes>
 
       <Footer />

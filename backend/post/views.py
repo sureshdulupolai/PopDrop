@@ -253,3 +253,53 @@ class CreatorTemplatesView(APIView):
                 context={"request": request}
             ).data
         })
+
+class DeletePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, slug):
+        post = get_object_or_404(
+            Post,
+            slug=slug,
+            user=request.user
+        )
+        post.delete()
+        return Response({"deleted": True})
+
+    
+class MyPostsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        posts = (
+            Post.objects.filter(user=request.user)
+            .annotate(avg_rating=Avg("reviews__rating"))
+            .order_by("-created_at")
+        )
+        return Response(PostCardSerializer(posts, many=True).data)
+
+class UpdatePostView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def put(self, request, slug):
+        post = get_object_or_404(
+            Post,
+            slug=slug,
+            user=request.user
+        )
+
+        post.title = request.data.get("title", post.title)
+        post.description = request.data.get("description", post.description)
+        post.code_content = request.data.get("code_content", post.code_content)
+        post.category_id = request.data.get("category", post.category_id)
+
+        if request.FILES.get("desktop_image"):
+            post.desktop_image = request.FILES.get("desktop_image")
+
+        if request.FILES.get("mobile_image"):
+            post.mobile_image = request.FILES.get("mobile_image")
+
+        post.save()
+        return Response({"updated": True})
+

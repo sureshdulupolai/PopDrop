@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import privateApi from "../../api/axiosPrivate";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; // ✅ useParams added
 
-const UploadTemplate = () => {
+const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
+  const { slug } = useParams();                  // ✅ now works
+  const navigate = useNavigate();
+
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
-  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     title: "",
@@ -17,42 +19,64 @@ const UploadTemplate = () => {
 
   const [desktop, setDesktop] = useState(null);
   const [mobile, setMobile] = useState(null);
+  const [templateId, setTemplateId] = useState(null);
 
+
+  /* 🔐 AUTH CHECK */
   useEffect(() => {
-    const refresh = localStorage.getItem("refresh_token");
-
-    if (!refresh) {
+    if (!localStorage.getItem("refresh_token")) {
       navigate("/login", { replace: true });
     }
   }, [navigate]);
 
+  /* 📦 CATEGORIES */
   useEffect(() => {
-    privateApi.get("/pop/categories/").then((res) => {
+    privateApi.get("/pop/categories/").then(res => {
       setCategories(res.data);
     });
   }, []);
+
+  /* ✏️ EDIT MODE DATA */
+  useEffect(() => {
+    if (edit && slug) {
+      privateApi.get(`/pop/posts/${slug}/`).then(res => {
+        const data = res.data;
+
+        setTemplateId(data.id); // 🔑 IMPORTANT
+
+        setForm({
+          title: data.title || "",
+          description: data.description || "",
+          category: data.category?.id || data.category,
+          code_content: data.code_content || "",
+        });
+      });
+    }
+  }, [edit, slug]);
 
   const submitForm = async (e) => {
     e.preventDefault();
 
     const fd = new FormData();
     Object.entries(form).forEach(([k, v]) => fd.append(k, v));
-    fd.append("desktop_image", desktop);
-    fd.append("mobile_image", mobile);
+    if (desktop) fd.append("desktop_image", desktop);
+    if (mobile) fd.append("mobile_image", mobile);
 
     try {
       setLoading(true);
-      await privateApi.post("/pop/upload/", fd);
 
-      // ✅ SUCCESS
-      setSuccessMsg("🎉 Template uploaded successfully! Waiting for admin approval.");
-
-      // reset form
-      setForm({ title: "", description: "", category: "", code_content: "" });
-      setDesktop(null);
-      setMobile(null);
-    } catch (err) {
-      alert("❌ Upload failed. Please try again.");
+      if (edit) {
+        await privateApi.put(`/pop/template/${slug}/update/`, fd);
+        navigate(`/template/${slug}`);
+      } else {
+        await privateApi.post("/pop/upload/", fd);
+        setSuccessMsg("🎉 Template uploaded successfully!");
+        setForm({ title: "", description: "", category: "", code_content: "" });
+        setDesktop(null);
+        setMobile(null);
+      }
+    } catch {
+      alert("❌ Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -61,90 +85,66 @@ const UploadTemplate = () => {
   return (
     <div className="upload-page-wrapper">
       <div className="upload-box">
-        <h2 className="upload-title">✨ Upload New Template</h2>
+        <h2 className="upload-title">
+          {edit ? "✏️ Edit Template" : "✨ Upload New Template"}
+        </h2>
+
         <p className="upload-subtitle">
-          Share your UI template with the community
+          {edit
+            ? "Update your template details"
+            : "Share your UI template with the community"}
         </p>
 
-        {/* ✅ SUCCESS CARD */}
         {successMsg && (
-          <div className="success-box">
-            <h4>✅ Upload Successful</h4>
-            <p>{successMsg}</p>
-          </div>
+          <div className="success-box">{successMsg}</div>
         )}
 
         <form onSubmit={submitForm} className="upload-form">
           <div className="upload-grid">
-            <div>
-              <label>Template Title</label>
-              <input
-                type="text"
-                value={form.title}
-                onChange={(e) =>
-                  setForm({ ...form, title: e.target.value })
-                }
-                required
-              />
-            </div>
+            <input
+              placeholder="Template Title"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              required
+            />
 
-            <div>
-              <label>Category</label>
-              <select
-                value={form.category}
-                onChange={(e) =>
-                  setForm({ ...form, category: e.target.value })
-                }
-                required
-              >
-                <option value="">Select category</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              value={form.category}
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
+              required
+            >
+              <option value="">Select category</option>
+              {categories.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
           </div>
 
-          <label>Description</label>
           <textarea
             rows="4"
+            placeholder="Description"
             value={form.description}
-            onChange={(e) =>
-              setForm({ ...form, description: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
 
-          <label>Code (HTML / CSS / JS)</label>
           <textarea
             rows="6"
+            placeholder="Code (HTML / CSS / JS)"
             value={form.code_content}
-            onChange={(e) =>
-              setForm({ ...form, code_content: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, code_content: e.target.value })}
           />
 
           <div className="upload-file-grid">
-            <div>
-              <span>Desktop Preview</span>
-              <input
-                type="file"
-                onChange={(e) => setDesktop(e.target.files[0])}
-              />
-            </div>
-
-            <div>
-              <span>Mobile Preview</span>
-              <input
-                type="file"
-                onChange={(e) => setMobile(e.target.files[0])}
-              />
-            </div>
+            <input type="file" onChange={(e) => setDesktop(e.target.files[0])} />
+            <input type="file" onChange={(e) => setMobile(e.target.files[0])} />
           </div>
 
           <button className="upload-submit-btn" disabled={loading}>
-            {loading ? "Uploading..." : "🚀 Publish Template"}
+            {loading
+              ? "Saving..."
+              : edit
+              ? "✅ Update Template"
+              : "🚀 Publish Template"}
           </button>
         </form>
       </div>
