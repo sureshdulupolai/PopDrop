@@ -283,16 +283,15 @@ class UpdatePostView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def put(self, request, slug):
-        post = get_object_or_404(
-            Post,
-            slug=slug,
-            user=request.user
-        )
+        post = get_object_or_404(Post, slug=slug, user=request.user)
 
         post.title = request.data.get("title", post.title)
         post.description = request.data.get("description", post.description)
         post.code_content = request.data.get("code_content", post.code_content)
-        post.category_id = request.data.get("category", post.category_id)
+
+        category = request.data.get("category")
+        if category:
+            post.category_id = int(category)
 
         if request.FILES.get("desktop_image"):
             post.desktop_image = request.FILES.get("desktop_image")

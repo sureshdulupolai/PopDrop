@@ -70,6 +70,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
     is_liked = serializers.SerializerMethodField()
     review_count = serializers.IntegerField(source="reviews.count", read_only=True)
     user_rating = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -82,7 +83,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
             "copy_count",
             "is_liked",
             "user_rating",
-            "user"
+            "user", "category"
         ]
 
     def get_avg_rating(self, obj):
@@ -102,5 +103,8 @@ class PostDetailSerializer(serializers.ModelSerializer):
             return False
         return obj.likes.filter(user=req.user).exists()
 
-
-
+    def get_category(self, obj):
+        return {
+            "id": obj.category.id,
+            "name": obj.category.name
+        }
