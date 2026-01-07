@@ -1,0 +1,68 @@
+.cp-hero-section {
+position: relative;
+height: 80vh;
+overflow: hidden;
+}
+
+
+.cp-hero-bg {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+object-fit: cover;
+z-index: 0;
+}
+
+
+.cp-hero-overlay {
+position: absolute;
+inset: 0;
+background: rgba(0, 0, 0, 0.55);
+z-index: 1;
+}
+
+.cp-hero-title,
+.cp-hero-subtitle {
+position: relative;
+z-index: 2;
+}
+
+
+.cp-illustration-wrapper {
+background: #ffffff;
+margin-top: -70px;
+position: relative;
+z-index: 3;
+}
+
+
+.cp-illustration-img {
+  width: 160px;
+  margin-top: -65px;
+
+  mix-blend-mode: multiply !important;
+}
+
+
+
+.cp-who-section {
+padding-top: 4rem;
+}
+
+
+.cp-who-title {
+font-size: 2rem;
+}
+
+
+.cp-who-text {
+font-size: 1rem;
+line-height: 1.7;
+}
+
+.cp-trust-box {
+background: #f8f9fa;
+border-radius: 16px;
+padding: 2rem;
+}

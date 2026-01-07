@@ -78,6 +78,7 @@ export default function MyTemplates() {
               >
                 Cancel
               </button>
+
             </div>
           </div>
         </div>

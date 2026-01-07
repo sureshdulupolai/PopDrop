@@ -15,13 +15,20 @@ export default function TemplateCard({
   function timeAgo(dateString) {
     const now = new Date();
     const past = new Date(dateString);
+
     const seconds = Math.floor((now - past) / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
 
     if (seconds < 60) return `${seconds} sec ago`;
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hr ago`;
-    return new Date(dateString).toDateString();
+    if (minutes < 60) return `${minutes} min ago`;
+    if (hours < 24) return `${hours} hr ago`;
+    if (days < 7) return `${days} day${days > 1 ? "s" : ""} ago`;
+
+    return past.toDateString();
   }
+
 
   const imageSrc = absoluteImage
     ? template.desktop_image
@@ -42,7 +49,7 @@ export default function TemplateCard({
           {showCreator && (
             <span>
               <i className="bi bi-person"></i>{" "}
-              {truncate(template.creator)}
+              {truncate(template.creator, 17)}
             </span>
           )}
 
@@ -58,7 +65,7 @@ export default function TemplateCard({
 
         <p className="text-muted small">
           {template.description
-            ? template.description.split(" ").slice(0, 8).join(" ") + "..."
+            ? truncate(template.description, 64)
             : "No description available"}
         </p>
 
@@ -78,7 +85,17 @@ export default function TemplateCard({
               >
                 🗑 Delete
               </button>
+
+              <button
+                className="action-btn delete-btn"
+                onClick={() => navigate(`/template/${template.slug}`)}
+              >
+              View
+            </button>
+
             </div>
+
+            
           ) : (
             <button
               className="btn btn-outline-primary mt-auto"
@@ -129,7 +146,7 @@ export default function TemplateCard({
   flex: 1;
   padding: 10px 14px;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;

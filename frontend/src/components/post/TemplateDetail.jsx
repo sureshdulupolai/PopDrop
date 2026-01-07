@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import privateApi from "../../api/axiosPrivate";
-import './templateDetail.css';
+import "./templateDetail.css";
 
 export default function TemplateDetail() {
   const { slug } = useParams();
@@ -31,6 +31,56 @@ export default function TemplateDetail() {
     return true;
   };
 
+  // 🔐 BLOCK COPY / INSPECT / RIGHT CLICK
+ useEffect(() => {
+  const blockKeys = (e) => {
+    if (
+      (e.ctrlKey && ["c", "u", "s"].includes(e.key.toLowerCase())) ||
+      (e.ctrlKey && e.shiftKey && ["i", "j"].includes(e.key.toLowerCase())) ||
+      e.key === "F12"
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
+  const blockRightClick = (e) => e.preventDefault();
+
+  document.addEventListener("keydown", blockKeys);
+  document.addEventListener("contextmenu", blockRightClick);
+
+  return () => {
+    document.removeEventListener("keydown", blockKeys);
+    document.removeEventListener("contextmenu", blockRightClick);
+  };
+}, []);
+
+
+  // 🔍 DEVTOOLS DETECTION
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (
+        window.outerWidth - window.innerWidth > 160 ||
+        window.outerHeight - window.innerHeight > 160
+      ) {
+        document.body.innerHTML = "";
+        navigate("/templates/gallery", { replace: true });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
+
+  // 📸 SCREENSHOT / TAB SWITCH BLUR
+  useEffect(() => {
+    const handleVisibility = () => {
+      document.body.style.filter = document.hidden ? "blur(20px)" : "none";
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibility);
+  }, []);
+
   // 🔄 FETCH TEMPLATE
   useEffect(() => {
     if (!checkAuth()) return;
@@ -42,7 +92,6 @@ export default function TemplateDetail() {
         setCopyCount(res.data.copy_count || 0);
         setUserRating(res.data.user_rating);
       } catch (err) {
-        console.error("Failed to fetch post:", err);
         navigate("/login", { replace: true });
       } finally {
         setLoading(false);
@@ -68,117 +117,67 @@ export default function TemplateDetail() {
     }
   }, [post]);
 
-  // 🔔 SUBSCRIBE STATUS (clean single effect)
+  // 🔔 SUBSCRIBE STATUS
   useEffect(() => {
     if (!post || !currentUserId || currentUserId === post.user.id) return;
 
-    const fetchSubscription = async () => {
-      try {
-        const res = await privateApi.get(
-          `/pop/users/${post.user.id}/subscribe-status/`
-        );
-        setIsSubscribed(res.data.subscribed);
-      } catch (err) {
-        console.error("Failed to fetch subscription status", err);
-        setIsSubscribed(post.user.is_subscribed || false);
-      }
-    };
-
-    fetchSubscription();
+    privateApi
+      .get(`/pop/users/${post.user.id}/subscribe-status/`)
+      .then((res) => setIsSubscribed(res.data.subscribed))
+      .catch(() => setIsSubscribed(false));
   }, [post, currentUserId]);
 
   // ❤️ LIKE
   const handleLike = async () => {
     if (!checkAuth()) return;
-    try {
-      const res = await privateApi.post(`/pop/posts/${post.id}/like/`);
-      setPost((prev) => ({
-        ...prev,
-        like_count: res.data.like_count,
-        is_liked: res.data.liked,
-      }));
-    } catch (err) {
-      console.error("Like failed", err);
-    }
+    const res = await privateApi.post(`/pop/posts/${post.id}/like/`);
+    setPost((p) => ({
+      ...p,
+      like_count: res.data.like_count,
+      is_liked: res.data.liked,
+    }));
   };
 
   // ⭐ RATE
   const handleRating = async (value) => {
     if (!checkAuth()) return;
-    try {
-      await privateApi.post(`/pop/posts/${post.id}/rate/`, { rating: value });
-      setPost((prev) => ({ ...prev, avg_rating: value }));
-    } catch (err) {
-      console.error("Rating failed", err);
-    }
+    await privateApi.post(`/pop/posts/${post.id}/rate/`, { rating: value });
+    setUserRating(value);
   };
 
-  // 📋 COPY
+  // 📋 COPY (ONLY BUTTON)
   const handleCopy = async () => {
     if (!post?.code_content || copyDisabled) return;
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(post.code_content);
-      } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = post.code_content;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-      }
 
-      setCopyCount((prev) => prev + 1);
-      privateApi.post(`/pop/posts/${post.id}/copy/`);
-      localStorage.setItem(`copy_${post.id}`, Date.now());
+    await navigator.clipboard.writeText(post.code_content);
+    privateApi.post(`/pop/posts/${post.id}/copy/`);
 
-      setCopied(true);
-      setCopyDisabled(true);
-      setTimeout(() => {
-        setCopied(false);
-        setCopyDisabled(false);
-        localStorage.removeItem(`copy_${post.id}`);
-      }, 5 * 60 * 1000);
-    } catch (err) {
-      console.error("Copy failed", err);
-    }
+    setCopyCount((p) => p + 1);
+    setCopied(true);
+    setCopyDisabled(true);
+    localStorage.setItem(`copy_${post.id}`, Date.now());
+
+    setTimeout(() => {
+      setCopied(false);
+      setCopyDisabled(false);
+      localStorage.removeItem(`copy_${post.id}`);
+    }, 5 * 60 * 1000);
   };
 
-  // 🔔 SUBSCRIBE BUTTON
   const handleSubscribe = async () => {
     if (!checkAuth() || subLoading) return;
-    try {
-      setSubLoading(true);
-      const res = await privateApi.post(
-        `/pop/users/${post.user.id}/subscribe/`
-      );
-      setIsSubscribed(res.data.subscribed);
-
-      // update followers count
-      setPost((prev) => ({
-        ...prev,
-        user: {
-          ...prev.user,
-          followers_count: res.data.subscribed
-            ? prev.user.followers_count + 1
-            : prev.user.followers_count - 1,
-        },
-      }));
-    } catch (err) {
-      console.error("Subscribe failed", err);
-    } finally {
-      setSubLoading(false);
-    }
+    setSubLoading(true);
+    const res = await privateApi.post(
+      `/pop/users/${post.user.id}/subscribe/`
+    );
+    setIsSubscribed(res.data.subscribed);
+    setSubLoading(false);
   };
 
   const handleBack = () => {
-    if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1); // go back
-    } else {
-      navigate("/templates/gallery"); // default fallback
-    }
+    window.history.length > 1
+      ? navigate(-1)
+      : navigate("/templates/gallery");
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -186,7 +185,7 @@ export default function TemplateDetail() {
 
   return (
     <>
-      <section className="template-page">
+      <section className="template-page no-select">
         <div className="container">
 
           {/* HEADER */}

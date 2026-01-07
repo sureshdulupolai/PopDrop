@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import privateApi from "../../api/axiosPrivate";
-import { useNavigate, useParams } from "react-router-dom"; // ✅ useParams added
+import { useNavigate, useParams } from "react-router-dom";
 
-const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
-  const { slug } = useParams();                  // ✅ now works
+const UploadTemplate = ({ edit = false }) => {
+  const { slug } = useParams();
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState([]);
@@ -19,8 +19,9 @@ const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
 
   const [desktop, setDesktop] = useState(null);
   const [mobile, setMobile] = useState(null);
-  const [templateId, setTemplateId] = useState(null);
 
+  const [existingDesktop, setExistingDesktop] = useState(null);
+  const [existingMobile, setExistingMobile] = useState(null);
 
   /* 🔐 AUTH CHECK */
   useEffect(() => {
@@ -31,7 +32,7 @@ const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
 
   /* 📦 CATEGORIES */
   useEffect(() => {
-    privateApi.get("/pop/categories/").then(res => {
+    privateApi.get("/pop/categories/").then((res) => {
       setCategories(res.data);
     });
   }, []);
@@ -39,17 +40,18 @@ const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
   /* ✏️ EDIT MODE DATA */
   useEffect(() => {
     if (edit && slug) {
-      privateApi.get(`/pop/posts/${slug}/`).then(res => {
+      privateApi.get(`/pop/posts/${slug}/`).then((res) => {
         const data = res.data;
-
-        setTemplateId(data.id); // 🔑 IMPORTANT
 
         setForm({
           title: data.title || "",
           description: data.description || "",
-          category: data.category?.id || data.category,
+          category: String(data.category?.id), // ✅ FIX
           code_content: data.code_content || "",
         });
+
+        setExistingDesktop(data.desktop_image || null);
+        setExistingMobile(data.mobile_image || null);
       });
     }
   }, [edit, slug]);
@@ -59,6 +61,7 @@ const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
 
     const fd = new FormData();
     Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+
     if (desktop) fd.append("desktop_image", desktop);
     if (mobile) fd.append("mobile_image", mobile);
 
@@ -66,7 +69,7 @@ const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
       setLoading(true);
 
       if (edit) {
-        await privateApi.put(`/pop/template/${slug}/update/`, fd);
+        await privateApi.put(`/pop/posts/${slug}/update/`, fd);
         navigate(`/template/${slug}`);
       } else {
         await privateApi.post("/pop/upload/", fd);
@@ -95,27 +98,31 @@ const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
             : "Share your UI template with the community"}
         </p>
 
-        {successMsg && (
-          <div className="success-box">{successMsg}</div>
-        )}
+        {successMsg && <div className="success-box">{successMsg}</div>}
 
         <form onSubmit={submitForm} className="upload-form">
           <div className="upload-grid">
             <input
               placeholder="Template Title"
               value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, title: e.target.value })
+              }
               required
             />
 
             <select
               value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, category: e.target.value })
+              }
               required
             >
               <option value="">Select category</option>
-              {categories.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
               ))}
             </select>
           </div>
@@ -124,15 +131,41 @@ const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
             rows="4"
             placeholder="Description"
             value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, description: e.target.value })
+            }
           />
 
           <textarea
             rows="6"
             placeholder="Code (HTML / CSS / JS)"
             value={form.code_content}
-            onChange={(e) => setForm({ ...form, code_content: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, code_content: e.target.value })
+            }
           />
+
+          {/* ✅ EXISTING IMAGES (EDIT MODE) */}
+          {edit && (
+            <div style={{ marginBottom: "10px" }}>
+              {existingDesktop && (
+                <p style={{ fontSize: "13px", color: "#6b7280" }}>
+                  🖥 Desktop image:{" "}
+                  <a href={existingDesktop} target="_blank" rel="noreferrer">
+                    view
+                  </a>
+                </p>
+              )}
+              {existingMobile && (
+                <p style={{ fontSize: "13px", color: "#6b7280" }}>
+                  📱 Mobile image:{" "}
+                  <a href={existingMobile} target="_blank" rel="noreferrer">
+                    view
+                  </a>
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="upload-file-grid">
             <input type="file" onChange={(e) => setDesktop(e.target.files[0])} />
@@ -149,7 +182,7 @@ const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
         </form>
       </div>
 
-      {/* ===== STYLES ===== */}
+      {/* ===== STYLES (UNCHANGED) ===== */}
       <style>{`
         .upload-page-wrapper {
           min-height: 100vh;
@@ -189,12 +222,6 @@ const UploadTemplate = ({ edit = false }) => {   // ✅ edit prop received
           margin-bottom: 20px;
           text-align: center;
           font-weight: 600;
-        }
-
-        .upload-form label {
-          font-weight: 600;
-          margin-bottom: 6px;
-          display: block;
         }
 
         .upload-form input,

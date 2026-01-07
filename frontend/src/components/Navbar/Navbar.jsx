@@ -93,7 +93,7 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
               </li>
 
               <li className="nav-item">
-                <a className="nav-link" href="#">Company</a>
+                <Link className="nav-link" to="/company">Company</Link>
               </li>
             </ul>
 

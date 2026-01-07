@@ -297,3 +297,23 @@
     transform: rotate(360deg);
   }
 }
+
+/* Disable text selection */
+.no-select, 
+.no-select * {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Prevent dragging images */
+img {
+  pointer-events: none;
+}
+
+/* Blur on screenshot attempt (mobile browsers) */
+@media (pointer: coarse) {
+  body:active {
+    filter: blur(8px);
+  }
+}
