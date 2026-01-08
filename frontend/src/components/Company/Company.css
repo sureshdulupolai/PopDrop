@@ -66,3 +66,342 @@ background: #f8f9fa;
 border-radius: 16px;
 padding: 2rem;
 }
+
+/* ================= COMPANY STATS ================= */
+
+.cp-stats-section {
+  background: #fff4ec;
+  padding: 5.5rem 0;
+}
+
+.cp-stats-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 2rem;
+}
+
+/* Row spacing */
+.cp-stats-row {
+  align-items: center;
+}
+
+/* Single stat item (icon left, text right) */
+.cp-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  justify-content: center;
+}
+
+/* Icon circle */
+.cp-stat-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  box-shadow: 0 12px 28px rgba(62, 62, 62, 0.08);
+  flex-shrink: 0;
+}
+
+/* Icon colors */
+.cp-heart {
+  color: #ff6b6b;
+}
+
+.cp-globe,
+.cp-users {
+  color: #ff8c42;
+}
+
+/* Text block */
+.cp-stat-content h3 {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.cp-stat-content p {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #6c757d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cp-stat-item {
+    justify-content: flex-start;
+  }
+
+  .cp-stat-content h3 {
+    font-size: 1.6rem;
+  }
+}
+
+
+/* ================= COMPANY STORY ================= */
+
+.cp-story-section {
+  padding: 5rem 0;
+}
+
+.cp-story-section h2 {
+  font-size: 2.2rem;
+}
+
+.cp-story-section h5 {
+  font-size: 1.2rem;
+}
+
+.cp-story-section p {
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* Timeline */
+.cp-timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 4rem;
+  position: relative;
+}
+
+.cp-timeline::before {
+  content: "";
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ff7a45;
+  z-index: 0;
+}
+
+.cp-timeline-item {
+  text-align: center;
+  width: 33%;
+  position: relative;
+  z-index: 1;
+}
+
+.cp-year {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: #ff7a45;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.cp-timeline-item p {
+  font-size: 0.9rem;
+  color: #495057;
+  margin: 0;
+}
+
+
+/* ================= LIFE AT COMPANY ================= */
+.life-section {
+  padding: 0 0 5rem 0;
+  background: #ffffff;
+}
+
+.life-title {
+  font-size: 2rem !important;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+.life-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+/* Grid layout */
+.life-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+/* Images */
+.life-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* Make layout feel dynamic */
+.life-grid img:nth-child(1) {
+  grid-row: span 2;
+}
+
+.life-grid img:nth-child(3) {
+  grid-row: span 2;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .life-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .life-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Section */
+.our-values-section {
+  background: #fff7f2;
+  padding: 3rem 0;
+}
+
+/* Circles container */
+.values-circles {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+/* Circle button */
+.value-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid #ff8a5b;
+  background: #ffffff;
+  color: #ff8a5b;
+  font-size: 22px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* Active circle */
+.value-circle.active {
+  background: #ff8a5b;
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(255, 138, 91, 0.35);
+}
+
+/* Content box */
+.value-content-box {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #ff8a5b;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem 3rem 0.5rem 3rem;
+}
+
+/* Zig-zag notch */
+.value-zigzag {
+  position: absolute;
+  top: -18px;
+  left: 60px;
+  width: 60px;
+  height: 36px;
+  background: #ffffff;
+  border-top: 2px solid #ff8a5b;
+  border-left: 2px solid #ff8a5b;
+  transform: rotate(45deg);
+}
+
+/* Key text */
+.value-key {
+  color: #ff8a5b;
+  font-size: 30px;
+}
+
+
+
+.team-section {
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.team-title {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.team-subtitle {
+  color: #6b7280;
+  max-width: 700px;
+  margin: 0 auto 60px;
+  font-size: 16px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0px;
+  max-width: 1200px;   /* 🔥 overall width control */
+  margin: 0 auto;
+}
+
+.team-card {
+  max-width: 240px;   /* 🔥 card width control */
+  margin: 0 auto;
+}
+
+.team-image {
+  width: 100%;
+  height: 280px;      /* 🔥 360 → 280 */
+  object-fit: cover;
+  transition: opacity 0.25s ease;
+}
+
+
+.team-image-wrapper {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.team-name {
+  margin-top: 18px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.team-role {
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+}
