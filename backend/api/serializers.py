@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User, UserProfile, CustomerReview
+from .models import User, UserProfile, CustomerReview, TeamMember
 from .utils import send_otp_email
 import random
 
@@ -191,3 +191,59 @@ class CustomerReviewSerializer(serializers.ModelSerializer):
     def get_is_mine(self, obj):
         request = self.context.get("request")
         return request and obj.user == request.user
+
+
+class TeamMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TeamMember
+        fields = [
+            "id",
+            "name",
+            "role",
+            "image",
+            "hover_image",
+            "join_date",
+            "ending_date",
+            "is_hidden",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["created_at", "updated_at"]
+
+    def validate(self, attrs):
+        """
+        Serializer level validation
+        (API / direct view se bhi enforce hoga)
+        """
+
+        # instance update ke case me existing values lena
+        is_hidden = attrs.get(
+            "is_hidden",
+            self.instance.is_hidden if self.instance else False
+        )
+
+        image = attrs.get(
+            "image",
+            self.instance.image if self.instance else None
+        )
+
+        join_date = attrs.get(
+            "join_date",
+            self.instance.join_date if self.instance else None
+        )
+
+        ending_date = attrs.get("ending_date")
+
+        # 🔴 Unhide hai aur image nahi di → error
+        if not is_hidden and not image:
+            raise serializers.ValidationError({
+                "image": "Image is required when team member is visible."
+            })
+
+        # 🔴 Ending date join date se pehle nahi ho sakti
+        if ending_date and join_date and ending_date < join_date:
+            raise serializers.ValidationError({
+                "ending_date": "Ending date cannot be before join date."
+            })
+
+        return attrs

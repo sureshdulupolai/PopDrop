@@ -4,6 +4,7 @@ from django.utils import timezone
 from datetime import timedelta
 import datetime
 from django.core.validators import MinValueValidator, MaxValueValidator, MaxLengthValidator
+from django.core.exceptions import ValidationError
 
 # USER MANAGER
 class UserManager(BaseUserManager):
@@ -165,3 +166,50 @@ class CustomerReview(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - ⭐{self.rating}"
+
+class TeamMember(models.Model):
+    name = models.CharField(max_length=120)
+    role = models.CharField(max_length=120)
+    image = models.ImageField(upload_to="team/images/",blank=True,null=True)
+    hover_image = models.ImageField(upload_to="team/hover-images/",blank=True,null=True)
+    join_date = models.DateField(default=timezone.now)
+    ending_date = models.DateField(blank=True,null=True,help_text="If set, member will not be shown after this date")
+    is_hidden = models.BooleanField(default=False,help_text="Hide or unhide this team member")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-join_date"]
+
+    def clean(self):
+        """
+        Custom validation rules
+        """
+        # Agar unhide hai aur image missing hai → error
+        if not self.is_hidden and not self.image:
+            raise ValidationError({
+                "image": "Image is required when team member is visible."
+            })
+
+        # ending date join date se pehle nahi ho sakti
+        if self.ending_date and self.ending_date < self.join_date:
+            raise ValidationError({
+                "ending_date": "Ending date cannot be before join date."
+            })
+
+    def is_active(self):
+        """
+        Used for frontend filtering
+        """
+        today = timezone.now().date()
+
+        if self.is_hidden:
+            return False
+
+        if self.ending_date and self.ending_date < today:
+            return False
+
+        return True
+
+    def __str__(self):
+        return f"{self.name} - {self.role}"

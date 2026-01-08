@@ -71,7 +71,7 @@ padding: 2rem;
 
 .cp-stats-section {
   background: #fff4ec;
-  padding: 5.5rem 0;
+  padding: 2rem 0 2rem 0;
 }
 
 .cp-stats-title {
@@ -147,7 +147,7 @@ padding: 2rem;
 /* ================= COMPANY STORY ================= */
 
 .cp-story-section {
-  padding: 5rem 0;
+  padding: 2rem 0 4rem 0;
 }
 
 .cp-story-section h2 {
@@ -382,7 +382,7 @@ padding: 2rem;
 }
 
 .team-name {
-  margin-top: 18px;
+  margin-top: 14px;
   font-size: 18px;
   font-weight: 600;
 }
@@ -390,7 +390,6 @@ padding: 2rem;
 .team-role {
   color: #6b7280;
   font-size: 14px;
-  margin-top: 4px;
 }
 
 /* Responsive */
@@ -405,3 +404,83 @@ padding: 2rem;
     grid-template-columns: 1fr;
   }
 }
+
+.cpm-join-section {
+  position: relative;
+  width: 100%;
+  min-height: 420px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+/* Background Image / Gradient */
+.cpm-bg-layer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #7b4ce2 0%,
+    #8b4bdc 40%,
+    #a34a9a 70%,
+    #b94a6b 100%
+  );
+  z-index: 1;
+}
+
+/* Content Layer */
+.cpm-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #ffffff;
+  padding: 40px 20px;
+  max-width: 720px;
+}
+
+/* Title */
+.cpm-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* Subtitle */
+.cpm-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 32px;
+  opacity: 0.9;
+}
+
+/* Button */
+.cpm-btn {
+  background: #ff6a2b;
+  color: #ffffff;
+  border: none;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cpm-btn:hover {
+  background: #ff5310;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cpm-title {
+    font-size: 28px;
+  }
+
+  .cpm-subtitle {
+    font-size: 16px;
+  }
+}
+

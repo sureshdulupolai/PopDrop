@@ -1,26 +1,28 @@
-import grpPhoto from "../../assets/grp_photo.jpg";
-import hoverPhoto from "../../assets/your-illustration.png";
-
-const teamMembers = [
-  {
-    id: 1,
-    name: "Viktor Kardos",
-    role: "CRO Expert",
-    image: grpPhoto,
-    hoverImage: hoverPhoto, // agar nahi ho toh null
-  },
-  {
-    id: 2,
-    name: "Laszlo Szotak",
-    role: "CRO Expert",
-    image: grpPhoto,
-    hoverImage: null, // hover disable automatically
-  },
-];
-
+import { useEffect, useState } from "react";
+import api from "../../api/axios";
 import TeamCard from "./TeamCard";
 
 export default function TeamSection() {
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api
+      .get("team/members/")
+      .then((res) => {
+        setTeamMembers(res.data);
+      })
+      .catch((err) => {
+        console.error("Team API error:", err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return null;
+  if (!teamMembers.length) return null;
+
   return (
     <section className="team-section bg-white">
       <h2 className="team-title">Our team</h2>

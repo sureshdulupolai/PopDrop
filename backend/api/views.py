@@ -2,13 +2,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer, CustomerReviewSerializer
-from .models import User, UserProfile, CustomerReview
+from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer, CustomerReviewSerializer, TeamMemberSerializer
+from .models import User, UserProfile, CustomerReview, TeamMember
 from .utils import send_otp_email
 import random
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.utils import timezone
+from django.db.models import Q
 
 # -------------------------
 # SIGNUP API
@@ -214,3 +216,47 @@ class ReviewDeleteView(APIView):
 
         review.delete()
         return Response(status=204)
+
+class TeamMemberPublicListView(APIView):
+    def get(self, request):
+        today = timezone.now().date()
+
+        queryset = TeamMember.objects.filter(
+            is_hidden=False
+        ).filter(
+            Q(ending_date__isnull=True) | Q(ending_date__gte=today)
+        )
+
+        serializer = TeamMemberSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class TeamMemberDetailView(APIView):
+    def get_object(self, pk):
+        return TeamMember.objects.get(pk=pk)
+
+    def get(self, request, pk):
+        member = self.get_object(pk)
+        serializer = TeamMemberSerializer(member)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        member = self.get_object(pk)
+        serializer = TeamMemberSerializer(
+            member, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        member = self.get_object(pk)
+        member.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class TeamMemberCreateView(APIView):
+    permission_classes = [IsAdminUser]
+    def post(self, request):
+        serializer = TeamMemberSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

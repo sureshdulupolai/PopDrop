@@ -1,9 +1,21 @@
 import { useState } from "react";
 
+const BACKEND_URL = "http://localhost:8000";
+
 export default function TeamCard({ member }) {
   const [hovered, setHovered] = useState(false);
 
-  const hasHoverImage = !!member.hoverImage;
+  const hasHoverImage = Boolean(member.hover_image);
+
+  const mainImage = member.image
+    ? `${BACKEND_URL}${member.image}`
+    : "";
+
+  const hoverImage = member.hover_image
+    ? `${BACKEND_URL}${member.hover_image}`
+    : "";
+
+  console.log(mainImage, " ", hoverImage);
 
   return (
     <div className="team-card">
@@ -13,11 +25,7 @@ export default function TeamCard({ member }) {
         onMouseLeave={() => hasHoverImage && setHovered(false)}
       >
         <img
-          src={
-            hovered && hasHoverImage
-              ? member.hoverImage
-              : member.image
-          }
+          src={hovered && hasHoverImage ? hoverImage : mainImage}
           alt={member.name}
           className="team-image"
         />

@@ -6,6 +6,7 @@ import { CompanyStory } from "./Top5";
 import { LifeAtCompany } from "./Top6";
 import OurValues from "./Top7";
 import TeamSection from "./Top8";
+import CpmJoinTeamSection from "./Top9";
 import "./Company.css";
 
 function AppCompany() {
@@ -19,6 +20,7 @@ function AppCompany() {
         <LifeAtCompany />
         <OurValues />
         <TeamSection />
+        <CpmJoinTeamSection />
         </>
     )
 }
