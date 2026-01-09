@@ -5,4 +5,6 @@ from api.models import User, CustomerReview, UserProfile, TeamMember
 admin.site.register(User)
 admin.site.register(UserProfile)
 admin.site.register(CustomerReview)
-admin.site.register(TeamMember)
+@admin.register(TeamMember)
+class TeamMemberAdmin(admin.ModelAdmin):
+    list_display = ("name", "role", "joined_ago", "is_hidden")

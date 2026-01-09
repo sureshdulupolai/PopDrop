@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, time
 import datetime
 from django.core.validators import MinValueValidator, MaxValueValidator, MaxLengthValidator
 from django.core.exceptions import ValidationError
+from datetime import datetime, time
 
 # USER MANAGER
 class UserManager(BaseUserManager):
@@ -177,30 +178,19 @@ class TeamMember(models.Model):
     is_hidden = models.BooleanField(default=False,help_text="Hide or unhide this team member")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    status = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["-join_date"]
 
     def clean(self):
-        """
-        Custom validation rules
-        """
-        # Agar unhide hai aur image missing hai → error
         if not self.is_hidden and not self.image:
-            raise ValidationError({
-                "image": "Image is required when team member is visible."
-            })
+            raise ValidationError({"image": "Image is required when team member is visible."})
 
-        # ending date join date se pehle nahi ho sakti
         if self.ending_date and self.ending_date < self.join_date:
-            raise ValidationError({
-                "ending_date": "Ending date cannot be before join date."
-            })
+            raise ValidationError({"ending_date": "Ending date cannot be before join date."})
 
     def is_active(self):
-        """
-        Used for frontend filtering
-        """
         today = timezone.now().date()
 
         if self.is_hidden:
@@ -211,5 +201,42 @@ class TeamMember(models.Model):
 
         return True
 
+# ✅ HUMAN READABLE JOIN TIME (DateField SAFE)
+    def joined_ago(self):
+        if not self.join_date:
+            return "N/A"
+
+        now = timezone.now()
+
+        # Convert date → datetime (timezone aware)
+        join_datetime = timezone.make_aware(
+            datetime.combine(self.join_date, time.min)
+        )
+
+        diff = now - join_datetime
+        seconds = diff.total_seconds()
+
+        if seconds < 3600:
+            minutes = int(seconds // 60)
+            return f"{minutes} min ago"
+
+        if seconds < 86400:
+            hours = int(seconds // 3600)
+            return f"{hours} hour{'s' if hours > 1 else ''} ago"
+
+        days = diff.days
+
+        if days < 30:
+            return f"{days} day{'s' if days > 1 else ''} ago"
+
+        months = days // 30
+        if months < 12:
+            return f"{months} month{'s' if months > 1 else ''} ago"
+
+        years = months // 12
+        return f"{years} year{'s' if years > 1 else ''} ago"
+
     def __str__(self):
-        return f"{self.name} - {self.role}"
+        return f"{self.name} - {self.role} (Joined {self.joined_ago()})"
+    
+

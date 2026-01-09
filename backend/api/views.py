@@ -222,7 +222,7 @@ class TeamMemberPublicListView(APIView):
         today = timezone.now().date()
 
         queryset = TeamMember.objects.filter(
-            is_hidden=False
+            is_hidden=False, status = True
         ).filter(
             Q(ending_date__isnull=True) | Q(ending_date__gte=today)
         )
