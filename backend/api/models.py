@@ -257,10 +257,28 @@ class TeamApplication(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="team_application")
     using_popdrop_since = models.PositiveIntegerField(help_text="Months using PopDrop")
     tech_stack = models.ManyToManyField(TeamAppCategory,related_name="applications")
-    experience_years = models.PositiveIntegerField()
     resume = models.FileField(upload_to="team/resumes/",blank=True,null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user.username
+
+class ContactRequest(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="contact_requests"
+    )
+
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+
+    is_checked = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.title}"
+    

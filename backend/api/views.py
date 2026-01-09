@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer, CustomerReviewSerializer, TeamMemberSerializer, TeamApplicationSerializer
-from .models import User, UserProfile, CustomerReview, TeamMember, TeamAppCategory, TeamApplication
+from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer, CustomerReviewSerializer, TeamMemberSerializer, TeamApplicationSerializer, ContactRequestSerializer
+from .models import User, UserProfile, CustomerReview, TeamMember, TeamAppCategory, TeamApplication, ContactRequest
 from .utils import send_otp_email
 import random
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -261,7 +261,6 @@ class TeamMemberCreateView(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
 class TeamApplicationView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -307,3 +306,40 @@ class TeamApplicationView(APIView):
             {"message": "Application submitted successfully"},
             status=status.HTTP_201_CREATED
         )
+
+class ContactRequestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        pending = ContactRequest.objects.filter(
+            user=request.user,
+            is_checked=False
+        ).exists()
+
+        return Response({
+            "has_pending": pending
+        })
+
+    def post(self, request):
+        pending = ContactRequest.objects.filter(
+            user=request.user,
+            is_checked=False
+        ).exists()
+
+        if pending:
+            return Response(
+                {
+                    "detail": "⏳ Your previous request is still pending. Please wait."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = ContactRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(
+                {"message": "✅ Request submitted successfully"},
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

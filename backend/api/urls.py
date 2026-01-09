@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SignupView, LoginView, ProfileView, VerifyOtpView, ResendOtpView, UserDetailView, UserListView, ReviewDeleteView, ReviewListCreateView, TeamMemberPublicListView, TeamMemberCreateView, TeamMemberDetailView, TeamApplicationView
+from .views import SignupView, LoginView, ProfileView, VerifyOtpView, ResendOtpView, UserDetailView, UserListView, ReviewDeleteView, ReviewListCreateView, TeamMemberPublicListView, TeamMemberCreateView, TeamMemberDetailView, TeamApplicationView, ContactRequestView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -17,4 +17,5 @@ urlpatterns = [
     path("team/members/create/", TeamMemberCreateView.as_view()),
     path("team/members/<int:pk>/", TeamMemberDetailView.as_view()),
     path("team/apply/", TeamApplicationView.as_view()),
+    path("contact/", ContactRequestView.as_view(), name="contact-request"),
 ]

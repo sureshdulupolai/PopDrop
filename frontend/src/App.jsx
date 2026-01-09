@@ -18,6 +18,7 @@ import CreatorTemplates from "./components/post/CreatorTemplates";
 import MyTemplates from "./components/post/MyTemplates";
 import AppCompany from "./components/Company/pathCompany";
 import JoinTeam from "./components/Company/formCP";
+import ContactUs from "./pages/ContactUs";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -70,6 +71,7 @@ function App() {
         <Route path="/my/templates" element={<MyTemplates />} />
 
         <Route path="/company" element={<AppCompany />} />
+        <Route path="/contact-us" element={<ContactUs />} />
         <Route
             path="/join-team"
             element={

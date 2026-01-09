@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User, UserProfile, CustomerReview, TeamMember, TeamAppCategory, TeamApplication
+from .models import User, UserProfile, CustomerReview, TeamMember, TeamAppCategory, TeamApplication, ContactRequest
 from .utils import send_otp_email
 import random
 
@@ -265,3 +265,15 @@ class TeamApplicationSerializer(serializers.ModelSerializer):
                 "No active tech available right now."
             )
         return value
+    
+class ContactRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactRequest
+        fields = [
+            "id",
+            "title",
+            "description",
+            "is_checked",
+            "created_at"
+        ]
+        read_only_fields = ["is_checked", "created_at"]
