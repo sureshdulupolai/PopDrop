@@ -1,0 +1,145 @@
+.cpm-join-wrapper {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9fafc;
+  padding: 40px 16px;
+  margin-top: 65px;
+}
+
+.cpm-form {
+  background: #fff;
+  max-width: 520px;
+  width: 100%;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+}
+
+.cpm-title {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.cpm-subtitle {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.cpm-field {
+  margin-bottom: 18px;
+}
+
+.cpm-field label {
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.cpm-field input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.cpm-tech-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cpm-tech-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #f2f4f7;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.cpm-tech-card i {
+  display: none;
+  color: #6d5cff;
+}
+
+.cpm-tech-card.active {
+  background: #eef2ff;
+  color: #4f46e5;
+  border: 2px solid #6d5cff;
+}
+
+.cpm-tech-card.active i {
+  display: block;
+}
+
+.cpm-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.cpm-btn-primary {
+  flex: 1;
+  background: #6d5cff;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.cpm-btn-secondary {
+  flex: 1;
+  background: #eee;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.cpm-info-card {
+  max-width: 520px;
+  margin: 120px auto;
+  padding: 24px;
+  border-radius: 14px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.cpm-info-card.error {
+  background: #ffecec;
+  color: #b00020;
+}
+
+.cpm-info-card.warning {
+  background: #fff7e6;
+  color: #8a5a00;
+}
+
+.cpm-info-card.success {
+  background: #e8fff1;
+  color: #137333;
+}
+
+.cpm-tech-card {
+  cursor: pointer;
+  user-select: none;
+}
+
+.cpm-tech-card:hover {
+  background: #eaeefc;
+}
+
+.cpm-btn-primary {
+  cursor: pointer;
+}
+
+.cpm-btn-primary:disabled {
+  background: #c7c7c7;
+  cursor: not-allowed;
+}

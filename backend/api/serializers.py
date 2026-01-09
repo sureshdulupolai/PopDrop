@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User, UserProfile, CustomerReview, TeamMember
+from .models import User, UserProfile, CustomerReview, TeamMember, TeamAppCategory, TeamApplication
 from .utils import send_otp_email
 import random
 
@@ -248,3 +248,20 @@ class TeamMemberSerializer(serializers.ModelSerializer):
             })
 
         return attrs
+    
+class TeamApplicationSerializer(serializers.ModelSerializer):
+    tech_stack = serializers.PrimaryKeyRelatedField(
+        queryset=TeamAppCategory.objects.filter(status=True),
+        many=True
+    )
+
+    class Meta:
+        model = TeamApplication
+        exclude = ("user", "created_at")
+
+    def validate_tech_stack(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                "No active tech available right now."
+            )
+        return value

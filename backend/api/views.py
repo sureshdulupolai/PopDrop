@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer, CustomerReviewSerializer, TeamMemberSerializer
-from .models import User, UserProfile, CustomerReview, TeamMember
+from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer, CustomerReviewSerializer, TeamMemberSerializer, TeamApplicationSerializer
+from .models import User, UserProfile, CustomerReview, TeamMember, TeamAppCategory, TeamApplication
 from .utils import send_otp_email
 import random
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -260,3 +260,50 @@ class TeamMemberCreateView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class TeamApplicationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Already applied check
+        if TeamApplication.objects.filter(user=request.user).exists():
+            return Response({
+                "already_applied": True,
+                "message": "You have already submitted your application."
+            })
+
+        techs = TeamAppCategory.objects.filter(status=True)
+
+        if not techs.exists():
+            return Response({
+                "no_category": True,
+                "message": "No open roles right now."
+            })
+
+        return Response({
+            "already_applied": False,
+            "techs": [
+                {
+                    "id": t.id,
+                    "name": t.tech_name,
+                    "type": t.category_type
+                } for t in techs
+            ]
+        })
+
+    def post(self, request):
+        if TeamApplication.objects.filter(user=request.user).exists():
+            return Response(
+                {"detail": "Already applied"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = TeamApplicationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+
+        return Response(
+            {"message": "Application submitted successfully"},
+            status=status.HTTP_201_CREATED
+        )

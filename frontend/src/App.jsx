@@ -17,6 +17,7 @@ import SubscribedTemplates from "./components/post/SubscribedTemplates";
 import CreatorTemplates from "./components/post/CreatorTemplates";
 import MyTemplates from "./components/post/MyTemplates";
 import AppCompany from "./components/Company/pathCompany";
+import JoinTeam from "./components/Company/formCP";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -69,6 +70,15 @@ function App() {
         <Route path="/my/templates" element={<MyTemplates />} />
 
         <Route path="/company" element={<AppCompany />} />
+        <Route
+            path="/join-team"
+            element={
+              <PrivateRoute>
+                <JoinTeam />
+              </PrivateRoute>
+            }
+          />
+
       </Routes>
 
       <Footer />
