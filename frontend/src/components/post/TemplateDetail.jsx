@@ -141,9 +141,27 @@ export default function TemplateDetail() {
   // ⭐ RATE
   const handleRating = async (value) => {
     if (!checkAuth()) return;
-    await privateApi.post(`/pop/posts/${post.id}/rate/`, { rating: value });
-    setUserRating(value);
+
+    try {
+      const res = await privateApi.post(
+        `/pop/posts/${post.id}/rate/`,
+        { rating: value }
+      );
+
+      // ✅ user ka rating
+      setUserRating(res.data.rating);
+
+      // ✅ post ka avg rating update
+      setPost((prev) => ({
+        ...prev,
+        avg_rating: res.data.avg_rating,
+        review_count: res.data.review_count,
+      }));
+    } catch (err) {
+      console.error("Rating failed", err);
+    }
   };
+
 
   // 📋 COPY (ONLY BUTTON)
   const handleCopy = async () => {
@@ -345,7 +363,7 @@ export default function TemplateDetail() {
                     <i
                       key={i}
                       className={`bi ${
-                        i <= (hoverRating || userRating || post.avg_rating)
+                        i <= (hoverRating || userRating)
                           ? "bi-star-fill active"
                           : "bi-star"
                       }`}
@@ -357,10 +375,10 @@ export default function TemplateDetail() {
                 </div>
 
                 <div className="rating-info">
-                  <span className="rating-value">
-                    {post.avg_rating?.toFixed(1) || "0.0"}
+                  <span className="rating-value me-2">
+                    {userRating || 0}
                   </span>
-                  <span className="rating-text">Average Rating</span>
+                  <span className="rating-text">Your Rating</span>
                 </div>
               </div>
             </div>

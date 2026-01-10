@@ -120,10 +120,18 @@ class RatePostView(APIView):
             defaults={"rating": rating}
         )
 
+        avg_rating = PostReview.objects.filter(
+            post_id=post_id
+        ).aggregate(avg=Avg("rating"))["avg"] or 0
+
+        review_count = PostReview.objects.filter(post_id=post_id).count()
+
         return Response({
-            "message": "Rating saved",
-            "rating": review.rating
+            "rating": review.rating,
+            "avg_rating": avg_rating,
+            "review_count": review_count,
         })
+
 
 
 # ---------- COPY TEMPLATE ----------
