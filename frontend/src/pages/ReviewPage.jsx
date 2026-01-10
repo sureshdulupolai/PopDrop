@@ -46,7 +46,7 @@ const CustomerReviews = ({ isLoggedIn }) => {
 
       {/* HEADER */}
       <div className="review-header">
-        <h1 className="review-title">Customer Reviews</h1>
+        <h1 className="review-title text-black">Customer Reviews</h1>
         <p className="review-subtitle">
           Trusted by users worldwide. See what our customers say.
         </p>

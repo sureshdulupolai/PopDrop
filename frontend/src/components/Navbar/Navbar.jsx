@@ -76,7 +76,7 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                     </div>
                   </Link>
 
-                  {isLoggedIn && (
+                  {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
                     <Link to="/my/templates" className="dropdown-item">
                       <i className="bi bi-person-circle"></i>
                       <div className="content-div">
