@@ -166,13 +166,47 @@ export default function TemplateDetail() {
 
   const handleSubscribe = async () => {
     if (!checkAuth() || subLoading) return;
+
     setSubLoading(true);
-    const res = await privateApi.post(
-      `/pop/users/${post.user.id}/subscribe/`
-    );
-    setIsSubscribed(res.data.subscribed);
-    setSubLoading(false);
+
+    try {
+      const res = await privateApi.post(
+        `/pop/users/${post.user.id}/subscribe/`
+      );
+
+      const backendSubscribed = res.data.subscribed;
+
+      setPost((prev) => {
+        if (!prev) return prev;
+
+        let newCount = prev.user.followers_count;
+
+        if (backendSubscribed && !isSubscribed) {
+          // follow hua
+          newCount += 1;
+        } else if (!backendSubscribed && isSubscribed) {
+          // unfollow hua
+          newCount -= 1;
+        }
+
+        return {
+          ...prev,
+          user: {
+            ...prev.user,
+            followers_count: Math.max(newCount, 0),
+          },
+        };
+      });
+
+      // ✅ sync frontend state with backend
+      setIsSubscribed(backendSubscribed);
+    } catch (err) {
+      console.error("Subscribe error", err);
+    } finally {
+      setSubLoading(false);
+    }
   };
+
 
   const handleBack = () => {
     window.history.length > 1
@@ -286,18 +320,19 @@ export default function TemplateDetail() {
             <div className="code-header">
               <h5>Template Code</h5>
               <button
-                  className={`copy-btn ${copied ? "copied" : ""}`}
-                  onClick={handleCopy}
-                  disabled={copyDisabled}
-                >
-                  {copyDisabled ? "Copied" : copied ? "Copied ✓" : "Copy Code"}
-                </button>
-
+                className={`copy-btn ${copied ? "copied" : ""}`}
+                onClick={handleCopy}
+                disabled={copyDisabled}
+              >
+                {copyDisabled ? "Copied" : copied ? "Copied ✓" : "Copy Code"}
+              </button>
             </div>
-            <pre>
+
+            <pre className="code-scroll">
               <code>{post.code_content}</code>
             </pre>
           </div>
+
 
           {/* REVIEW */}
           <div className="review-section">
@@ -333,6 +368,62 @@ export default function TemplateDetail() {
 
         </div>
       </section>
+
+      <style>
+        {`
+          /* CODE CARD */
+.code-card {
+  background: #0b1220;
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 30px;
+}
+
+/* PRE SCROLL AREA */
+.code-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 16px;
+  border-radius: 12px;
+  color: #e5e7eb;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+/* CODE FONT */
+.code-scroll code {
+  font-family: "Fira Code", monospace;
+}
+
+/* ===== CUSTOM SCROLLBAR (CHROME / EDGE) ===== */
+.code-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.code-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.code-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.code-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+
+/* ===== FIREFOX SUPPORT ===== */
+.code-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
+}
+
+        `}
+      </style>
     </>
   );
 }
