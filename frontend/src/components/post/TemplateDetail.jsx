@@ -227,9 +227,7 @@ export default function TemplateDetail() {
 
 
   const handleBack = () => {
-    window.history.length > 1
-      ? navigate(-1)
-      : navigate("/templates/gallery");
+    navigate("/templates/gallery");
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -291,7 +289,21 @@ export default function TemplateDetail() {
 
           {/* TITLE */}
           <div className="title-block mt-4">
-            <h2 className="template-title">{post.title}</h2>
+            <h2 className="template-title">
+              {post.title}
+
+              <button
+                className="inline-open-btn"
+                title="View Template"
+                onClick={() =>
+                  window.open(`/template-view/${post.slug}`, "_blank")
+                }
+              >
+                <i className="bi bi-box-arrow-up-right"></i>
+                <span>View</span>
+              </button>
+            </h2>
+
             <p>{post.description}</p>
           </div>
 
@@ -438,6 +450,55 @@ export default function TemplateDetail() {
 .code-scroll {
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
+}
+
+.template-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+}
+
+/* Inline View Button */
+.inline-open-btn {
+  margin-top: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #6366f1;
+
+  border-radius: 999px;
+
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Icon smaller */
+.inline-open-btn i {
+  font-size: 13px;
+}
+
+/* Hover */
+.inline-open-btn:hover {
+  background: #f1f5f9;
+  color: #475569;
+
+  border: 1px solid #e2e8f0;
+  transform: translateY(-1px);
+}
+
+/* Mobile: text hide */
+@media (max-width: 576px) {
+  .inline-open-btn span {
+    display: none;
+  }
 }
 
         `}

@@ -83,7 +83,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
             "copy_count",
             "is_liked",
             "user_rating",
-            "user", "category"
+            "user", "category", "slug"
         ]
 
     def get_avg_rating(self, obj):

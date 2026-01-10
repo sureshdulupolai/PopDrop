@@ -1,0 +1,140 @@
+.template-preview-page {
+  min-height: 100vh;
+  background: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  margin-top: 65px;
+}
+
+/* TOP BAR */
+.preview-topbar {
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  display: grid;
+  grid-template-columns: 140px 1fr 140px;
+  align-items: center;
+
+  padding: 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* LEFT / CENTER / RIGHT */
+.topbar-left,
+.topbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.topbar-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* BACK BUTTON (FIXED WIDTH) */
+.back-btn {
+  width: 110px;
+  height: 36px;
+
+  background: #e5e7eb;
+  color: #111827;
+
+  border: none;
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #d1d5db;
+}
+
+/* TITLE */
+.preview-title {
+  max-width: 100%;
+  font-weight: 600;
+  font-size: 14px;
+  color: #334155;
+  text-transform: capitalize;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* PREVIEW AREA */
+.preview-wrapper {
+  flex: 1;
+  padding: 28px;
+  display: flex;
+  justify-content: center;
+}
+
+.preview-wrapper iframe {
+  width: 100%;
+  max-width: 1280px;
+  height: calc(100vh - 120px);
+
+  border: none;
+  border-radius: 18px;
+  background: #ffffff;
+
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+}
+
+/* LOADER */
+.preview-loader {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f8fafc;
+  color: #475569;
+}
+
+.spinner {
+  width: 38px;
+  height: 38px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin-bottom: 14px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .preview-topbar {
+    grid-template-columns: 100px 1fr 100px;
+    padding: 0 12px;
+  }
+
+  .back-btn {
+    width: 90px;
+    font-size: 12px;
+  }
+
+  .preview-wrapper {
+    padding: 12px;
+  }
+
+  .preview-wrapper iframe {
+    height: calc(100vh - 96px);
+    border-radius: 12px;
+  }
+}

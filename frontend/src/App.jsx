@@ -19,6 +19,7 @@ import MyTemplates from "./components/post/MyTemplates";
 import AppCompany from "./components/Company/pathCompany";
 import JoinTeam from "./components/Company/formCP";
 import ContactUs from "./pages/ContactUs";
+import TemplateView from "./components/post/TemplateView";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -72,6 +73,7 @@ function App() {
 
         <Route path="/company" element={<AppCompany />} />
         <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/template-view/:slug" element={<TemplateView />} />
         <Route
             path="/join-team"
             element={
