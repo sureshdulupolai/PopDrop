@@ -19,9 +19,18 @@ class SignupView(APIView):
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
-            data = serializer.save()
-            return Response({"status": True, "data": data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            profile = serializer.save()
+            return Response({
+                "status": True,
+                "data": {
+                    "user_id": profile.user.id,
+                    "email": profile.user.email,
+                    "category": profile.category
+                }
+            }, status=status.HTTP_201_CREATED)
+
+        # DRF sends proper validation errors
+        return Response({"status": False, "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 # -------------------------
 # LOGIN API

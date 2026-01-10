@@ -3,15 +3,14 @@ from django.contrib.auth import authenticate
 from .models import User, UserProfile, CustomerReview, TeamMember, TeamAppCategory, TeamApplication, ContactRequest
 from .utils import send_otp_email
 import random
+from django.db import IntegrityError
 
 # -------------------------
 # SIGNUP SERIALIZER
 # -------------------------
 class SignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    category = serializers.ChoiceField(
-        choices=UserProfile.CATEGORY_CHOICES
-    )
+    category = serializers.ChoiceField(choices=UserProfile.CATEGORY_CHOICES)
 
     class Meta:
         model = User
@@ -20,38 +19,44 @@ class SignupSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         category = validated_data.pop("category")
 
-        # Create user
-        user = User.objects.create_user(
-            email=validated_data["email"],
-            fullname=validated_data["fullname"],
-            mobile=validated_data.get("mobile"),
-            password=validated_data["password"]
-        )
+        # Check if email exists
+        if User.objects.filter(email=validated_data["email"]).exists():
+            raise serializers.ValidationError({"email": "Email already exists"})
 
-        # Create profile
+        # Check if mobile exists
+        mobile = validated_data.get("mobile")
+        if mobile and User.objects.filter(mobile=mobile).exists():
+            raise serializers.ValidationError({"mobile": "Mobile number already exists"})
+
+        try:
+            user = User.objects.create_user(
+                email=validated_data["email"],
+                fullname=validated_data["fullname"],
+                mobile=mobile,
+                password=validated_data["password"]
+            )
+        except IntegrityError as e:
+            raise serializers.ValidationError({"detail": str(e)})
+
         profile = UserProfile.objects.create(
             user=user,
             category=category
         )
 
-        # 👉 ONLY developer gets admin panel access
+        # Only developer gets admin access
         if category == "developer":
             user.is_staff = True
-            user.is_superuser = True   # 🔥 IMPORTANT
+            user.is_superuser = True
             user.save()
             profile.is_verified = True
             profile.save()
-            
+
         # OTP
         otp = str(random.randint(100000, 999999))
         profile.set_otp(otp)
         send_otp_email(user.email, otp)
 
-        return {
-            "user_id": user.id,
-            "email": user.email,
-            "category": category,
-        }
+        return profile  # ✅ Return the profile instance, not a dict
 
 # -------------------------
 # LOGIN SERIALIZER

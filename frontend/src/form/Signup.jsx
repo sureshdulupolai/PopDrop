@@ -58,34 +58,57 @@ const Signup = ({ role }) => {
 
   const submitSignup = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(""); // clear previous error
+    setLoading(true); // start loading
 
+    // Frontend password mismatch check
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match");
+      setLoading(false);
       return;
     }
 
-    try {
-      const payload = {
-        fullname: form.fullname,
-        email: form.email,
-        mobile: form.mobile,
-        password: form.password,
-        category: role // 🔥 FIXED ROLE
-      };
+    const payload = {
+      fullname: form.fullname,
+      email: form.email,
+      mobile: form.mobile,
+      password: form.password,
+      category: role
+    };
 
+    try {
       const res = await signupUser(payload);
 
-      navigate("/verify-otp", {
-        state: {
-          user_id: res.data.data.user_id,
-          email: res.data.data.email
-        }
-      });
-    } catch {
-      setError("Signup failed");
+      // Check backend response
+      if (res.data.status) {
+        // Success → navigate to OTP page
+        navigate("/verify-otp", {
+          state: {
+            user_id: res.data.data.user_id,
+            email: res.data.data.email
+          }
+        });
+      } else {
+        // Backend returned validation errors
+        // Flatten the first error message from serializer
+        const backendError = res.data.errors
+          ? Object.values(res.data.errors).flat()[0]
+          : res.data.message || "Signup failed";
+
+        setError(backendError);
+      }
+    } catch (err) {
+      // Network or server error
+      const networkError =
+        err.response?.data?.errors
+          ? Object.values(err.response.data.errors).flat()[0]
+          : err.response?.data?.message || "Signup failed";
+      setError(networkError);
+    } finally {
+      setLoading(false); // stop loading
     }
   };
+
 
   const content = ROLE_TEXT[role];
 
@@ -104,8 +127,18 @@ const Signup = ({ role }) => {
               <p className="text-muted">{content.subtitle}</p>
             </div>
 
-            {error && <p className="text-danger">{error}</p>}
-
+            {error && (
+              <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                {error}
+                <button
+                  type="button"
+                  className="btn-close"
+                  aria-label="Close"
+                  onClick={() => setError("")}
+                ></button>
+              </div>
+            )}
+            
             <form onSubmit={submitSignup}>
               <input
                 className="form-control mb-3"
@@ -166,7 +199,14 @@ const Signup = ({ role }) => {
               </div>
 
               <button className="signup-btn w-100" disabled={loading}>
-                Sign Up as {role.charAt(0).toUpperCase() + role.slice(1)}
+                {loading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Signing up...
+                  </>
+                ) : (
+                  `Sign Up as ${role.charAt(0).toUpperCase() + role.slice(1)}`
+                )}
               </button>
             </form>
           </div>

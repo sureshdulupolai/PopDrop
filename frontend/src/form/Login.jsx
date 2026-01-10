@@ -117,12 +117,16 @@ const Login = ({ setIsLoggedIn }) => {
               </div>
 
               <div className="d-flex gap-3">
-                <button type="button" className="back-btn" onClick={() => navigate(-1)}>
-                  Back
-                </button>
 
                 <button type="submit" className="login-btn" disabled={loading}>
-                  {loading ? "Logging in..." : "Log in"}
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Logging in...
+                    </>
+                  ) : (
+                    "Log in"
+                  )}
                 </button>
               </div>
 
