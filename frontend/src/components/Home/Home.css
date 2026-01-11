@@ -714,17 +714,60 @@ html, body {
 
 /* Tablets */
 @media (max-width: 768px) {
-  .pd-review-card { flex: 0 0 220px; } /* smaller for tablet */
-  .pd-review-header h2 { font-size: 32px; }
+  .pd-review-card {
+    flex: 0 0 260px;     /* FIXED width → balanced */
+    padding: 24px;      /* height naturally badhegi */
+  }
+
+  .pd-review-header h2 {
+    font-size: 30px;
+  }
+
+  .pd-review-card p {
+    font-size: 15px;
+    line-height: 1.7;   /* readable */
+  }
 }
+
 
 /* Phones */
 @media (max-width: 480px) {
-  .pd-review-card { flex: 0 0 85%; margin: 0 auto; } /* centered */
-  .pd-review-header h2 { font-size: 28px; }
-  .pd-review-slider { padding: 0 5%; } /* more breathing room */
-  .pd-review-track { gap: 15px; }
+  .pd-review-slider {
+    padding: 0 16px;
+  }
+
+  .pd-review-track {
+    gap: 18px;
+  }
+
+  .pd-review-card {
+    flex: 0 0 92%;        /* controlled width */
+    max-width: 340px;    /* ❗ important – zyada wide nahi */
+    padding: 26px 22px;  /* height increase */
+    border-radius: 18px;
+  }
+
+  .pd-review-card h3 {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .pd-stars {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .pd-review-card p {
+    font-size: 15px;
+    line-height: 1.75;   /* card tall + premium feel */
+  }
+
+  .pd-review-header h2 {
+    font-size: 26px;
+    padding: 0 10px;
+  }
 }
+
 
 
 
