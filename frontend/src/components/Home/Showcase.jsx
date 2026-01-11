@@ -50,10 +50,9 @@ export default function Showcase() {
                   <img
                     src={whiteHome}
                     alt="Popup preview"
-                    className="popup-img"
+                    className="popup-img img-right-adjust"
                   />
                 </div>
-
               </div>
             </div>
           </section>

@@ -21,24 +21,6 @@ html, body {
   text-align: center;
 }
 
-.hero-title {
-  font-weight: 900;
-  font-size: 82px;
-  line-height: 1.03;
-  letter-spacing: -1.5px;
-  color: #7b2ff7;
-  text-shadow: 0 6px 18px rgba(123, 47, 247, 0.18);
-}
-
-.hero-title span {
-  background: linear-gradient(92deg, #7b2ff7 0%, #d441ff 40%, #ff5b3d 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  position: relative;
-  font-weight: 900;
-}
-
 /* Shine effect */
 .hero-title span::after {
   content: "";
@@ -49,6 +31,47 @@ html, body {
   height: 5% !important;
   pointer-events: none;
 }
+
+.hero-title {
+  font-weight: 900;
+  font-size: 82px;
+  line-height: 1.03;
+  letter-spacing: -1.5px;
+  color: #7b2ff7;
+  text-shadow: 0 6px 18px rgba(123, 47, 247, 0.18);
+}
+
+/* Gradient span */
+.hero-title span {
+  background: linear-gradient(92deg, #7b2ff7 0%, #d441ff 40%, #ff5b3d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  font-weight: 900;
+  display: inline-block; /* ensure it respects positioning */
+}
+
+/* ================= RESPONSIVE FIX ================= */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 52px;       /* reduce font on mobile */
+    line-height: 1.1;
+  }
+  .hero-title span {
+    display: block;        /* put "supercharged" on new line */
+    text-align: center;    /* center align */
+    margin-left: 0;        /* reset any horizontal shift */
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    margin-top: -100px;
+    font-size: 40px !important;       /* further smaller on phone */
+  }
+}
+
 
 /* ==========================================
    SHOWCASE BOX
@@ -112,21 +135,32 @@ html, body {
   margin-left: 0 !important;
 }
 
+/* Base: center image on mobile */
+.img-right-adjust {
+  display: block;
+  margin: 20px auto 0 auto; /* top 20px, auto left/right */
+}
+
+/* Tablet: slight right shift */
 @media (min-width: 768px) {
-  .img-left {
-    margin-left: 40px !important;
+  .img-right-adjust {
+    margin-left: 20px; 
+    margin-right: 0;
   }
 }
 
+/* Desktop: more right shift */
 @media (min-width: 992px) {
-  .img-left {
-    margin-left: 80px !important;
+  .img-right-adjust {
+    margin-left: 60px;
+    margin-right: 0;
   }
 }
 
 @media (min-width: 1200px) {
-  .img-left {
-    margin-left: 140px !important;
+  .img-right-adjust {
+    margin-left: 100px;
+    margin-right: 0;
   }
 }
 
@@ -268,18 +302,39 @@ html, body {
     font-size: 15px;
 }
 
+
+/* Desktop (default) */
 .editor-mockup {
     width: 100%;
     max-width: 520px;
     border-radius: 28px;
     overflow: hidden;
     box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    margin: 0 auto; /* Center on desktop */
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+    .editor-mockup {
+        margin: 20px auto 0 10%; /* Moves slightly left with top margin */
+        max-width: 450px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    .editor-mockup {
+        margin: 20px auto 0 5%; /* More left shift on small screens */
+        max-width: 350px;
+        position: relative;
+        left: -22px !important;
+    }
 }
 
 .editor-video {
     width: 100%;
-    border-radius: 28px;
     display: block;
+    border-radius: 28px;
 }
 
 /**/ 
@@ -570,12 +625,13 @@ html, body {
 
 /**/
 
-
-/* SECTION */
+/* ==========================================
+   REVIEW SECTION
+========================================== */
 .pd-review-section {
   width: 100%;
-  padding: 70px 0 40px;
-  background: #ffffff; /* full white background */
+  padding: 10px 0 40px;
+  background: #ffffff;
 }
 
 /* HEADER */
@@ -595,6 +651,7 @@ html, body {
 .pd-review-slider {
   width: 100%;
   overflow: hidden;
+  padding: 0 10px; /* add side padding for mobile */
 }
 
 .pd-review-track {
@@ -612,7 +669,8 @@ html, body {
   border: 1px solid #f1f1f1;
   border-radius: 16px;
   padding: 22px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.05); /* light clean shadow */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  box-sizing: border-box;
 }
 
 .pd-review-card h3 {
@@ -648,18 +706,24 @@ html, body {
 }
 
 /* RESPONSIVE */
+
+/* Medium screens (laptop) */
 @media (max-width: 1100px) {
   .pd-review-card { flex: 0 0 300px; }
 }
 
+/* Tablets */
 @media (max-width: 768px) {
-  .pd-review-card { flex: 0 0 260px; }
+  .pd-review-card { flex: 0 0 220px; } /* smaller for tablet */
   .pd-review-header h2 { font-size: 32px; }
 }
 
+/* Phones */
 @media (max-width: 480px) {
-  .pd-review-card { flex: 0 0 80%; }
+  .pd-review-card { flex: 0 0 85%; margin: 0 auto; } /* centered */
   .pd-review-header h2 { font-size: 28px; }
+  .pd-review-slider { padding: 0 5%; } /* more breathing room */
+  .pd-review-track { gap: 15px; }
 }
 
 
