@@ -71,6 +71,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
     review_count = serializers.IntegerField(source="reviews.count", read_only=True)
     user_rating = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()   
 
     class Meta:
         model = Post
@@ -83,6 +84,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
             "copy_count",
             "is_liked",
             "user_rating",
+            "is_owner",
             "user", "category", "slug"
         ]
 
@@ -108,3 +110,9 @@ class PostDetailSerializer(serializers.ModelSerializer):
             "id": obj.category.id,
             "name": obj.category.name
         }
+    
+    def get_is_owner(self, obj):   # ✅ METHOD (THIS WAS MISSING)
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return obj.user == request.user

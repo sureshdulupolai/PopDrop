@@ -1,12 +1,33 @@
 import { useEffect, useState } from "react";
 import privateApi from "../../api/axiosPrivate";
 import TemplateCard from "./TemplateCard";
+import AuthErrorScreen from "../common/AuthErrorScreen";
 
 export default function MyTemplates() {
   const [templates, setTemplates] = useState([]);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔐 auth + role check
+  const refresh = localStorage.getItem("refresh_token");
+  const user = localStorage.getItem("user");
+  const role = user ? JSON.parse(user).category : null;
+
+  // ❌ Not logged in OR wrong role
+  if (!refresh || !["designer", "developer"].includes(role)) {
+    return (
+      <AuthErrorScreen
+        title="Access Denied"
+        message="This page is only available for designers and developers."
+        actionText="Go Home"
+        actionLink="/"
+        secondaryActionText="View Templates"
+        secondaryActionLink="/templates/gallery"
+      />
+    );
+  }
+
+  // ✅ Fetch data only if allowed
   useEffect(() => {
     privateApi
       .get("/pop/posts/my/page/")

@@ -7,7 +7,7 @@ import "./Navbar.css";
 export default function Navbar({ isLoggedIn, onLogout, userRole }) {
   const navigate = useNavigate();
   const [showTemplates, setShowTemplates] = useState(false);
-
+  // console.log(userRole);
   return (
     <>
       <nav className="navbar navbar-expand-lg custom-navbar fixed-top">
@@ -89,15 +89,20 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
               </li>
 
               <li className="nav-item">
-                <Link className="nav-link" to="/review">Review</Link>
-              </li>
-
-              <li className="nav-item">
                 <Link className="nav-link" to="/company">Company</Link>
               </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/contact-us">Contact</Link>
-              </li>
+
+              {isLoggedIn && (
+                <>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/review">Review</Link>
+                  </li>
+
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/contact-us">Contact</Link>
+                  </li>
+                </>
+              )}
             </ul>
 
             {/* Right Actions */}

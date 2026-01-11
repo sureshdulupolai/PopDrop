@@ -20,6 +20,7 @@ import AppCompany from "./components/Company/pathCompany";
 import JoinTeam from "./components/Company/formCP";
 import ContactUs from "./pages/ContactUs";
 import TemplateView from "./components/post/TemplateView";
+import AuthErrorScreen from "./components/common/AuthErrorScreen";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -56,11 +57,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<HomePageHere isLoggedIn={isLoggedIn} />} />
-        <Route path="/signup" element={<Signup role="normal" />} />
-        <Route path="/signup/designer" element={<Signup role="designer" />} />
-        <Route path="/signup/developer" element={<Signup role="developer" />} />
         <Route path="/verify-otp" element={<OtpVerifyHere />} />
-        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/review" element={<CustomerReviews isLoggedIn={isLoggedIn} />} />
         <Route path="/templates/gallery" element={<TemplateGallery />} />
         <Route path="/templates/upload" element={<UploadTemplate />} />
@@ -82,6 +79,94 @@ function App() {
               </PrivateRoute>
             }
           />
+
+        <Route
+          path="/signup"
+          element={
+            isLoggedIn ? (
+              <AuthErrorScreen
+                title="Already Logged In"
+                message="You are already logged in. Please logout to create a new account."
+                actionText="Go to Profile"
+                actionLink="/profile"
+                secondaryActionText="Go Home"
+                secondaryActionLink="/"
+              />
+            ) : (
+              <Signup role="normal" />
+            )
+          }
+        />
+
+        <Route
+          path="/signup/designer"
+          element={
+            isLoggedIn ? (
+              <AuthErrorScreen
+                title="Access Denied"
+                message="You are already logged in as a user. Logout to signup as designer."
+                actionText="Logout & Signup"
+                actionLink="/profile"
+              />
+            ) : (
+              <Signup role="designer" />
+            )
+          }
+        />
+
+        <Route
+          path="/signup/developer"
+          element={
+            isLoggedIn ? (
+              <AuthErrorScreen
+                title="Access Denied"
+                message="You are already logged in. Developer signup requires logout."
+                actionText="Go to Profile"
+                actionLink="/profile"
+              />
+            ) : (
+              <Signup role="developer" />
+            )
+          }
+        />
+
+        <Route
+          path="/login"
+          element={
+            isLoggedIn ? (
+              <AuthErrorScreen
+                title="Already Logged In"
+                message="You are already logged in. Logout to login with another account."
+                actionText="Go to Profile"
+                actionLink="/profile"
+                secondaryActionText="Go Home"
+                secondaryActionLink="/"
+              />
+            ) : (
+              <Login setIsLoggedIn={setIsLoggedIn} />
+            )
+          }
+        />
+
+        <Route
+          path="*"
+          element={
+            <AuthErrorScreen
+              title="Page Not Found"
+              message={
+                <>
+                  The page <strong>{window.location.pathname}</strong> does not exist.
+                </>
+              }
+              actionText="Go Home"
+              actionLink="/"
+              secondaryActionText="Browse Templates"
+              secondaryActionLink="/templates/gallery"
+            />
+          }
+        />
+
+
 
       </Routes>
 

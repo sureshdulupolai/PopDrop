@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import privateApi from "../../api/axiosPrivate";
 import { useNavigate, useParams } from "react-router-dom";
+import AuthErrorScreen from "../common/AuthErrorScreen";
 
 const UploadTemplate = ({ edit = false }) => {
   const { slug } = useParams();
@@ -9,6 +10,7 @@ const UploadTemplate = ({ edit = false }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [forbidden, setForbidden] = useState(false); // ✅ NEW
 
   const [form, setForm] = useState({
     title: "",
@@ -37,22 +39,28 @@ const UploadTemplate = ({ edit = false }) => {
     });
   }, []);
 
-  /* ✏️ EDIT MODE DATA */
+  /* ✏️ EDIT MODE DATA (OWNER CHECK VIA BACKEND) */
   useEffect(() => {
     if (edit && slug) {
-      privateApi.get(`/pop/posts/${slug}/`).then((res) => {
-        const data = res.data;
+      privateApi
+        .get(`/pop/posts/${slug}/`)
+        .then((res) => {
+          const data = res.data;
 
-        setForm({
-          title: data.title || "",
-          description: data.description || "",
-          category: String(data.category?.id), // ✅ FIX
-          code_content: data.code_content || "",
+          setForm({
+            title: data.title || "",
+            description: data.description || "",
+            category: String(data.category?.id),
+            code_content: data.code_content || "",
+          });
+
+          setExistingDesktop(data.desktop_image || null);
+          setExistingMobile(data.mobile_image || null);
+        })
+        .catch(() => {
+          // ❌ not owner OR slug invalid
+          setForbidden(true);
         });
-
-        setExistingDesktop(data.desktop_image || null);
-        setExistingMobile(data.mobile_image || null);
-      });
     }
   }, [edit, slug]);
 
@@ -74,7 +82,12 @@ const UploadTemplate = ({ edit = false }) => {
       } else {
         await privateApi.post("/pop/upload/", fd);
         setSuccessMsg("🎉 Template uploaded successfully!");
-        setForm({ title: "", description: "", category: "", code_content: "" });
+        setForm({
+          title: "",
+          description: "",
+          category: "",
+          code_content: "",
+        });
         setDesktop(null);
         setMobile(null);
       }
@@ -84,6 +97,18 @@ const UploadTemplate = ({ edit = false }) => {
       setLoading(false);
     }
   };
+
+  /* 🚫 NOT OWNER / INVALID EDIT ACCESS */
+  if (forbidden) {
+    return (
+      <AuthErrorScreen
+        title="Access denied"
+        message="You are not allowed to edit this template."
+        actionText="Go to Gallery"
+        actionLink="/templates/gallery"
+      />
+    );
+  }
 
   return (
     <div className="upload-page-wrapper">

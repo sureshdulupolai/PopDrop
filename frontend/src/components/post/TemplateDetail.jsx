@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import privateApi from "../../api/axiosPrivate";
+import AuthErrorScreen from "../common/AuthErrorScreen";
 import "./templateDetail.css";
 
 export default function TemplateDetail() {
@@ -17,6 +18,7 @@ export default function TemplateDetail() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subLoading, setSubLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
+  const [notFound, setNotFound] = useState(false);
 
   const currentUserId = localStorage.getItem("user_id")
     ? Number(localStorage.getItem("user_id"))
@@ -32,29 +34,28 @@ export default function TemplateDetail() {
   };
 
   // 🔐 BLOCK COPY / INSPECT / RIGHT CLICK
- useEffect(() => {
-  const blockKeys = (e) => {
-    if (
-      (e.ctrlKey && ["c", "u", "s"].includes(e.key.toLowerCase())) ||
-      (e.ctrlKey && e.shiftKey && ["i", "j"].includes(e.key.toLowerCase())) ||
-      e.key === "F12"
-    ) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  };
+  useEffect(() => {
+    const blockKeys = (e) => {
+      if (
+        (e.ctrlKey && ["c", "u", "s"].includes(e.key.toLowerCase())) ||
+        (e.ctrlKey && e.shiftKey && ["i", "j"].includes(e.key.toLowerCase())) ||
+        e.key === "F12"
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
 
-  const blockRightClick = (e) => e.preventDefault();
+    const blockRightClick = (e) => e.preventDefault();
 
-  document.addEventListener("keydown", blockKeys);
-  document.addEventListener("contextmenu", blockRightClick);
+    document.addEventListener("keydown", blockKeys);
+    document.addEventListener("contextmenu", blockRightClick);
 
-  return () => {
-    document.removeEventListener("keydown", blockKeys);
-    document.removeEventListener("contextmenu", blockRightClick);
-  };
-}, []);
-
+    return () => {
+      document.removeEventListener("keydown", blockKeys);
+      document.removeEventListener("contextmenu", blockRightClick);
+    };
+  }, []);
 
   // 🔍 DEVTOOLS DETECTION
   useEffect(() => {
@@ -81,10 +82,8 @@ export default function TemplateDetail() {
       document.removeEventListener("visibilitychange", handleVisibility);
   }, []);
 
-  // 🔄 FETCH TEMPLATE
+  // 🔄 FETCH TEMPLATE (NO AUTH CHECK HERE)
   useEffect(() => {
-    if (!checkAuth()) return;
-
     const fetchPost = async () => {
       try {
         const res = await privateApi.get(`/pop/posts/${slug}/`);
@@ -92,7 +91,11 @@ export default function TemplateDetail() {
         setCopyCount(res.data.copy_count || 0);
         setUserRating(res.data.user_rating);
       } catch (err) {
-        navigate("/login", { replace: true });
+        if (err.response?.status === 404) {
+          setNotFound(true);
+        } else {
+          setNotFound(true);
+        }
       } finally {
         setLoading(false);
       }
@@ -148,10 +151,8 @@ export default function TemplateDetail() {
         { rating: value }
       );
 
-      // ✅ user ka rating
       setUserRating(res.data.rating);
 
-      // ✅ post ka avg rating update
       setPost((prev) => ({
         ...prev,
         avg_rating: res.data.avg_rating,
@@ -162,14 +163,19 @@ export default function TemplateDetail() {
     }
   };
 
-
   // 📋 COPY (ONLY BUTTON)
   const handleCopy = async () => {
     if (!post?.code_content || copyDisabled) return;
 
+    // Copy code to clipboard
     await navigator.clipboard.writeText(post.code_content);
-    privateApi.post(`/pop/posts/${post.id}/copy/`);
 
+    // Backend ko notify karo, yahan authentication optional
+    privateApi.post(`/pop/posts/${post.id}/copy/`).catch((err) => {
+      console.error("Copy count update failed", err);
+    });
+
+    // Frontend state update
     setCopyCount((p) => p + 1);
     setCopied(true);
     setCopyDisabled(true);
@@ -181,6 +187,7 @@ export default function TemplateDetail() {
       localStorage.removeItem(`copy_${post.id}`);
     }, 5 * 60 * 1000);
   };
+
 
   const handleSubscribe = async () => {
     if (!checkAuth() || subLoading) return;
@@ -200,10 +207,8 @@ export default function TemplateDetail() {
         let newCount = prev.user.followers_count;
 
         if (backendSubscribed && !isSubscribed) {
-          // follow hua
           newCount += 1;
         } else if (!backendSubscribed && isSubscribed) {
-          // unfollow hua
           newCount -= 1;
         }
 
@@ -216,7 +221,6 @@ export default function TemplateDetail() {
         };
       });
 
-      // ✅ sync frontend state with backend
       setIsSubscribed(backendSubscribed);
     } catch (err) {
       console.error("Subscribe error", err);
@@ -225,13 +229,29 @@ export default function TemplateDetail() {
     }
   };
 
-
   const handleBack = () => {
     navigate("/templates/gallery");
   };
 
   if (loading) return <div className="loading">Loading...</div>;
-  if (!post) return <div>No post found</div>;
+
+  if (notFound) {
+    return (
+      <AuthErrorScreen
+        title="Template Not Found"
+        message={
+          <>
+            No template exists for the URL slug <br />
+            <strong>{slug}</strong>.
+          </>
+        }
+        actionText="Browse Templates"
+        actionLink="/templates/gallery"
+        secondaryActionText="Go Home"
+        secondaryActionLink="/"
+      />
+    );
+  }
 
   return (
     <>

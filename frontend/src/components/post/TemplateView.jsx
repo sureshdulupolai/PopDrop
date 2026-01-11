@@ -1,22 +1,28 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import privateApi from "../../api/axiosPrivate";
+import AuthErrorScreen from "../common/AuthErrorScreen";
 import "./templateView.css";
 
 export default function TemplateView() {
   const { slug } = useParams();
-  const navigate = useNavigate();
 
   const [html, setHtml] = useState("");
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const fetchTemplate = async () => {
       try {
         const res = await privateApi.get(`/pop/posts/${slug}/`);
-        setHtml(res.data.code_content);
-      } catch {
-        setHtml("<h1 style='text-align:center'>Template not found</h1>");
+
+        if (!res.data?.code_content) {
+          setNotFound(true);
+        } else {
+          setHtml(res.data.code_content);
+        }
+      } catch (err) {
+        setNotFound(true);
       } finally {
         setLoading(false);
       }
@@ -25,12 +31,32 @@ export default function TemplateView() {
     fetchTemplate();
   }, [slug]);
 
+  /* loader */
   if (loading) {
     return (
       <div className="preview-loader">
         <div className="spinner"></div>
         <p>Loading template preview…</p>
       </div>
+    );
+  }
+
+  /* ❌ slug not found */
+  if (notFound) {
+    return (
+      <AuthErrorScreen
+        title="Template Not Found"
+        message={
+          <>
+            The template with slug <strong>{slug}</strong> does not exist
+            or may have been removed.
+          </>
+        }
+        actionText="Browse Templates"
+        actionLink="/templates/gallery"
+        secondaryActionText="Go Home"
+        secondaryActionLink="/"
+      />
     );
   }
 
