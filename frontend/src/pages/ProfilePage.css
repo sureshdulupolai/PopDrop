@@ -1,0 +1,117 @@
+.profile-page {
+          min-height: 105vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #f4f6fa;
+        }
+        .profile-card {
+          position: relative;
+          width: 420px;
+          background: #fff;
+          border-radius: 26px;
+          padding: 36px 34px;
+          text-align: center;
+          box-shadow: 0 25px 60px rgba(0,0,0,.12);
+          overflow: hidden;
+        }
+        .rainbow-border {
+          position: absolute;
+          inset: 0;
+          padding: 4px;
+          border-radius: 26px;
+          background: linear-gradient(45deg, #ff6ec4, #7873f5, #4ade80, #facc15);
+          -webkit-mask: 
+            linear-gradient(#fff 0 0) content-box, 
+            linear-gradient(#fff 0 0);
+          -webkit-mask-composite: destination-out;
+                  mask-composite: exclude; 
+          pointer-events: none;
+        }
+        .profile-avatar {
+          position: relative;
+          width: 110px;
+          height: 110px;
+          margin: 0 auto;
+          z-index: 1;
+        }
+        .profile-avatar img {
+          width: 110px;
+          height: 110px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #111;
+        }
+        .avatar-edit {
+          position: absolute;
+          bottom: 4px;
+          right: 4px;
+          width: 32px;
+          height: 32px;
+          background: #000;
+          color: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 14px;
+        }
+        .verified-badge {
+          margin: 14px auto 26px;
+          display: inline-block;
+          padding: 7px 18px;
+          border-radius: 20px;
+          font-size: 13px;
+          background: ${profile.is_verified ? "#e9fff4" : "#ffe9e9"};
+          color: ${profile.is_verified ? "#0d8f57" : "#d32f2f"};
+          font-weight: 500;
+        }
+        .field {
+          text-align: left;
+          margin-bottom: 22px;
+        }
+        .field label {
+          font-size: 12px;
+          color: #888;
+        }
+        .field input {
+          width: 100%;
+          border: none;
+          border-bottom: 2px solid #e5e5e5;
+          padding: 6px 2px;
+          font-size: 15px;
+          outline: none;
+          background: transparent;
+          cursor: text;
+        }
+        .cooldown {
+          font-size: 13px;
+          color: #d35400;
+          margin-top: 10px;
+        }
+        .save-btn {
+          margin-top: 26px;
+          width: 100%;
+          padding: 13px;
+          border-radius: 30px;
+          font-size: 15px;
+          border: 1.5px solid #f65b3b;
+          background: transparent;
+          color: #f65b3b;
+          font-weight: 500;
+          cursor: pointer;
+          transition: .25s;
+        }
+        .save-btn:hover {
+          background: #f65b3b;
+          color: #fff;
+        }
+        .blocked-message {
+          background: #ffebee;
+          color: #c62828;
+          padding: 10px 14px;
+          border-radius: 12px;
+          margin-bottom: 20px;
+          font-weight: 500;
+        }

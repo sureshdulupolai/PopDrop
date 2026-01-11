@@ -121,55 +121,41 @@ class UserDetailSerializer(serializers.ModelSerializer):
 # PROFILE SERIALIZER
 # -------------------------
 class ProfileSerializer(serializers.ModelSerializer):
-    # READ from User model
     email = serializers.EmailField(source="user.email", read_only=True)
     fullname = serializers.CharField(source="user.fullname")
     mobile = serializers.CharField(source="user.mobile")
-    profile_image = serializers.SerializerMethodField()
+    profile_image = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = UserProfile
-        fields = [
-            "email",
-            "fullname",
-            "mobile",
-            "category",
-            "profile_image",
-            "is_verified",
-            "next_profile_update_allowed_at",
-        ]
+        fields = ["email", "fullname", "mobile", "category", "profile_image", "is_verified", "next_profile_update_allowed_at"]
 
     def update(self, instance, validated_data):
-        # user data
         user_data = validated_data.pop("user", {})
 
-        # cooldown check
+        # Cooldown check
         if not instance.can_update_profile():
             raise serializers.ValidationError({
                 "detail": "Profile update not allowed yet",
                 "next_allowed_at": instance.next_profile_update_allowed_at
             })
 
-        # update USER table
-        instance.user.fullname = user_data.get(
-            "fullname", instance.user.fullname
-        )
-        instance.user.mobile = user_data.get(
-            "mobile", instance.user.mobile
-        )
+        # Update user fields
+        instance.user.fullname = user_data.get("fullname", instance.user.fullname)
+        instance.user.mobile = user_data.get("mobile", instance.user.mobile)
         instance.user.save()
 
-        # update PROFILE table
-        instance.category = validated_data.get(
-            "category", instance.category
-        )
+        # Update profile fields
+        instance.category = validated_data.get("category", instance.category)
 
-        if validated_data.get("profile_image"):
+        # ✅ Image update
+        if "profile_image" in validated_data:
             instance.profile_image = validated_data.get("profile_image")
 
         instance.update_cooldown(hours=2)
         instance.save()
         return instance
+
     
     def get_profile_image(self, obj):
         request = self.context.get("request")
