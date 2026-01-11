@@ -199,6 +199,40 @@ const CustomerReviews = ({ isLoggedIn }) => {
 
         .stars { color: #ff8a47; font-size: 14px; }
         .review-date { font-size: 12px; color: #777; margin-top: 10px; display: block; }
+
+
+        @media (max-width: 768px) {
+  .reviews-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px; /* ⬅ vertical gap reduced */
+  }
+
+  .review-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .reviews-grid {
+    grid-template-columns: 1fr; /* single column */
+    gap: 0px;                  /* ⬅ big fix here */
+  }
+
+  .review-card {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .review-date {
+    margin-top: 6px; /* extra spacing kam */
+  }
+}
+@media (max-width: 480px) {
+  .review-card p {
+    margin-bottom: 6px;
+  }
+}
+
       `}</style>
     </div>
   );

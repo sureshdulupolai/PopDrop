@@ -114,7 +114,7 @@ const Signup = ({ role }) => {
 
   return (
     <>
-    <div className="container-fluid full-height bg-white">
+    <div className="container-fluid full-height bg-white mt-4">
       <div className="row h-100">
 
         {/* LEFT */}

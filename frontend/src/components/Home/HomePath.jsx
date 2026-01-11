@@ -17,7 +17,7 @@ function HomePageHere({ isLoggedIn }) {
       <PopdropExperience />
       <FeatureSection />
       <PremiumSection isLoggedIn={isLoggedIn} />
-      <ReviewSlider />
+      {isLoggedIn && <ReviewSlider isLoggedIn={isLoggedIn} />}
     </>
   )
 }

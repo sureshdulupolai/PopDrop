@@ -57,7 +57,7 @@ const Login = ({ setIsLoggedIn }) => {
 
   return (
     <>
-      <div className="login-wrapper">
+      <div className="login-wrapper mt-4">
         <div className="left-panel">
           <h1 className="left-title">
             50+ curated <br />
@@ -260,17 +260,32 @@ const Login = ({ setIsLoggedIn }) => {
   border-radius: 20px;
 }
 
-/* RESPONSIVE */
+/* RESPONSIVE FIX */
 @media (max-width: 992px) {
+
   .login-wrapper {
     flex-direction: column;
+    height: auto;              /* ❗ FIX */
+    overflow: visible;         /* ❗ FIX */
   }
-  .left-panel, .right-panel {
+
+  .left-panel {
     width: 100%;
-    height: auto;
-    padding: 50px 30px;
+    padding: 70px 24px 90px;   /* ⬅ more bottom space */
+    text-align: left;
+  }
+
+  .right-panel {
+    width: 100%;
+    padding: 40px 20px 80px;
+    align-items: flex-start;
+  }
+
+  .login-box {
+    margin-top: 20px;          /* 🔥 image 3 fix */
   }
 }
+
 `}
       </style>
     </>

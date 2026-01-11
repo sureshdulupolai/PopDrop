@@ -3,63 +3,78 @@ import { getReviews } from "../../api/reviews";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
-export default function ReviewSlider() {
+export default function ReviewSlider({ isLoggedIn }) {
   const trackRef = useRef(null);
+  const animationRef = useRef(null);
+  const posRef = useRef(0);
+  const hoverRef = useRef(false);
+
   const [reviews, setReviews] = useState([]);
   const navigate = useNavigate();
+  const speed = 0.5;
 
-  let pos = 0;
-  let speed = 0.5;
-  let hover = false;
-
-  /* ================= FETCH REVIEWS ================= */
+  /* ================= STOP IF NOT LOGGED IN ================= */
   useEffect(() => {
+    if (!isLoggedIn) return;
+
+    let mounted = true;
+
     async function fetchReviews() {
       try {
         const res = await getReviews();
-        setReviews(res.data || []);
+        if (mounted) {
+          setReviews(res.data || []);
+        }
       } catch (err) {
-        console.error("Failed to load reviews", err);
+        // ❌ NO REDIRECT
+        console.warn("Reviews hidden (not logged in)");
       }
     }
 
     fetchReviews();
-  }, []);
+    return () => (mounted = false);
+  }, [isLoggedIn]);
 
-  /* ================= SLIDER LOGIC ================= */
+  /* ================= SLIDER ANIMATION ================= */
   useEffect(() => {
-    if (!reviews.length) return;
+    if (!isLoggedIn || reviews.length === 0 || !trackRef.current) return;
 
     const track = trackRef.current;
-    if (!track) return;
 
-    track.innerHTML += track.innerHTML;
+    const animate = () => {
+      if (!hoverRef.current) {
+        posRef.current -= speed;
+        track.style.transform = `translateX(${posRef.current}px)`;
 
-    function move() {
-      if (!hover) {
-        pos -= speed;
-        track.style.transform = `translateX(${pos}px)`;
-
-        if (Math.abs(pos) >= track.scrollWidth / 2) {
-          pos = 0;
+        if (Math.abs(posRef.current) >= track.scrollWidth / 2) {
+          posRef.current = 0;
         }
       }
-      requestAnimationFrame(move);
-    }
+      animationRef.current = requestAnimationFrame(animate);
+    };
 
-    move();
+    animate();
 
-    track.addEventListener("mouseenter", () => (hover = true));
-    track.addEventListener("mouseleave", () => (hover = false));
-  }, [reviews]);
+    const onEnter = () => (hoverRef.current = true);
+    const onLeave = () => (hoverRef.current = false);
 
-  /* ================= STAR RENDER ================= */
-  const renderStars = (count) => {
-    return "★★★★★☆☆☆☆☆".slice(5 - count, 10 - count);
-  };
+    track.addEventListener("mouseenter", onEnter);
+    track.addEventListener("mouseleave", onLeave);
 
-  /* ================= NO REVIEWS → HIDE ================= */
-  if (reviews.length === 0) return null;
+    return () => {
+      cancelAnimationFrame(animationRef.current);
+      track.removeEventListener("mouseenter", onEnter);
+      track.removeEventListener("mouseleave", onLeave);
+    };
+  }, [reviews, isLoggedIn]);
+
+  /* ================= HARD BLOCK ================= */
+  if (!isLoggedIn || reviews.length === 0) return null;
+
+  const duplicatedReviews = [...reviews, ...reviews];
+
+  const renderStars = (count) =>
+    "★★★★★☆☆☆☆☆".slice(5 - count, 10 - count);
 
   return (
     <section className="pd-review-section">
@@ -71,11 +86,10 @@ export default function ReviewSlider() {
         </div>
       </div>
 
-      {/* SLIDER */}
       <div className="pd-review-slider">
         <div className="pd-review-track" ref={trackRef}>
-          {reviews.map((review) => (
-            <div className="pd-review-card" key={review.id}>
+          {duplicatedReviews.map((review, idx) => (
+            <div className="pd-review-card" key={`${review.id}-${idx}`}>
               <h3>{review.user_name}</h3>
               <p className="pd-stars">{renderStars(review.rating)}</p>
               <p>{review.description}</p>
@@ -84,7 +98,6 @@ export default function ReviewSlider() {
         </div>
       </div>
 
-      {/* SEE MORE (only if > 6 reviews) */}
       {reviews.length > 6 && (
         <div className="container text-center mt-4">
           <button

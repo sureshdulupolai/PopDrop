@@ -1,6 +1,3 @@
-body {
-      overflow: hidden;
-    }
 
     .full-height {
       height: 100vh;
@@ -128,3 +125,37 @@ body {
     .img-size {
       border-radius: 20px;
     }
+
+    /* ===============================
+   RESPONSIVE FIX (Signup Page)
+================================ */
+@media (max-width: 992px) {
+
+  body {
+    overflow: auto;               /* 🔥 allow scroll */
+  }
+
+  .full-height {
+    height: auto;                 /* 🔥 remove 100vh */
+  }
+
+  .left-section {
+    height: auto;
+    padding: 70px 20px 40px;
+  }
+
+  .right-section {
+    height: auto;                 /* 🔥 THIS FIXES IMAGE 3 */
+    padding: 60px 24px 80px;
+    align-items: flex-start;
+  }
+
+  .right-content {
+    margin-top: 30px;             /* 🔥 IMAGE 2 FIX */
+    text-align: left;
+  }
+
+  .right-title {
+    font-size: 36px;
+  }
+}
