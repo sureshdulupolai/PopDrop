@@ -54,7 +54,10 @@ class SignupSerializer(serializers.ModelSerializer):
         # OTP
         otp = str(random.randint(100000, 999999))
         profile.set_otp(otp)
-        send_otp_email(user.email, otp)
+        try:
+            send_otp_email(user.email, otp)
+        except Exception as e:
+            print("Email error:", e)
 
         return profile  # ✅ Return the profile instance, not a dict
 

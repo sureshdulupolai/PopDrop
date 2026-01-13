@@ -17,6 +17,7 @@ from django.db.models import Q
 # -------------------------
 class SignupView(APIView):
     def post(self, request):
+        print("RECEIVED DATA:", request.data)
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
             profile = serializer.save()
