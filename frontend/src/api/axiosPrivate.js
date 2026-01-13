@@ -2,7 +2,7 @@ import axios from "axios";
 import { refreshToken } from "./refresh";
 
 const privateApi = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "https://popdrop-backend-1.onrender.com",
   withCredentials: true,
   headers: {
     "Content-Type": "multipart/form-data",

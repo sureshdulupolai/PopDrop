@@ -166,7 +166,7 @@ const Profile = () => {
                   : profile.profile_image
                   ? profile.profile_image.startsWith("http")
                     ? profile.profile_image
-                    : `http://localhost:8000${profile.profile_image}`
+                    : `https://popdrop-backend-1.onrender.com${profile.profile_image}`
                   : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
               }
               alt="profile-image"

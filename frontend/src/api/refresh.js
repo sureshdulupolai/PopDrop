@@ -5,7 +5,7 @@ export const refreshToken = async () => {
   if (!refresh) throw new Error("No refresh token");
 
   const res = await axios.post(
-    "http://localhost:8000/auth/token/refresh/",
+    "https://popdrop-backend-1.onrender.com//auth/token/refresh/",
     { refresh }
   );
 

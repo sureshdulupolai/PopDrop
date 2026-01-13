@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const publicApi = axios.create({
-  baseURL: "http://localhost:8000", // ❗ auth nahi
+  baseURL: "https://popdrop-backend-1.onrender.com/", // ❗ auth nahi
   headers: {
     "Content-Type": "application/json",
   },
