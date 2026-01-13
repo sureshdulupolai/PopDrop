@@ -177,10 +177,13 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = '9ff06d001@smtp-brevo.com'
-EMAIL_PORT = 587  # or 465 for SSL
-EMAIL_USE_TLS = True  # or False if using SSL
-EMAIL_HOST_USER = '9ff06d001@smtp-brevo.com'
-EMAIL_HOST_PASSWORD = 'xsmtpsib-67f105323f093acfb4608b456cb17f1e332515d5a01b988f655c6dded1c8cb56-rHl019n0HoSNVUof'
-DEFAULT_FROM_EMAIL = 'noreply@popdrop.in'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
