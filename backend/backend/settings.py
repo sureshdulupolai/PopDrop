@@ -69,14 +69,14 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS =[
-    "https://popdrop-ui.netlify.app/",
+    "https://popdrop-ui.netlify.app",
 ]
 
 
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://popdrop-ui.netlify.app/",
+    "https://popdrop-ui.netlify.app",
 ]
 
 from corsheaders.defaults import default_headers
