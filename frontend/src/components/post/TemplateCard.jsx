@@ -33,6 +33,8 @@ export default function TemplateCard({
     ? template.desktop_image
     : `https://popdrop-backend-1.onrender.com${template.desktop_image}`;
 
+  console.log(imageSrc);
+
   return (
     <>
     <div className="card template-card h-100">
