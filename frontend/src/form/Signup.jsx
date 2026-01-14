@@ -90,11 +90,12 @@ const Signup = ({ role }) => {
           "template_1v2c0p9",
           {
             to_email: email,
-            otp: otp
+            name: "PopDrop",          // or user.fullname
+            time: new Date().toLocaleString(),
+            message: `Your OTP is: ${otp}`
           },
           "wtfODQiMYk4i24OWU"
         );
-
 
         // ➜ Go to verify page
         navigate("/verify-otp", {
