@@ -127,17 +127,34 @@ class VerifyOtpView(APIView):
 class ResendOtpView(APIView):
     def post(self, request):
         user_id = request.data.get("user_id")
+
+        if not user_id:
+            return Response({"status": False, "error": "user_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
             user = User.objects.get(id=user_id)
-            profile = user.profile
         except User.DoesNotExist:
-            return Response({"status": False, "error": "User not found"}, status=404)
+            return Response({"status": False, "error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+        try:
+            profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            return Response({"status": False, "error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Generate new OTP
         otp = str(random.randint(100000, 999999))
         profile.set_otp(otp)
-        send_otp_email(user.email, otp)
+        profile.save(update_fields=["otp", "otp_created_at"])
 
-        return Response({"status": True, "message": "OTP resent successfully"}, status=200)
+        # Optional: frontend ko OTP bhej do testing ke liye
+        # Agar email bhejna hai backend se:
+        # send_otp_email(user.email, otp)  
+
+        return Response({
+            "status": True,
+            "message": "OTP resent successfully",
+            "otp": otp  # optional, testing ke liye
+        }, status=status.HTTP_200_OK)
 
 # -------------------------
 # PROFILE VIEW
