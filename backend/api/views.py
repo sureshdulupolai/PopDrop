@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import SignupSerializer, LoginSerializer, UserDetailSerializer, ProfileSerializer, CustomerReviewSerializer, TeamMemberSerializer, TeamApplicationSerializer, ContactRequestSerializer
 from .models import User, UserProfile, CustomerReview, TeamMember, TeamAppCategory, TeamApplication, ContactRequest
-from .utils import send_otp_email
 import random
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.utils import timezone
@@ -17,21 +16,19 @@ from django.db.models import Q
 # -------------------------
 class SignupView(APIView):
     def post(self, request):
-        print("RECEIVED DATA:", request.data)
         serializer = SignupSerializer(data=request.data)
+
         if serializer.is_valid():
-            profile = serializer.save()
+            data = serializer.save()   # 👈 dict milega
             return Response({
                 "status": True,
-                "data": {
-                    "user_id": profile.user.id,
-                    "email": profile.user.email,
-                    "category": profile.category
-                }
+                "data": data
             }, status=status.HTTP_201_CREATED)
 
-        # DRF sends proper validation errors
-        return Response({"status": False, "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            "status": False,
+            "errors": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 # -------------------------
 # LOGIN API

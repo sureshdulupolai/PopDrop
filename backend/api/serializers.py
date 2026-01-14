@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User, UserProfile, CustomerReview, TeamMember, TeamAppCategory, TeamApplication, ContactRequest
-from .utils import send_otp_email
 import random
 from django.db import IntegrityError
 
@@ -43,7 +42,7 @@ class SignupSerializer(serializers.ModelSerializer):
             category=category
         )
 
-        # Only developer gets admin access
+        # Developer auto-verify
         if category == "developer":
             user.is_staff = True
             user.is_superuser = True
@@ -51,15 +50,16 @@ class SignupSerializer(serializers.ModelSerializer):
             profile.is_verified = True
             profile.save()
 
-        # OTP
+        # OTP generate & save
         otp = str(random.randint(100000, 999999))
         profile.set_otp(otp)
-        try:
-            send_otp_email(user.email, otp)
-        except Exception as e:
-            print("Email error:", e)
 
-        return profile  # ✅ Return the profile instance, not a dict
+        # 🔥 IMPORTANT: frontend ko OTP bhejna (EmailJS ke liye)
+        return {
+            "user_id": user.id,
+            "email": user.email,
+            "otp": otp
+        }
 
 # -------------------------
 # LOGIN SERIALIZER

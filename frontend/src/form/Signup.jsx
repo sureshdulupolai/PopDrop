@@ -1,3 +1,4 @@
+import emailjs from "emailjs-com";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
@@ -81,11 +82,24 @@ const Signup = ({ role }) => {
 
       // Check backend response
       if (res.data.status) {
-        // Success → navigate to OTP page
+        const { user_id, email, otp } = res.data.data;
+
+        // 🔥 Send OTP email using EmailJS
+        await emailjs.send(
+          "service_5bm58np",
+          "template_1v2c0p9",
+          {
+            email: email,
+            message: `Your PopDrop OTP is ${otp}`
+          },
+          "wtfODQiMYk4i24OWU"
+        );
+
+        // ➜ Go to verify page
         navigate("/verify-otp", {
           state: {
-            user_id: res.data.data.user_id,
-            email: res.data.data.email
+            user_id,
+            email
           }
         });
       } else {
