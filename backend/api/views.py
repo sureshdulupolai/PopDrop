@@ -19,16 +19,22 @@ class SignupView(APIView):
         serializer = SignupSerializer(data=request.data)
 
         if serializer.is_valid():
-            data = serializer.save()   # 👈 dict milega
+            profile = serializer.save()   # 👈 UserProfile instance
+
             return Response({
                 "status": True,
-                "data": data
+                "data": {
+                    "user_id": profile.user.id,
+                    "email": profile.user.email,
+                    "otp": profile.otp   # 👈 frontend ko milega
+                }
             }, status=status.HTTP_201_CREATED)
 
         return Response({
             "status": False,
             "errors": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
+
 
 # -------------------------
 # LOGIN API

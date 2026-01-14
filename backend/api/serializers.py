@@ -18,31 +18,25 @@ class SignupSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         category = validated_data.pop("category")
 
-        # Check if email exists
         if User.objects.filter(email=validated_data["email"]).exists():
             raise serializers.ValidationError({"email": "Email already exists"})
 
-        # Check if mobile exists
         mobile = validated_data.get("mobile")
         if mobile and User.objects.filter(mobile=mobile).exists():
             raise serializers.ValidationError({"mobile": "Mobile number already exists"})
 
-        try:
-            user = User.objects.create_user(
-                email=validated_data["email"],
-                fullname=validated_data["fullname"],
-                mobile=mobile,
-                password=validated_data["password"]
-            )
-        except IntegrityError as e:
-            raise serializers.ValidationError({"detail": str(e)})
+        user = User.objects.create_user(
+            email=validated_data["email"],
+            fullname=validated_data["fullname"],
+            mobile=mobile,
+            password=validated_data["password"]
+        )
 
         profile = UserProfile.objects.create(
             user=user,
             category=category
         )
 
-        # Developer auto-verify
         if category == "developer":
             user.is_staff = True
             user.is_superuser = True
@@ -54,12 +48,8 @@ class SignupSerializer(serializers.ModelSerializer):
         otp = str(random.randint(100000, 999999))
         profile.set_otp(otp)
 
-        # 🔥 IMPORTANT: frontend ko OTP bhejna (EmailJS ke liye)
-        return {
-            "user_id": user.id,
-            "email": user.email,
-            "otp": otp
-        }
+        return profile   # ✅ ALWAYS return model instance
+
 
 # -------------------------
 # LOGIN SERIALIZER

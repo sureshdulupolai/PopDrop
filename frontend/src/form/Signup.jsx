@@ -89,11 +89,12 @@ const Signup = ({ role }) => {
           "service_5bm58np",
           "template_1v2c0p9",
           {
-            email: email,
-            message: `Your PopDrop OTP is ${otp}`
+            to_email: email,
+            otp: otp
           },
           "wtfODQiMYk4i24OWU"
         );
+
 
         // ➜ Go to verify page
         navigate("/verify-otp", {

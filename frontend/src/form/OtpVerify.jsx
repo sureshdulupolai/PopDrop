@@ -1,3 +1,4 @@
+import emailjs from "emailjs-com";
 import React, { useState, useEffect } from "react";
 import { verifyOtp, resendOtp } from "../api/auth";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -59,10 +60,23 @@ const OtpVerify = () => {
       setSuccess("");
     }
   };
-
+  
   const handleResend = async () => {
     try {
-      await resendOtp({ user_id });
+      const res = await resendOtp({ user_id }); // backend se new otp milega
+
+      const otp = res.data.otp;
+
+      await emailjs.send(
+        "service_5bm58np",
+        "template_1v2c0p9",
+        {
+          to_email: email,
+          otp: otp
+        },
+        "wtfODQiMYk4i24OWU"
+      );
+
       setTimer(60);
       setError("");
       setSuccess("OTP resent successfully!");
@@ -71,6 +85,7 @@ const OtpVerify = () => {
       setSuccess("");
     }
   };
+
 
   return (
     <div className="otp-wrapper">
