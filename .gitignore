@@ -1,0 +1,17 @@
+# Environments
+.env
+
+# Database
+db.sqlite3
+*.sqlite3
+
+# Media uploads
+media/
+render_media/
+
+# Python
+__pycache__/
+*.pyc
+
+# Static collected
+staticfiles/
