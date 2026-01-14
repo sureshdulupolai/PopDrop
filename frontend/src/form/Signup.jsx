@@ -69,10 +69,16 @@ const Signup = ({ role }) => {
       return;
     }
 
+    if (!form.fullname || !form.email || !form.password) {
+      setError("Please fill all required fields");
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       fullname: form.fullname,
       email: form.email,
-      mobile: form.mobile,
+      mobile: form.mobile || "",  // optional
       password: form.password,
       category: role
     };
