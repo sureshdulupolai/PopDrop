@@ -17,16 +17,39 @@ class SignupSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         category = validated_data.pop("category")
-
-        if User.objects.filter(email=validated_data["email"]).exists():
-            raise serializers.ValidationError({"email": "Email already exists"})
-
+        email = validated_data["email"]
         mobile = validated_data.get("mobile")
-        if mobile and User.objects.filter(mobile=mobile).exists():
-            raise serializers.ValidationError({"mobile": "Mobile number already exists"})
 
+        # --------------------------------
+        # Check existing user by email
+        # --------------------------------
+        existing_user = User.objects.filter(email=email).first()
+
+        if existing_user:
+            profile = existing_user.profile
+
+            # ❌ Already verified → block
+            if profile.is_verified:
+                raise serializers.ValidationError({
+                    "email": "Email already exists"
+                })
+
+            # ✅ Not verified → delete old user
+            existing_user.delete()
+
+        # --------------------------------
+        # Mobile uniqueness check (after delete)
+        # --------------------------------
+        if mobile and User.objects.filter(mobile=mobile).exists():
+            raise serializers.ValidationError({
+                "mobile": "Mobile number already exists"
+            })
+
+        # --------------------------------
+        # Create fresh user
+        # --------------------------------
         user = User.objects.create_user(
-            email=validated_data["email"],
+            email=email,
             fullname=validated_data["fullname"],
             mobile=mobile,
             password=validated_data["password"]
@@ -37,6 +60,9 @@ class SignupSerializer(serializers.ModelSerializer):
             category=category
         )
 
+        # --------------------------------
+        # Developer auto-verify (unchanged)
+        # --------------------------------
         if category == "developer":
             user.is_staff = True
             user.is_superuser = True
@@ -44,11 +70,14 @@ class SignupSerializer(serializers.ModelSerializer):
             profile.is_verified = True
             profile.save()
 
-        # OTP generate & save
+        # --------------------------------
+        # OTP generate & save (unchanged)
+        # --------------------------------
         otp = str(random.randint(100000, 999999))
         profile.set_otp(otp)
 
-        return profile   # ✅ ALWAYS return model instance
+        return profile  # ✅ ALWAYS return model instance
+
 
 
 # -------------------------

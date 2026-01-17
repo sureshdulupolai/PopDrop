@@ -78,7 +78,7 @@ const Signup = ({ role }) => {
     const payload = {
       fullname: form.fullname,
       email: form.email,
-      mobile: form.mobile || "",  // optional
+      mobile: form.mobile,  // optional
       password: form.password,
       category: role
     };
