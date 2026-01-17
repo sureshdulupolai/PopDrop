@@ -102,8 +102,8 @@ class VerifyOtpView(APIView):
         if profile.otp_expired():
             return Response({"status": False, "error": "OTP expired"},status=400)
 
-        if profile.otp != otp_input:
-            return Response({"status": False, "error": "Invalid OTP"},status=400)
+        if str(profile.otp) != str(otp_input):
+            return Response({"status": False, "error": "Invalid OTP"}, status=400)
 
         profile.is_verified = True
         profile.otp = None
@@ -153,7 +153,6 @@ class ResendOtpView(APIView):
         return Response({
             "status": True,
             "message": "OTP resent successfully",
-            "otp": otp  # optional, testing ke liye
         }, status=status.HTTP_200_OK)
 
 # -------------------------

@@ -51,14 +51,21 @@ const OtpVerify = () => {
     }
 
     try {
-      await verifyOtp({ user_id, otp: finalOtp });
-      setSuccess("OTP Verified! Redirecting...");
-      setError("");
-      setTimeout(() => navigate("/login"), 1500);
+      const res = await verifyOtp({ user_id, otp: finalOtp });
+
+      if (res.data.status) {
+        setSuccess("OTP Verified! Redirecting...");
+        setError("");
+        setTimeout(() => navigate("/login"), 1500);
+      } else {
+        setError(res.data.error || "Invalid OTP");
+        setSuccess("");
+      }
     } catch (err) {
-      setError(err.response?.data?.error || "Invalid OTP, please try again.");
+      setError("Invalid OTP, please try again.");
       setSuccess("");
     }
+
   };
   
   const handleResend = async () => {
@@ -72,7 +79,9 @@ const OtpVerify = () => {
         "template_1v2c0p9",
         {
           to_email: email,
-          otp: otp
+          name: "PopDrop",
+          time: new Date().toLocaleString(),
+          message: `Your OTP is: ${otp}`
         },
         "wtfODQiMYk4i24OWU"
       );
