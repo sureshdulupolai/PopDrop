@@ -6,6 +6,7 @@ import datetime
 from django.core.validators import MinValueValidator, MaxValueValidator, MaxLengthValidator
 from django.core.exceptions import ValidationError
 from datetime import datetime, time
+from datetime import timedelta
 
 # USER MANAGER
 class UserManager(BaseUserManager):
@@ -119,7 +120,7 @@ class UserProfile(models.Model):
     def otp_expired(self):
         if not self.otp_created_at:
             return True
-        return timezone.now() > self.otp_created_at + datetime.timedelta(minutes=5)
+        return timezone.now() > self.otp_created_at + timedelta(minutes=5)
 
     # ------- Profile update timer -------
     # def update_cooldown(self, days=2):

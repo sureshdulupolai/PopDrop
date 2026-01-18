@@ -153,6 +153,7 @@ class ResendOtpView(APIView):
         return Response({
             "status": True,
             "message": "OTP resent successfully",
+            "otp": otp,   # 🔥 ADD THIS
         }, status=status.HTTP_200_OK)
 
 # -------------------------
