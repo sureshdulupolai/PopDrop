@@ -14,6 +14,10 @@ class SignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["email", "fullname", "mobile", "password", "category"]
+        extra_kwargs = {
+            "email": {"validators": []},   # 🔥 THIS LINE FIXES IT
+            "mobile": {"validators": []},
+        }
 
     def create(self, validated_data):
         category = validated_data.pop("category")
