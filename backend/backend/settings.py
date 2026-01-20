@@ -18,11 +18,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = "/media/"
-
-if os.environ.get("RENDER"):  
-    MEDIA_ROOT = os.path.join(BASE_DIR, "render_media")
-else:
-    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 
