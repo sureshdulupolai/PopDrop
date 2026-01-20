@@ -7,6 +7,7 @@ db.sqlite3
 
 # Media uploads
 media/
+!media/template_previews/
 render_media/
 
 # Python
