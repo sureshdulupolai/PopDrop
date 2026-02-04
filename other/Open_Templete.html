@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PopDrop | Backend API Platform</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg,#0f172a,#1e293b);
+            color: white;
+        }
+
+        .glass{
+            backdrop-filter: blur(14px);
+            background: rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.1);
+        }
+
+        .gradient-text{
+            background: linear-gradient(45deg,#3a86ff,#ffbe0b);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .card-hover:hover{
+            transform: translateY(-6px);
+            transition:.3s;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg glass fixed-top">
+  <div class="container">
+    <a class="navbar-brand text-white fw-bold" href="#">PopDrop</a>
+
+    <button class="navbar-toggler bg-white" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link text-white" href="#features">Features</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#upload">Upload</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#stats">Stats</a></li>
+            <li class="nav-item">
+                <button class="btn btn-warning ms-3">Login</button>
+            </li>
+        </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ================= HERO ================= -->
+<section class="min-h-screen flex items-center justify-center text-center px-4">
+
+    <div>
+        <h1 class="display-4 fw-bold">
+            Powerful <span class="gradient-text">Cloud Backend</span> <br>
+            For Your Apps 🚀
+        </h1>
+
+        <p class="mt-4 text-gray-300">
+            Secure authentication, image uploads, APIs & cloud storage with Django + Cloudinary.
+        </p>
+
+        <div class="mt-5">
+            <button class="btn btn-warning me-3 px-4">Get Started</button>
+            <button class="btn btn-outline-light px-4">Docs</button>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- ================= FEATURES ================= -->
+<section id="features" class="container py-5">
+
+    <h2 class="text-center mb-5 fw-bold gradient-text">Features</h2>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 glass card-hover text-center">
+                <h4>JWT Auth</h4>
+                <p class="text-gray-300">Secure login & refresh tokens system.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 glass card-hover text-center">
+                <h4>Cloudinary Uploads</h4>
+                <p class="text-gray-300">Images stored on CDN automatically.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-4 rounded-4 glass card-hover text-center">
+                <h4>Fast API</h4>
+                <p class="text-gray-300">Django REST optimized performance.</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ================= UPLOAD DEMO ================= -->
+<section id="upload" class="py-5 text-center">
+
+    <h2 class="gradient-text mb-4">Upload Image Demo</h2>
+
+    <div class="glass p-5 mx-auto rounded-4" style="max-width:400px;">
+
+        <input type="file" id="imageInput" class="form-control mb-3">
+
+        <button onclick="previewImage()" class="btn btn-warning w-100">
+            Preview
+        </button>
+
+        <img id="preview" class="mt-4 w-full rounded-lg hidden">
+
+    </div>
+</section>
+
+
+<!-- ================= STATS ================= -->
+<section id="stats" class="container py-5">
+
+    <div class="row text-center">
+
+        <div class="col-md-4">
+            <h1 class="gradient-text">99.9%</h1>
+            <p>Uptime</p>
+        </div>
+
+        <div class="col-md-4">
+            <h1 class="gradient-text">Fast</h1>
+            <p>CDN Delivery</p>
+        </div>
+
+        <div class="col-md-4">
+            <h1 class="gradient-text">Secure</h1>
+            <p>JWT Auth</p>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+<footer class="text-center py-4 glass mt-5">
+    © 2026 PopDrop • Built with Django + Cloudinary
+</footer>
+
+
+<!-- ================= JS ================= -->
+<script>
+function previewImage(){
+    const file = document.getElementById('imageInput').files[0];
+    const preview = document.getElementById('preview');
+
+    if(file){
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove("hidden");
+    }
+}
+
+// smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+    });
+});
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

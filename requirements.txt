@@ -14,5 +14,5 @@ requests==2.32.5
 sqlparse==0.5.4
 tzdata==2025.2
 urllib3==2.6.2
-cloudinary
-django-cloudinary-storage
+cloudinary==1.44.1
+django-cloudinary-storage==0.3.0
