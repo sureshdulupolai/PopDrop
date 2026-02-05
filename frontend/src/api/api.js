@@ -2,7 +2,7 @@ import axios from "axios";
 import { refreshToken } from "./refresh";
 
 const api = axios.create({
-  baseURL: "https://popdrop-backend-2.onrender.com",
+  baseURL: "http://localhost:8000",
 });
 
 api.interceptors.request.use((config) => {
