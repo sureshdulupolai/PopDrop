@@ -31,7 +31,7 @@ export default function TemplateCard({
 
   const imageSrc = absoluteImage
     ? template.desktop_image
-    : `https://popdrop-backend-1.onrender.com${template.desktop_image}`;
+    : `https://popdrop-backend-2.onrender.com${template.desktop_image}`;
 
   console.log(imageSrc);
 

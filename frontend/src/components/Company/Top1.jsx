@@ -1,4 +1,4 @@
-import grpPhoto from "../../assets/grp_photo.jpg";
+import grpPhoto from "../../assets/company/img_2.jpg";
 
 export function HeroSectionCompany() {
     return (
