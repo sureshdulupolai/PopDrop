@@ -88,7 +88,6 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS =[
     "https://popdrop-ui.netlify.app",
-    "https://popdrop-backend.fly.dev"
 ]
 
 
@@ -204,7 +203,6 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-SECRET_KEY = 'django-insecure-popdropsecret'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
