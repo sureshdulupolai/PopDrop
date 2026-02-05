@@ -39,15 +39,14 @@ class CreatorSerializer(serializers.ModelSerializer):
             subscribed_to=obj
         ).exists()
 
-    # ✅ Cloudinary absolute image
+    # ✅ SAFE image (never 500)
     def get_profile_image(self, obj):
-        request = self.context.get("request")
         img = getattr(obj.profile, "profile_image", None)
+        if not img:
+            return None
 
-        if img:
-            return request.build_absolute_uri(img.url)
-
-        return None
+        request = self.context.get("request")
+        return request.build_absolute_uri(img.url) if request else img.url
 
 
 # =========================
@@ -62,7 +61,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 # =========================
-# Post Card (LIST VIEW)
+# Post Card
 # =========================
 class PostCardSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source="category.name", default=None)
@@ -70,7 +69,6 @@ class PostCardSerializer(serializers.ModelSerializer):
     avg_rating = serializers.FloatField(read_only=True)
     slug = serializers.CharField()
 
-    # ✅ FIXED IMAGE
     desktop_image = serializers.SerializerMethodField()
 
     class Meta:
@@ -87,16 +85,18 @@ class PostCardSerializer(serializers.ModelSerializer):
             "slug",
         ]
 
-    # ✅ Cloudinary absolute URL
+    # ✅ SAFE Cloudinary URL
     def get_desktop_image(self, obj):
+        img = obj.desktop_image
+        if not img:
+            return None
+
         request = self.context.get("request")
-        if obj.desktop_image:
-            return request.build_absolute_uri(obj.desktop_image.url)
-        return None
+        return request.build_absolute_uri(img.url) if request else img.url
 
 
 # =========================
-# Post Detail (DETAIL VIEW)
+# Post Detail
 # =========================
 class PostDetailSerializer(serializers.ModelSerializer):
     user = CreatorSerializer(read_only=True)
@@ -107,7 +107,6 @@ class PostDetailSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
 
-    # ✅ FIXED IMAGES
     desktop_image = serializers.SerializerMethodField()
     mobile_image = serializers.SerializerMethodField()
 
@@ -155,15 +154,19 @@ class PostDetailSerializer(serializers.ModelSerializer):
             return False
         return obj.user == request.user
 
-    # ✅ Cloudinary absolute URLs
+    # ✅ SAFE images
     def get_desktop_image(self, obj):
+        img = obj.desktop_image
+        if not img:
+            return None
+
         request = self.context.get("request")
-        if obj.desktop_image:
-            return request.build_absolute_uri(obj.desktop_image.url)
-        return None
+        return request.build_absolute_uri(img.url) if request else img.url
 
     def get_mobile_image(self, obj):
+        img = obj.mobile_image
+        if not img:
+            return None
+
         request = self.context.get("request")
-        if obj.mobile_image:
-            return request.build_absolute_uri(obj.mobile_image.url)
-        return None
+        return request.build_absolute_uri(img.url) if request else img.url

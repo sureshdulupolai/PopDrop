@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Body Section</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans">
+
+    <!-- ===== BODY SECTION ===== -->
+    <section class="min-h-screen flex items-center justify-center px-6">
+
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+
+            <!-- Left Content -->
+            <div class="space-y-6">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
+                    Build Beautiful <span class="text-blue-600">Responsive</span> Websites Easily
+                </h1>
+
+                <p class="text-gray-600 text-lg">
+                    Create modern layouts using Tailwind CSS with smooth animations and interactive elements.
+                    This section is fully responsive and looks perfect on all devices.
+                </p>
+
+                <div class="flex gap-4">
+                    <button id="btn"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition duration-300">
+                        Get Started
+                    </button>
+
+                    <button
+                        class="border border-gray-400 hover:bg-gray-100 px-6 py-3 rounded-xl transition">
+                        Learn More
+                    </button>
+                </div>
+
+                <p id="msg" class="text-green-600 font-medium hidden">
+                    🚀 Welcome! Button clicked successfully.
+                </p>
+            </div>
+
+            <!-- Right Image -->
+            <div class="flex justify-center">
+                <img
+                    src="https://images.unsplash.com/photo-1559028012-481c04fa702d?q=80&w=900"
+                    alt="Website Design"
+                    class="rounded-2xl shadow-2xl hover:scale-105 transition duration-500" />
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+        const btn = document.getElementById("btn");
+        const msg = document.getElementById("msg");
+
+        btn.addEventListener("click", () => {
+            msg.classList.remove("hidden");
+            btn.innerText = "Started ✓";
+        });
+    </script>
+
+</body>
+</html>

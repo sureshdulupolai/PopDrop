@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
-
+from django.db.models import F
 from .models import Post, Category, PostReview, UserSubscription, PostLike
 from api.models import User
 from .serializers import (
@@ -21,6 +21,7 @@ class CategoryListView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        
         categories = Category.objects.annotate(
             post_count=Count("posts")
         )
@@ -55,7 +56,9 @@ class PostListView(APIView):
                 Q(description__icontains=search)
             )
 
-        return Response(PostCardSerializer(qs, many=True).data)
+        return Response(
+            PostCardSerializer(qs, many=True, context={"request": request}).data
+        )
 
 
 # ---------- POST DETAIL ----------
@@ -195,18 +198,28 @@ class ToggleLikeView(APIView):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
 
-        like = PostLike.objects.filter(post=post, user=request.user)
+        like_qs = PostLike.objects.filter(post=post, user=request.user)
 
-        if like.exists():
-            like.delete()
-            post.like_count -= 1
+        # ---------- UNLIKE ----------
+        if like_qs.exists():
+            like_qs.delete()
+
+            Post.objects.filter(id=post_id).update(
+                like_count=F("like_count") - 1
+            )
             liked = False
+
+        # ---------- LIKE ----------
         else:
             PostLike.objects.create(post=post, user=request.user)
-            post.like_count += 1
+
+            Post.objects.filter(id=post_id).update(
+                like_count=F("like_count") + 1
+            )
             liked = True
 
-        post.save()
+        # fresh value
+        post.refresh_from_db(fields=["like_count"])
 
         return Response({
             "liked": liked,
@@ -284,7 +297,9 @@ class MyPostsView(APIView):
             .annotate(avg_rating=Avg("reviews__rating"))
             .order_by("-created_at")
         )
-        return Response(PostCardSerializer(posts, many=True).data)
+        return Response(
+            PostCardSerializer(posts, many=True, context={"request": request}).data
+        )
 
 class UpdatePostView(APIView):
     permission_classes = [IsAuthenticated]
