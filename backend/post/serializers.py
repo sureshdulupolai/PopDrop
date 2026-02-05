@@ -3,9 +3,13 @@ from django.db.models import Avg
 from .models import Post, Category, UserSubscription, PostReview
 from api.models import User
 
+
+# =========================
+# Creator
+# =========================
 class CreatorSerializer(serializers.ModelSerializer):
     public_id = serializers.CharField(source="profile.public_id", read_only=True)
-    profile_image = serializers.ImageField(source="profile.profile_image", read_only=True)
+    profile_image = serializers.SerializerMethodField()
     is_verified = serializers.BooleanField(source="profile.is_verified", read_only=True)
     followers_count = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
@@ -35,7 +39,20 @@ class CreatorSerializer(serializers.ModelSerializer):
             subscribed_to=obj
         ).exists()
 
+    # ✅ Cloudinary absolute image
+    def get_profile_image(self, obj):
+        request = self.context.get("request")
+        img = getattr(obj.profile, "profile_image", None)
 
+        if img:
+            return request.build_absolute_uri(img.url)
+
+        return None
+
+
+# =========================
+# Category
+# =========================
 class CategorySerializer(serializers.ModelSerializer):
     post_count = serializers.IntegerField(read_only=True)
 
@@ -44,12 +61,18 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "slug", "post_count"]
 
 
+# =========================
+# Post Card (LIST VIEW)
+# =========================
 class PostCardSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source="category.name", default=None)
     creator = serializers.CharField(source="user.fullname")
     avg_rating = serializers.FloatField(read_only=True)
     slug = serializers.CharField()
-    
+
+    # ✅ FIXED IMAGE
+    desktop_image = serializers.SerializerMethodField()
+
     class Meta:
         model = Post
         fields = [
@@ -64,6 +87,17 @@ class PostCardSerializer(serializers.ModelSerializer):
             "slug",
         ]
 
+    # ✅ Cloudinary absolute URL
+    def get_desktop_image(self, obj):
+        request = self.context.get("request")
+        if obj.desktop_image:
+            return request.build_absolute_uri(obj.desktop_image.url)
+        return None
+
+
+# =========================
+# Post Detail (DETAIL VIEW)
+# =========================
 class PostDetailSerializer(serializers.ModelSerializer):
     user = CreatorSerializer(read_only=True)
     avg_rating = serializers.SerializerMethodField()
@@ -71,7 +105,11 @@ class PostDetailSerializer(serializers.ModelSerializer):
     review_count = serializers.IntegerField(source="reviews.count", read_only=True)
     user_rating = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
-    is_owner = serializers.SerializerMethodField()   
+    is_owner = serializers.SerializerMethodField()
+
+    # ✅ FIXED IMAGES
+    desktop_image = serializers.SerializerMethodField()
+    mobile_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -110,9 +148,22 @@ class PostDetailSerializer(serializers.ModelSerializer):
             "id": obj.category.id,
             "name": obj.category.name
         }
-    
-    def get_is_owner(self, obj):   # ✅ METHOD (THIS WAS MISSING)
+
+    def get_is_owner(self, obj):
         request = self.context.get("request")
         if not request or not request.user.is_authenticated:
             return False
         return obj.user == request.user
+
+    # ✅ Cloudinary absolute URLs
+    def get_desktop_image(self, obj):
+        request = self.context.get("request")
+        if obj.desktop_image:
+            return request.build_absolute_uri(obj.desktop_image.url)
+        return None
+
+    def get_mobile_image(self, obj):
+        request = self.context.get("request")
+        if obj.mobile_image:
+            return request.build_absolute_uri(obj.mobile_image.url)
+        return None

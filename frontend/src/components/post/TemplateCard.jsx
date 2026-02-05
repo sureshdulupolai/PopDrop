@@ -29,9 +29,7 @@ export default function TemplateCard({
     return past.toDateString();
   }
 
-  const imageSrc = absoluteImage
-    ? template.desktop_image
-    : `https://popdrop-backend-2.onrender.com${template.desktop_image}`;
+  const imageSrc = template.desktop_image;
 
   console.log(imageSrc);
 
