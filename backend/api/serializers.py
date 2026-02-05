@@ -150,7 +150,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     fullname = serializers.CharField(source="user.fullname")
     mobile = serializers.CharField(source="user.mobile")
-    profile_image = serializers.ImageField(required=False, allow_null=True)
+    profile_image = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile

@@ -160,17 +160,14 @@ const Profile = () => {
 
           <div className="profile-avatar">
             <img
-              src={
-                profile.profile_image instanceof File
-                  ? URL.createObjectURL(profile.profile_image)
-                  : profile.profile_image
-                  ? profile.profile_image.startsWith("http")
-                    ? profile.profile_image
-                    : `https://popdrop-backend-1.onrender.com${profile.profile_image}`
-                  : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-              }
-              alt="profile-image"
-            />
+  src={
+    profile.profile_image instanceof File
+      ? URL.createObjectURL(profile.profile_image)
+      : profile.profile_image ||
+        "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+  }
+/>
+
             {!profile.is_blocked && (
               <label className="avatar-edit">
                 <input
