@@ -150,7 +150,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     fullname = serializers.CharField(source="user.fullname")
     mobile = serializers.CharField(source="user.mobile")
-    profile_image = serializers.SerializerMethodField()
+    # profile_image auto-handled by ModelSerializer as ImageField (read/write)
 
     class Meta:
         model = UserProfile
@@ -181,13 +181,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance.update_cooldown(hours=2)
         instance.save()
         return instance
-
-    
-    def get_profile_image(self, obj):
-        request = self.context.get("request")
-        if obj.profile_image:
-            return request.build_absolute_uri(obj.profile_image.url)
-        return None
 
 class CustomerReviewSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source="user.fullname", read_only=True)

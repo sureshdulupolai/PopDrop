@@ -261,6 +261,7 @@ class TeamMemberPublicListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class TeamMemberDetailView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
     def get_object(self, pk):
         return TeamMember.objects.get(pk=pk)
 
@@ -285,6 +286,7 @@ class TeamMemberDetailView(APIView):
 
 class TeamMemberCreateView(APIView):
     permission_classes = [IsAdminUser]
+    parser_classes = [MultiPartParser, FormParser]
     def post(self, request):
         serializer = TeamMemberSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
