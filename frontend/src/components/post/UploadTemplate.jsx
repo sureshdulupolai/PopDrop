@@ -47,6 +47,12 @@ const UploadTemplate = ({ edit = false }) => {
         .then((res) => {
           const data = res.data;
 
+          // 🔒 Security Check: Only owner can edit
+          if (!data.is_owner) {
+            setForbidden(true);
+            return;
+          }
+
           setForm({
             title: data.title || "",
             description: data.description || "",
@@ -201,8 +207,8 @@ const UploadTemplate = ({ edit = false }) => {
             {loading
               ? "Saving..."
               : edit
-              ? "✅ Update Template"
-              : "🚀 Publish Template"}
+                ? "✅ Update Template"
+                : "🚀 Publish Template"}
           </button>
         </form>
       </div>

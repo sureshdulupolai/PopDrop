@@ -260,51 +260,51 @@ export default function TemplateDetail() {
 
           {/* HEADER */}
           <div className="top-bar">
-          <div className="left-bar">
-            <button onClick={handleBack} className="back-btn">
-              ← Back
-            </button>
-          </div>
-
-          <div className="right-bar">
-
-            <div className="creator-box">
-              <img src={post.user.profile_image} alt="creator" />
-
-              <div className="creator-info">
-                <div className="creator-name">
-                  {post.user.fullname}
-                  {post.user.is_verified && (
-                    <i className="bi bi-patch-check-fill verified"></i>
-                  )}
-                </div>
-                <small>{post.user.followers_count} followers</small>
-              </div>
-
-            {post && currentUserId && currentUserId !== post.user.id && (
-              <button
-                className={`subscribe-btn ${isSubscribed ? "subscribed" : ""}`}
-                onClick={handleSubscribe}
-                disabled={subLoading}
-              >
-                {subLoading ? (
-                  <span className="loader"></span>
-                ) : isSubscribed ? (
-                  <>
-                    <i className="bi bi-check-circle-fill"></i> Subscribed
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-plus-lg"></i> Subscribe
-                  </>
-                )}
+            <div className="left-bar">
+              <button onClick={handleBack} className="back-btn">
+                ← Back
               </button>
-            )}
-
             </div>
 
+            <div className="right-bar">
+
+              <div className="creator-box">
+                <img src={post.user.profile_image} alt="creator" />
+
+                <div className="creator-info">
+                  <div className="creator-name">
+                    {post.user.fullname}
+                    {post.user.is_verified && (
+                      <i className="bi bi-patch-check-fill verified"></i>
+                    )}
+                  </div>
+                  <small>{post.user.followers_count} followers</small>
+                </div>
+
+                {post && currentUserId && currentUserId !== post.user.id && (
+                  <button
+                    className={`subscribe-btn ${isSubscribed ? "subscribed" : ""}`}
+                    onClick={handleSubscribe}
+                    disabled={subLoading}
+                  >
+                    {subLoading ? (
+                      <span className="loader"></span>
+                    ) : isSubscribed ? (
+                      <>
+                        <i className="bi bi-check-circle-fill"></i> Subscribed
+                      </>
+                    ) : (
+                      <>
+                        <i className="bi bi-plus-lg"></i> Subscribe
+                      </>
+                    )}
+                  </button>
+                )}
+
+              </div>
+
+            </div>
           </div>
-        </div>
 
 
           {/* TITLE */}
@@ -322,6 +322,23 @@ export default function TemplateDetail() {
                 <i className="bi bi-box-arrow-up-right"></i>
                 <span>View</span>
               </button>
+
+              {post.is_owner && (
+                <div className="action-btn-group">
+                  <button
+                    className="edit-btn"
+                    onClick={() => navigate(`/template/${post.slug}/edit`)}
+                  >
+                    <i className="bi bi-pencil-square"></i> <span>Edit</span>
+                  </button>
+                  <button
+                    className="delete-btn-sm"
+                    onClick={() => navigate(`/template/${post.slug}/delete`)}
+                  >
+                    <i className="bi bi-trash"></i> <span>Delete</span>
+                  </button>
+                </div>
+              )}
             </h2>
 
             <p>{post.description}</p>
@@ -394,11 +411,10 @@ export default function TemplateDetail() {
                   {[1, 2, 3, 4, 5].map((i) => (
                     <i
                       key={i}
-                      className={`bi ${
-                        i <= (hoverRating || userRating)
-                          ? "bi-star-fill active"
-                          : "bi-star"
-                      }`}
+                      className={`bi ${i <= (hoverRating || userRating)
+                        ? "bi-star-fill active"
+                        : "bi-star"
+                        }`}
                       onMouseEnter={() => setHoverRating(i)}
                       onMouseLeave={() => setHoverRating(0)}
                       onClick={() => handleRating(i)}
@@ -417,7 +433,7 @@ export default function TemplateDetail() {
           </div>
 
         </div>
-      </section>
+      </section >
 
       <style>
         {`
@@ -514,12 +530,58 @@ export default function TemplateDetail() {
   transform: translateY(-1px);
 }
 
-/* Mobile: text hide */
-@media (max-width: 576px) {
-  .inline-open-btn span {
+/* Mobile/Tablet: text hide */
+@media (max-width: 992px) {
+  .inline-open-btn span,
+  .edit-btn span,
+  .delete-btn-sm span {
     display: none;
   }
+  
+  .action-btn-group {
+    margin-left: 5px;
+  }
 }
+
+
+/* Edit / Delete Buttons */
+.action-btn-group {
+    display: flex;
+    gap: 8px;
+    margin-left: 10px;
+}
+
+.edit-btn, .delete-btn-sm {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.edit-btn {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.edit-btn:hover {
+    background: #bae6fd;
+}
+
+.delete-btn-sm {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.delete-btn-sm:hover {
+    background: #fecaca;
+}
+
 
         `}
       </style>

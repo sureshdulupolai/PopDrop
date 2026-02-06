@@ -20,6 +20,7 @@ import AppCompany from "./components/Company/pathCompany";
 import JoinTeam from "./components/Company/formCP";
 import ContactUs from "./pages/ContactUs";
 import TemplateView from "./components/post/TemplateView";
+import DeleteConfirmation from "./components/post/DeleteConfirmation";
 import AuthErrorScreen from "./components/common/AuthErrorScreen";
 
 function App() {
@@ -71,14 +72,16 @@ function App() {
         <Route path="/company" element={<AppCompany />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/template-view/:slug" element={<TemplateView />} />
+        <Route path="/template/:slug/edit" element={<UploadTemplate edit={true} />} />
+        <Route path="/template/:slug/delete" element={<DeleteConfirmation />} />
         <Route
-            path="/join-team"
-            element={
-              <PrivateRoute>
-                <JoinTeam />
-              </PrivateRoute>
-            }
-          />
+          path="/join-team"
+          element={
+            <PrivateRoute>
+              <JoinTeam />
+            </PrivateRoute>
+          }
+        />
 
         <Route
           path="/signup"
