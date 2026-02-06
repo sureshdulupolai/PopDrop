@@ -1,5 +1,5 @@
 import { useNavigate, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../../assets/logo.png";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./Navbar.css";
@@ -7,7 +7,33 @@ import "./Navbar.css";
 export default function Navbar({ isLoggedIn, onLogout, userRole }) {
   const navigate = useNavigate();
   const [showTemplates, setShowTemplates] = useState(false);
-  // console.log(userRole);
+
+  // 📱 Mobile Sidebar State
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobileTemplatesOpen, setIsMobileTemplatesOpen] = useState(false);
+
+  // 🔒 Lock Body Scroll when Sidebar is Open
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isSidebarOpen]);
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+    setIsMobileTemplatesOpen(false); // Reset accordion
+  };
+
+  const handleMobileLinkClick = (path) => {
+    navigate(path);
+    closeSidebar();
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand-lg custom-navbar fixed-top">
@@ -21,17 +47,17 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
             <span className="fw-semibold brand-name">PopDrop</span>
           </Link>
 
-          {/* Mobile Toggle */}
+          {/* 🍔 Mobile Hamburger (Custom Click) */}
           <button
-            className="navbar-toggler"
+            className="navbar-toggler border-0"
             type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#popdropNav"
+            onClick={() => setIsSidebarOpen(true)}
           >
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse" id="popdropNav">
+          {/* 🖥️ Desktop Menu (Hidden on Mobile) */}
+          <div className="collapse navbar-collapse d-none d-lg-block" id="popdropNav">
 
             {/* Left Menu */}
             <ul className="navbar-nav left-menu gap-lg-4 align-items-lg-center">
@@ -132,77 +158,114 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
         </div>
       </nav>
 
-      <style>
-        {`
-/* ===== Templates Dropdown ===== */
-.custom-dropdown {
-  position: relative;
-}
+      {/* 📱 Mobile Sidebar Overlay */}
+      <div
+        className={`mobile-overlay ${isSidebarOpen ? "show" : ""}`}
+        onClick={closeSidebar}
+      ></div>
 
-.dropdown-btn {
-  background: none;
-  border: none;
-  color: #555;
-  font-size: 15px;
-  cursor: pointer;
-}
+      {/* 📱 Mobile Sidebar Drawer */}
+      <div className={`mobile-sidebar ${isSidebarOpen ? "open" : ""}`}>
 
-.custom-dropdown-menu {
-  position: absolute;
-  top: 140%;
-  left: 0;
-  width: 300px;
-  background: #fff;
-  border-radius: 14px;
-  padding: 10px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  transition: all 0.25s ease;
-  z-index: 9999;
-}
+        {/* Header */}
+        <div className="sidebar-header">
+          <div className="d-flex align-items-center gap-2">
+            <img src={logo} alt="PopDrop" width="32" />
+            <span className="fw-bold fs-5">PopDrop</span>
+          </div>
+          <button className="close-btn" onClick={closeSidebar}>
+            <i className="bi bi-x-lg"></i>
+          </button>
+        </div>
 
-/* Open state */
-.custom-dropdown.open .custom-dropdown-menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
+        {/* Scrollable Content */}
+        <div className="sidebar-content">
 
-/* Items */
-.custom-dropdown-menu .dropdown-item {
-  display: flex;
-  gap: 10px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  transition: 0.2s;
-}
+          <ul className="sidebar-menu">
 
-.custom-dropdown-menu .dropdown-item i {
-  font-size: 22px;
-  color: #f65b3b;
-}
+            {/* Templates Accordion */}
+            <li className="sidebar-item">
+              <div
+                className="sidebar-link d-flex justify-content-between align-items-center"
+                onClick={() => setIsMobileTemplatesOpen(!isMobileTemplatesOpen)}
+              >
+                <span>Templates</span>
+                <i className={`bi bi-chevron-down transition-icon ${isMobileTemplatesOpen ? "rotate-180" : ""}`}></i>
+              </div>
 
-.custom-dropdown-menu .dropdown-item strong {
-  font-size: 14px;
-}
+              {/* Accordion Body */}
+              <div className={`mobile-accordion ${isMobileTemplatesOpen ? "expanded" : ""}`}>
+                <div onClick={() => handleMobileLinkClick("/templates/gallery")} className="sub-item">
+                  <i className="bi bi-code-slash me-2"></i> Gallery
+                </div>
 
-.custom-dropdown-menu .dropdown-item span {
-  font-size: 12px;
-  color: #6b7280;
-}
+                {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
+                  <div onClick={() => handleMobileLinkClick("/templates/upload")} className="sub-item">
+                    <i className="bi bi-cloud-upload me-2"></i> Upload
+                  </div>
+                )}
 
-.custom-dropdown-menu .dropdown-item:hover {
-  background: #f8fafc;
-  // transform: translateX(4px);
-}
-.content-div{
-position: relative;
-top: 3px;
-}
-        `}
-      </style>
+                <div onClick={() => handleMobileLinkClick("/template/subscriptions")} className="sub-item">
+                  <i className="bi bi-credit-card me-2"></i> Subscription
+                </div>
+
+                {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
+                  <div onClick={() => handleMobileLinkClick("/my/templates")} className="sub-item">
+                    <i className="bi bi-person-circle me-2"></i> My Profile
+                  </div>
+                )}
+              </div>
+            </li>
+
+            <li className="sidebar-item">
+              <div className="sidebar-link" onClick={() => handleMobileLinkClick("/company")}>
+                Company
+              </div>
+            </li>
+
+            {isLoggedIn && (
+              <>
+                <li className="sidebar-item">
+                  <div className="sidebar-link" onClick={() => handleMobileLinkClick("/review")}>
+                    Review
+                  </div>
+                </li>
+                <li className="sidebar-item">
+                  <div className="sidebar-link" onClick={() => handleMobileLinkClick("/contact-us")}>
+                    Contact
+                  </div>
+                </li>
+              </>
+            )}
+          </ul>
+
+        </div>
+
+        {/* Footer */}
+        <div className="sidebar-footer">
+          {!isLoggedIn ? (
+            <div className="d-flex flex-column gap-2">
+              <button className="btn btn-outline-dark w-100" onClick={() => handleMobileLinkClick("/login")}>
+                Log in
+              </button>
+              <button className="btn get-btn w-100" onClick={() => handleMobileLinkClick("/signup")}>
+                Get PopDrop Free
+              </button>
+            </div>
+          ) : (
+            <div className="d-flex align-items-center justify-content-between">
+              <button className="btn d-flex align-items-center gap-2" onClick={() => handleMobileLinkClick("/profile")}>
+                <i className="bi bi-person-circle fs-4"></i>
+                <span>My Profile</span>
+              </button>
+              <button className="btn text-danger" onClick={onLogout}>
+                <i className="bi bi-box-arrow-right fs-4"></i>
+              </button>
+            </div>
+          )}
+        </div>
+
+      </div>
     </>
   );
 }
