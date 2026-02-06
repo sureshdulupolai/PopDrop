@@ -5,7 +5,7 @@ import logo from "../assets/logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
-const Login = ({ setIsLoggedIn }) => {
+const Login = ({ setIsLoggedIn, setUserRole }) => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -23,6 +23,8 @@ const Login = ({ setIsLoggedIn }) => {
 
     // If access token expired but refresh exists, try to stay logged in
     if ((token && expiry && now < expiry) || refresh) {
+      // NOTE: We don't have user object here to setRole easily unless we decode token or fetch profile.
+      // But App.jsx handles the initial load check, so this effect is mostly for redirecting if they revisit /login.
       setIsLoggedIn(true);
       navigate("/profile", { replace: true });
     }
@@ -47,6 +49,7 @@ const Login = ({ setIsLoggedIn }) => {
       localStorage.setItem("expiry", now + 3 * 365 * 24 * 60 * 60 * 1000); // 3 years
 
       setIsLoggedIn(true);
+      if (setUserRole) setUserRole(user.category); // ✅ Update Role Immediately
       navigate("/", { replace: true });
     } catch (err) {
       setError("Invalid email or password.");
@@ -85,7 +88,7 @@ const Login = ({ setIsLoggedIn }) => {
             {error && <p className="text-danger">{error}</p>}
 
             <form onSubmit={handleSubmit}>
-              
+
               {/* EMAIL */}
               <input
                 type="email"

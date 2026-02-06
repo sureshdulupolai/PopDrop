@@ -146,7 +146,7 @@ function App() {
                 secondaryActionLink="/"
               />
             ) : (
-              <Login setIsLoggedIn={setIsLoggedIn} />
+              <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />
             )
           }
         />
