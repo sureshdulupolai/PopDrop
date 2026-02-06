@@ -4,3 +4,6 @@ html, body {
   padding: 0 !important;
   overflow-x: hidden !important;
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
