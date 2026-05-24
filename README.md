@@ -115,48 +115,6 @@ PopDrop utilizes a dynamic dual-state database paradigm and secure local media a
 
 ---
 
-## 🚀 Local Installation Guide
-
-### Prerequisites
-*   Python 3.10+
-*   Node.js & npm
-
-### 1. Backend Setup
-1. Navigate to the backend folder:
-   ```bash
-   cd backend
-   ```
-2. Create and activate a python virtual environment:
-   ```bash
-   python -m venv env
-   env\Scripts\activate      # Windows
-   source env/bin/activate   # Mac/Linux
-   ```
-3. Install the requirements:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Run migrations and start the Django server:
-   ```bash
-   python manage.py migrate
-   python manage.py runserver
-   ```
-
-### 2. Frontend Setup
-1. Navigate to the frontend folder:
-   ```bash
-   cd ../frontend
-   ```
-2. Install npm dependencies:
-   ```bash
-   npm install
-   ```
-3. Run the development server:
-   ```bash
-   npm run dev
-   ```
-
----
 
 ## 📄 License
 

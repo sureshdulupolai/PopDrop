@@ -375,3 +375,70 @@ class ContactRequestView(APIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# -------------------------
+# FORGOT PASSWORD API
+# -------------------------
+class ForgotPasswordView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"status": False, "error": "Email is required"}, status=400)
+
+        try:
+            user = User.objects.get(email=email)
+            profile = user.profile
+        except User.DoesNotExist:
+            return Response({"status": False, "error": "User with this email does not exist"}, status=404)
+
+        # Generate 6-digit OTP
+        otp = str(random.randint(100000, 999999))
+        profile.set_otp(otp)
+        profile.save(update_fields=["otp", "otp_created_at"])
+
+        return Response({
+            "status": True,
+            "message": "OTP sent successfully",
+            "otp": otp
+        }, status=200)
+
+
+# -------------------------
+# RESET PASSWORD API
+# -------------------------
+class ResetPasswordView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        otp_input = request.data.get("otp")
+        password = request.data.get("password")
+
+        if not email or not otp_input or not password:
+            return Response({"status": False, "error": "All fields are required"}, status=400)
+
+        try:
+            user = User.objects.get(email=email)
+            profile = user.profile
+        except User.DoesNotExist:
+            return Response({"status": False, "error": "User not found"}, status=404)
+
+        # Check OTP expiry
+        if profile.otp_expired():
+            return Response({"status": False, "error": "OTP expired"}, status=400)
+
+        # Check OTP match
+        if str(profile.otp) != str(otp_input):
+            return Response({"status": False, "error": "Invalid OTP"}, status=400)
+
+        # Set new password
+        user.set_password(password)
+        user.save()
+
+        # Clear OTP session
+        profile.otp = None
+        profile.otp_created_at = None
+        profile.save(update_fields=["otp", "otp_created_at"])
+
+        return Response({
+            "status": True,
+            "message": "Password changed successfully!"
+        }, status=200)

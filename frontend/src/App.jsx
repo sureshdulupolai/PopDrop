@@ -9,6 +9,7 @@ import OtpVerifyHere from "./form/OtpVerify";
 import Profile from "./pages/ProfilePage";
 import PrivateRoute from "./routes/PrivateRoute";
 import Login from "./form/Login";
+import ForgotPassword from "./form/ForgotPassword";
 import CustomerReviews from "./pages/ReviewPage";
 import TemplateGallery from "./components/post/TemplateGallery";
 import UploadTemplate from "./components/post/UploadTemplate";
@@ -208,6 +209,22 @@ function AppContent() {
               />
             ) : (
               <Login setIsLoggedIn={setIsLoggedIn} setUserRole={setUserRole} />
+            )
+          }
+        />
+
+        <Route
+          path="/forgot-password"
+          element={
+            isLoggedIn ? (
+              <AuthErrorScreen
+                title="Already Logged In"
+                message="You are already logged in."
+                actionText="Go to Profile"
+                actionLink="/profile"
+              />
+            ) : (
+              <ForgotPassword />
             )
           }
         />

@@ -152,7 +152,13 @@ const Login = ({ setIsLoggedIn, setUserRole }) => {
               </div>
 
               <p className="mt-3 text-end">
-                <a href="#" className="forgot-link">Forgot password?</a>
+                <span 
+                  onClick={() => navigate("/forgot-password")} 
+                  className="forgot-link" 
+                  style={{ cursor: "pointer" }}
+                >
+                  Forgot password?
+                </span>
               </p>
             </form>
           </div>
