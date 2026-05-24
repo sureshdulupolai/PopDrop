@@ -199,8 +199,14 @@ const UploadTemplate = ({ edit = false }) => {
           )}
 
           <div className="upload-file-grid">
-            <input type="file" onChange={(e) => setDesktop(e.target.files[0])} />
-            <input type="file" onChange={(e) => setMobile(e.target.files[0])} />
+            <div className="file-input-wrapper">
+              <label className="file-label">🖥️ Desktop Overview</label>
+              <input type="file" onChange={(e) => setDesktop(e.target.files[0])} />
+            </div>
+            <div className="file-input-wrapper">
+              <label className="file-label">📱 Phone Overview</label>
+              <input type="file" onChange={(e) => setMobile(e.target.files[0])} />
+            </div>
           </div>
 
           <button className="upload-submit-btn" disabled={loading}>
@@ -275,6 +281,21 @@ const UploadTemplate = ({ edit = false }) => {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 20px;
+        }
+
+        .file-input-wrapper {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .file-label {
+          font-size: 14.5px;
+          font-weight: 600;
+          color: #4b5563;
+          display: flex;
+          align-items: center;
+          gap: 6px;
         }
 
         .upload-submit-btn {
