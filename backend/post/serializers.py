@@ -83,6 +83,7 @@ class PostCardSerializer(serializers.ModelSerializer):
             "desktop_image",
             "avg_rating",
             "slug",
+            "is_approved",
         ]
 
     # ✅ SAFE Local Media URL

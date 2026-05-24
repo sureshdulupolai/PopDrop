@@ -14,6 +14,8 @@ from .views import (
     DeletePostView,
     MyPostsView,
     UpdatePostView,
+    ModerationPostListView,
+    ToggleApprovePostView,
 )
 
 urlpatterns = [
@@ -31,4 +33,6 @@ urlpatterns = [
     path("posts/my/page/", MyPostsView.as_view()),
     path("posts/<slug:slug>/delete/", DeletePostView.as_view()),
     path("posts/<slug:slug>/update/", UpdatePostView.as_view()),
+    path("moderation/posts/", ModerationPostListView.as_view()),
+    path("posts/<int:post_id>/approve/", ToggleApprovePostView.as_view()),
 ]

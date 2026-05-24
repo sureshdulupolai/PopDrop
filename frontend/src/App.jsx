@@ -10,6 +10,7 @@ import Profile from "./pages/ProfilePage";
 import PrivateRoute from "./routes/PrivateRoute";
 import Login from "./form/Login";
 import ForgotPassword from "./form/ForgotPassword";
+import Notification from "./pages/Notification";
 import CustomerReviews from "./pages/ReviewPage";
 import TemplateGallery from "./components/post/TemplateGallery";
 import UploadTemplate from "./components/post/UploadTemplate";
@@ -99,6 +100,7 @@ function AppContent() {
         />
         <Route path="/creator/:publicId/templates" element={<CreatorTemplates />} />
         <Route path="/profile" element={<PrivateRoute> <Profile /> </PrivateRoute>} />
+        <Route path="/notification" element={<PrivateRoute> <Notification /> </PrivateRoute>} />
         <Route
           path="/template/:slug/edit"
           element={

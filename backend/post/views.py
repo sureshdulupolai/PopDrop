@@ -325,3 +325,67 @@ class UpdatePostView(APIView):
         post.save()
         return Response({"updated": True})
 
+
+# ─────────────────────────────────────────────
+#  MODERATION API VIEWS (Developer Role only)
+# ─────────────────────────────────────────────
+class ModerationPostListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Enforce developer role limit
+        if getattr(request.user.profile, "category", "") != "developer":
+            return Response({"error": "Access Denied. Developer only."}, status=403)
+
+        category_slug = request.GET.get("category", "all")
+        search = request.GET.get("search", "")
+        status_filter = request.GET.get("status", "all") // all, approved, pending
+
+        qs = Post.objects.all().select_related(
+            "user", "category"
+        ).annotate(
+            avg_rating=Avg("reviews__rating")
+        ).order_by("-created_at")
+
+        # Status filter
+        if status_filter == "approved":
+            qs = qs.filter(is_approved=True)
+        elif status_filter == "pending":
+            qs = qs.filter(is_approved=False)
+
+        # Category filter
+        if category_slug != "all":
+            qs = qs.filter(category__slug=category_slug)
+
+        # Search filter
+        if search:
+            qs = qs.filter(
+                Q(title__icontains=search) |
+                Q(description__icontains=search) |
+                Q(user__fullname__icontains=search)
+            )
+
+        return Response(
+            PostCardSerializer(qs, many=True, context={"request": request}).data
+        )
+
+
+class ToggleApprovePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        # Enforce developer role limit
+        if getattr(request.user.profile, "category", "") != "developer":
+            return Response({"error": "Access Denied. Developer only."}, status=403)
+
+        post = get_object_or_404(Post, id=post_id)
+        post.is_approved = not post.is_approved
+        post.save()
+
+        return Response({
+            "status": True,
+            "is_approved": post.is_approved,
+            "message": f"Template status updated to {'Approved' if post.is_approved else 'Pending'}"
+        })
+
+

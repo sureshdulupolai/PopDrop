@@ -129,6 +129,12 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                   <li className="nav-item">
                     <Link className="nav-link" to="/contact-us">Contact</Link>
                   </li>
+
+                  {userRole === "developer" && (
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/notification">Notification</Link>
+                    </li>
+                  )}
                 </>
               )}
             </ul>
@@ -239,6 +245,13 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                     Contact
                   </div>
                 </li>
+                {userRole === "developer" && (
+                  <li className="sidebar-item">
+                    <div className="sidebar-link" onClick={() => handleMobileLinkClick("/notification")}>
+                      Notification
+                    </div>
+                  </li>
+                )}
               </>
             )}
           </ul>
