@@ -324,19 +324,19 @@ const Notification = () => {
       <style>{`
         .moderation-page-wrapper {
           min-height: 100vh;
-          background: linear-gradient(135deg, #f8fafc, #eef2ff);
-          padding: 95px 20px;
-          display: flex;
-          justify-content: center;
+          background: #ffffff;
+          padding: 100px 40px 40px 40px;
+          width: 100%;
+          display: block;
         }
 
         .moderation-box {
           width: 100%;
-          max-width: 1100px;
+          max-width: 100%;
           background: #ffffff;
-          border-radius: 22px;
-          padding: 40px;
-          box-shadow: 0 25px 60px rgba(0,0,0,0.06);
+          border-radius: 0px;
+          padding: 0px;
+          box-shadow: none;
         }
 
         .filters-card {

@@ -49,6 +49,35 @@
   color: #000;
 }
 
+.navbar-nav .nav-link.active {
+  color: #f65b3b !important;
+  font-weight: 600;
+  position: relative;
+}
+
+.navbar-nav .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
+  height: 2.5px;
+  background-color: #f65b3b;
+  border-radius: 2px;
+  animation: navLineSlide 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes navLineSlide {
+  from {
+    opacity: 0;
+    transform: scaleX(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
 /* Right Buttons */
 .right-buttons {
   margin-left: auto !important;
@@ -152,6 +181,18 @@
   background: #f8fafc;
 }
 
+.custom-dropdown-menu .dropdown-item.active {
+  background: #fff4f1 !important;
+}
+
+.custom-dropdown-menu .dropdown-item.active i {
+  color: #e14c2f !important;
+}
+
+.custom-dropdown-menu .dropdown-item.active strong {
+  color: #f65b3b !important;
+}
+
 .content-div {
   position: relative;
   top: 3px;
@@ -248,11 +289,20 @@ body {
   font-size: 16px;
   text-decoration: none;
   cursor: pointer;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .sidebar-link:hover {
   background: #fafafa;
   color: #000;
+}
+
+.sidebar-link.active {
+  background: #fff4f1 !important;
+  color: #f65b3b !important;
+  font-weight: 600;
+  border-left: 4px solid #f65b3b !important;
 }
 
 /* Templates Accordion */
@@ -275,11 +325,18 @@ body {
   font-size: 14px;
   color: #555;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .mobile-accordion .sub-item:hover {
   background: #f0f0f0;
   color: #000;
+}
+
+.mobile-accordion .sub-item.active {
+  background: #fff4f1 !important;
+  color: #f65b3b !important;
+  font-weight: 600;
 }
 
 .transition-icon {

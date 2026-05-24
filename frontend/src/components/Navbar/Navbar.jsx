@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import logo from "../../assets/logo.png";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -6,6 +6,14 @@ import "./Navbar.css";
 
 export default function Navbar({ isLoggedIn, onLogout, userRole }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  const isTemplatesActive =
+    currentPath.startsWith("/templates") ||
+    currentPath.startsWith("/template/") ||
+    currentPath.startsWith("/my/templates");
+
   const [showTemplates, setShowTemplates] = useState(false);
 
   // 📱 Mobile Sidebar State
@@ -69,14 +77,14 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                 onMouseLeave={() => setShowTemplates(false)}
               >
                 <button
-                  className="nav-link dropdown-btn"
+                  className={`nav-link dropdown-btn ${isTemplatesActive ? "active" : ""}`}
                   onClick={() => setShowTemplates(!showTemplates)}
                 >
                   Templates <i className="bi bi-chevron-down ms-1"></i>
                 </button>
 
                 <div className="custom-dropdown-menu">
-                  <Link to="/templates/gallery" className="dropdown-item">
+                  <Link to="/templates/gallery" className={`dropdown-item ${currentPath === "/templates/gallery" ? "active" : ""}`}>
                     <i className="bi bi-code-slash"></i>
                     <div className="content-div">
                       <strong>Gallery</strong>
@@ -85,7 +93,7 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                   </Link>
 
                   {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
-                    <Link to="/templates/upload" className="dropdown-item">
+                    <Link to="/templates/upload" className={`dropdown-item ${currentPath === "/templates/upload" ? "active" : ""}`}>
                       <i className="bi bi-cloud-upload"></i>
                       <div className="content-div">
                         <strong>Upload</strong>
@@ -95,7 +103,7 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                   )}
 
                   {isLoggedIn && (
-                    <Link to="/template/subscriptions" className="dropdown-item">
+                    <Link to="/template/subscriptions" className={`dropdown-item ${currentPath === "/template/subscriptions" ? "active" : ""}`}>
                       <i className="bi bi-credit-card"></i>
                       <div className="content-div">
                         <strong>Subscription</strong>
@@ -105,7 +113,7 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                   )}
 
                   {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
-                    <Link to="/my/templates" className="dropdown-item">
+                    <Link to="/my/templates" className={`dropdown-item ${currentPath === "/my/templates" ? "active" : ""}`}>
                       <i className="bi bi-person-circle"></i>
                       <div className="content-div">
                         <strong>My Profile</strong>
@@ -117,22 +125,22 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
               </li>
 
               <li className="nav-item">
-                <Link className="nav-link" to="/company">Company</Link>
+                <Link className={`nav-link ${currentPath === "/company" ? "active" : ""}`} to="/company">Company</Link>
               </li>
 
               {isLoggedIn && (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/review">Review</Link>
+                    <Link className={`nav-link ${currentPath === "/review" ? "active" : ""}`} to="/review">Review</Link>
                   </li>
 
                   <li className="nav-item">
-                    <Link className="nav-link" to="/contact-us">Contact</Link>
+                    <Link className={`nav-link ${currentPath === "/contact-us" ? "active" : ""}`} to="/contact-us">Contact</Link>
                   </li>
 
                   {userRole === "developer" && (
                     <li className="nav-item">
-                      <Link className="nav-link" to="/notification">Notification</Link>
+                      <Link className={`nav-link ${currentPath === "/notification" ? "active" : ""}`} to="/notification">Notification</Link>
                     </li>
                   )}
                 </>
@@ -194,7 +202,7 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
             {/* Templates Accordion */}
             <li className="sidebar-item">
               <div
-                className="sidebar-link d-flex justify-content-between align-items-center"
+                className={`sidebar-link d-flex justify-content-between align-items-center ${isTemplatesActive ? "active" : ""}`}
                 onClick={() => setIsMobileTemplatesOpen(!isMobileTemplatesOpen)}
               >
                 <span>Templates</span>
@@ -203,24 +211,24 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
 
               {/* Accordion Body */}
               <div className={`mobile-accordion ${isMobileTemplatesOpen ? "expanded" : ""}`}>
-                <div onClick={() => handleMobileLinkClick("/templates/gallery")} className="sub-item">
+                <div onClick={() => handleMobileLinkClick("/templates/gallery")} className={`sub-item ${currentPath === "/templates/gallery" ? "active" : ""}`}>
                   <i className="bi bi-code-slash me-2"></i> Gallery
                 </div>
 
                 {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
-                  <div onClick={() => handleMobileLinkClick("/templates/upload")} className="sub-item">
+                  <div onClick={() => handleMobileLinkClick("/templates/upload")} className={`sub-item ${currentPath === "/templates/upload" ? "active" : ""}`}>
                     <i className="bi bi-cloud-upload me-2"></i> Upload
                   </div>
                 )}
 
                 {isLoggedIn && (
-                  <div onClick={() => handleMobileLinkClick("/template/subscriptions")} className="sub-item">
+                  <div onClick={() => handleMobileLinkClick("/template/subscriptions")} className={`sub-item ${currentPath === "/template/subscriptions" ? "active" : ""}`}>
                     <i className="bi bi-credit-card me-2"></i> Subscription
                   </div>
                 )}
 
                 {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
-                  <div onClick={() => handleMobileLinkClick("/my/templates")} className="sub-item">
+                  <div onClick={() => handleMobileLinkClick("/my/templates")} className={`sub-item ${currentPath === "/my/templates" ? "active" : ""}`}>
                     <i className="bi bi-person-circle me-2"></i> My Profile
                   </div>
                 )}
@@ -228,7 +236,7 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
             </li>
 
             <li className="sidebar-item">
-              <div className="sidebar-link" onClick={() => handleMobileLinkClick("/company")}>
+              <div className={`sidebar-link ${currentPath === "/company" ? "active" : ""}`} onClick={() => handleMobileLinkClick("/company")}>
                 Company
               </div>
             </li>
@@ -236,18 +244,18 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
             {isLoggedIn && (
               <>
                 <li className="sidebar-item">
-                  <div className="sidebar-link" onClick={() => handleMobileLinkClick("/review")}>
+                  <div className={`sidebar-link ${currentPath === "/review" ? "active" : ""}`} onClick={() => handleMobileLinkClick("/review")}>
                     Review
                   </div>
                 </li>
                 <li className="sidebar-item">
-                  <div className="sidebar-link" onClick={() => handleMobileLinkClick("/contact-us")}>
+                  <div className={`sidebar-link ${currentPath === "/contact-us" ? "active" : ""}`} onClick={() => handleMobileLinkClick("/contact-us")}>
                     Contact
                   </div>
                 </li>
                 {userRole === "developer" && (
                   <li className="sidebar-item">
-                    <div className="sidebar-link" onClick={() => handleMobileLinkClick("/notification")}>
+                    <div className={`sidebar-link ${currentPath === "/notification" ? "active" : ""}`} onClick={() => handleMobileLinkClick("/notification")}>
                       Notification
                     </div>
                   </li>

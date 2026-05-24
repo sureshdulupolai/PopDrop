@@ -63,9 +63,15 @@
           padding: 7px 18px;
           border-radius: 20px;
           font-size: 13px;
-          background: ${profile.is_verified ? "#e9fff4" : "#ffe9e9"};
-          color: ${profile.is_verified ? "#0d8f57" : "#d32f2f"};
           font-weight: 500;
+        }
+        .verified-badge.verified {
+          background: #e9fff4;
+          color: #0d8f57;
+        }
+        .verified-badge.unverified {
+          background: #ffe9e9;
+          color: #d32f2f;
         }
         .field {
           text-align: left;

@@ -5,7 +5,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)](#)
 [![Security Protection](https://img.shields.io/badge/Security-Hacker%20Protected-red?style=for-the-badge&logo=google-cloud-security&logoColor=white)](#-upgraded-production-security--protection-suite)
 
-PopDrop is a high-performance, enterprise-grade community-driven Software-as-a-Service (SaaS) platform engineered for developers, designers, and creators to share, discover, rate, and seamlessly reuse top-tier web templates and modular UI components. Unlike basic static repositories, PopDrop features a state-of-the-art **stateful OTP validation framework**, **multi-role profile registries**, and an **integrated secure request telemetry pipeline**.
+PopDrop is a high-performance, enterprise-grade community-driven Software-as-a-Service (SaaS) platform engineered for developers, designers, and creators to share, discover, rate, and seamlessly reuse top-tier web templates and modular UI components. Unlike basic static repositories, PopDrop features a state-of-the-art **stateful OTP validation framework** and **multi-role profile registries**.
 
 ---
 
@@ -25,15 +25,16 @@ graph TD
     
     SecurityMiddleware -->|Validated Request| Router{Django URL Router}
     
-    Router -->|/auth/signup| AuthApp[Api App: Custom User OTP Registration]
-    Router -->|/auth/verify-otp| OTPApp[Api App: Cryptographic OTP Verification]
-    Router -->|/pop| PostApp[Post App: Categories & Responsive Listings]
-    Router -->|/pop/like| LikeApp[Post App: Concurrency Safe Likes]
-    Router -->|/pop/review| ReviewApp[Post App: Unique Client Ratings]
+    Router -->|/api/signup/| AuthApp[Api App: Custom User OTP Registration]
+    Router -->|/api/otp/verify/| OTPApp[Api App: Cryptographic OTP Verification]
+    Router -->|/pop/posts/| PostApp[Post App: Categories & Responsive Listings]
+    Router -->|/pop/posts/:id/like/| LikeApp[Post App: Concurrency Safe Likes]
+    Router -->|/api/reviews/| ReviewApp[Api App: Unique Client Ratings]
     
     AuthApp --> DB[(Relational DB: SQLite / Neon PostgreSQL)]
     PostApp --> DB
     LikeApp --> DB
+    ReviewApp --> DB
     
     PostApp -->|Default Secure Local Media| LocalStorage[Local FileSystem: media/]
 ```
@@ -58,16 +59,40 @@ PopDrop/
 
 ---
 
+## ✨ Premium UX & Feature Highlights
+
+PopDrop integrates an elegant, top-tier aesthetic with powerful functional modules to offer an outstanding user and developer experience:
+
+### 1. 🧭 Dynamic Navigation Highlighting
+*   **Active Route Tracking:** Utilizes React Router's `useLocation` to dynamically capture the active route path in real-time.
+*   **Desktop Indicator:** Highlights the active menu link with our high-contrast brand color (`#f65b3b`) and a smooth, sliding bottom border using CSS keyframe micro-animations.
+*   **Responsive Mobile Sidebar:** Integrates full dynamic highlighting within the sliding drawer sidebar, complete with left-border active anchors for main items and deep-tint highlights for active templates accordion sub-items.
+
+### 2. 🖥️ Developer Moderation & Notification Dashboard
+*   **Unified Full-Width Interface:** Exposes a full-screen, edge-to-edge moderation portal accessible exclusively to users with the `developer` category.
+*   **Multi-Filter Controls:** Implements real-time filters by categories (e.g., Landing, SaaS, Portfolio), text search, and approval status (`Pending`, `Approved`, `Disapproved`).
+*   **One-Click Status Toggle:** Utilizes Django's backend transaction-safe toggle view to instantly approve or restrict template visibility without reloading.
+
+### 3. 🔑 Glassmorphic Auth Alert Suites & Forgot Password Flow
+*   **Glassmorphic Message Boxes:** Upgrades basic browser alert text to beautiful, high-fidelity responsive glassmorphic alert boxes with modern SVG icons across Login, Signup, and OTP portals.
+*   **OTP-Secure Recovery:** Replaces default password changes with an advanced flow using high-entropy generated OTP verification codes.
+*   **Automatic 5-Second Redirection:** Features a beautiful progress-gated countdown that routes the user back to `/login` automatically after a successful credential reset.
+
+### 4. 📐 Precision Template Previews
+*   **Desktop & Mobile Labels:** Explicitly separates upload portals inside `UploadTemplate.jsx` with prominent premium badges (`🖥️ Desktop Overview` and `📱 Phone Overview`) to ensure designers publish perfectly framed templates.
+
+---
+
 ## ⏱️ Platform Routes, Paths, and Time-Gated Restrictions
 
 To protect server resources, prevent database write load, and block brute-force scanners, PopDrop enforces strict timing rules and active verification gates across key endpoints:
 
 | URL Path Pattern | System Module / Target | Authorized Role | Security Lockout / Timing Gate / Restriction Logic |
 | :--- | :--- | :--- | :--- |
-| `/auth/verify-otp/` | **OTP Code Verification** | `guest` / `pre-auth` | **1. Sliding-Window Expiry:** 6-digit numeric OTP validation codes expire exactly **5 minutes** after creation.<br>**2. Dynamic OTP Erasure:** Upon successful validation or code expiry, the OTP key is wiped from the database transactionally to prevent secondary replay attacks. |
-| `/auth/resend-otp/` | **Resend Verification Code** | `guest` / `pre-auth` | **1. Rate-Limiting:** Generates and overrides the active user validation session with a new high-entropy OTP, transactionally safe from race conditions. |
-| `/auth/profile/` | **Profile Dashboard Update** | `developer` / `designer` | **1. Profile Update Cooldown:** Toggling role updates or updating compliance logs triggers a strict **2-hour cooling-off period** (`next_profile_update_allowed_at`) to secure database write loads. |
-| `/pop/review/` | **Submit Review & Rating** | `authenticated` | **1. Strict One-Review Limit:** Enforces a unique client constraint (`one_review_per_user` DB key) preventing a user from posting multiple ratings on the same component. |
+| `/api/otp/verify/` | **OTP Code Verification** | `guest` / `pre-auth` | **1. Sliding-Window Expiry:** 6-digit numeric OTP validation codes expire exactly **5 minutes** after creation.<br>**2. Dynamic OTP Erasure:** Upon successful validation or code expiry, the OTP key is wiped from the database transactionally to prevent secondary replay attacks. |
+| `/api/otp/resend/` | **Resend Verification Code** | `guest` / `pre-auth` | **1. Rate-Limiting:** Generates and overrides the active user validation session with a new high-entropy OTP, transactionally safe from race conditions. |
+| `/api/profile/` | **Profile Dashboard Update** | `developer` / `designer` | **1. Profile Update Cooldown:** Toggling role updates or updating compliance logs triggers a strict **2-hour cooling-off period** (`next_profile_update_allowed_at`) to secure database write loads. |
+| `/api/reviews/` | **Submit Review & Rating** | `authenticated` | **1. Strict One-Review Limit:** Enforces a unique client constraint preventing a user from posting multiple ratings on the same component. |
 | `/api/contact/` | **Submit Contact Inquiries** | `authenticated` | **1. Rate Lockout:** Users are blocked from submitting any new inquiries while a previous ticket is unresolved (`is_checked=False`). |
 
 ---
@@ -106,12 +131,12 @@ PopDrop utilizes a dynamic dual-state database paradigm and secure local media a
 *   **Development Database:** Utilizes a lightweight SQLite relational database (`db.sqlite3`) for seamless local runs.
 *   **Production Database:** Employs Neon serverless PostgreSQL or Supabase database clusters dynamically via connection pooling with `dj_database_url`.
 
-### 2. Cloud-Free Image Storage Architecture
-*   **Local Storage:** In keeping with standard secure system architecture, PopDrop rejects expensive cloud media dependencies and stores images safely under local filesystem paths using Django's default `FileSystemStorage`:
+### 2. Local Image Storage Architecture
+*   **Local File Storage:** Stores uploaded images safely under local filesystem directories using Django's default `FileSystemStorage` engine:
     *   **User Profiles:** `/media/profile_images/`
     *   **Desktop Component Previews:** `/media/template_previews/desktop/`
     *   **Mobile Component Previews:** `/media/template_previews/mobile/`
-*   **Safe Serialization:** The image serializer dynamically reconstructs correct relative and absolute paths depending on the host request domain, making local testing identical to production.
+*   **Dynamic Serialization:** The serializer dynamically reconstructs the correct relative and absolute paths depending on the incoming request host, ensuring seamless asset serving on both local development and production.
 
 ---
 

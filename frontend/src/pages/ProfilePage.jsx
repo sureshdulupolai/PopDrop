@@ -181,7 +181,7 @@ const Profile = () => {
             )}
           </div>
 
-          <div className="verified-badge">
+          <div className={`verified-badge ${profile.is_verified ? "verified" : "unverified"}`}>
             {profile.is_verified ? "✔ Verified" : "❌ Not Verified"}
           </div>
 

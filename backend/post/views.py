@@ -339,7 +339,7 @@ class ModerationPostListView(APIView):
 
         category_slug = request.GET.get("category", "all")
         search = request.GET.get("search", "")
-        status_filter = request.GET.get("status", "all") // all, approved, pending
+        status_filter = request.GET.get("status", "all")  # all, approved, pending
 
         qs = Post.objects.all().select_related(
             "user", "category"
