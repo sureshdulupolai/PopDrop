@@ -85,7 +85,25 @@ const Login = ({ setIsLoggedIn, setUserRole }) => {
               <p className="text-muted">Log in to your account</p>
             </div>
 
-            {error && <p className="text-danger">{error}</p>}
+            {error && (
+              <div 
+                className="alert alert-danger d-flex align-items-center gap-2 border-0 mb-3" 
+                style={{
+                  background: "rgba(246, 91, 59, 0.08)",
+                  borderLeft: "4px solid #f65b3b",
+                  color: "#d43d1c",
+                  borderRadius: "8px",
+                  padding: "12px 16px",
+                  fontSize: "14.5px",
+                  fontWeight: "500",
+                  boxShadow: "0 4px 12px rgba(246, 91, 59, 0.06)",
+                  textAlign: "left"
+                }}
+              >
+                <i className="bi bi-exclamation-triangle-fill fs-5" style={{ color: "#f65b3b" }}></i>
+                <div>{error}</div>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit}>
 

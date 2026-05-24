@@ -1,7 +1,8 @@
 import axios from "axios";
+import { BASE_URL } from "./config";
 
 const publicApi = axios.create({
-  baseURL: "http://localhost:8000/", // ❗ auth nahi
+  baseURL: `${BASE_URL}/`, // ❗ auth nahi
   headers: {
     "Content-Type": "application/json",
   },

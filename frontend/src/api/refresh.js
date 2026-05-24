@@ -1,11 +1,12 @@
 import axios from "axios";
+import { BASE_URL } from "./config";
 
 export const refreshToken = async () => {
   const refresh = localStorage.getItem("refresh_token");
   if (!refresh) throw new Error("No refresh token");
 
   const res = await axios.post(
-    "http://localhost:8000/auth/token/refresh/",
+    `${BASE_URL}/auth/token/refresh/`,
     { refresh }
   );
 

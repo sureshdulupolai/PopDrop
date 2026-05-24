@@ -150,11 +150,28 @@ const Signup = ({ role }) => {
             </div>
 
             {error && (
-              <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                {error}
+              <div 
+                className="alert alert-danger d-flex align-items-center justify-content-between gap-2 border-0 mb-3" 
+                style={{
+                  background: "rgba(246, 91, 59, 0.08)",
+                  borderLeft: "4px solid #f65b3b",
+                  color: "#d43d1c",
+                  borderRadius: "8px",
+                  padding: "12px 16px",
+                  fontSize: "14.5px",
+                  fontWeight: "500",
+                  boxShadow: "0 4px 12px rgba(246, 91, 59, 0.06)",
+                  textAlign: "left"
+                }}
+              >
+                <div className="d-flex align-items-center gap-2">
+                  <i className="bi bi-exclamation-triangle-fill fs-5" style={{ color: "#f65b3b" }}></i>
+                  <div>{error}</div>
+                </div>
                 <button
                   type="button"
                   className="btn-close"
+                  style={{ fontSize: "12px", filter: "invert(35%) sepia(95%) saturate(1859%) hue-rotate(345deg) brightness(88%) contrast(90%)" }}
                   aria-label="Close"
                   onClick={() => setError("")}
                 ></button>

@@ -1,8 +1,9 @@
 import axios from "axios";
 import { refreshToken } from "./refresh";
+import { BASE_URL } from "./config";
 
 const privateApi = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: BASE_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "multipart/form-data",

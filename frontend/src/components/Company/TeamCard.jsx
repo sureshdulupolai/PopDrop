@@ -1,6 +1,5 @@
 import { useState } from "react";
-
-const BACKEND_URL = "http://localhost:8000";
+import { BASE_URL as BACKEND_URL } from "../../api/config";
 
 export default function TeamCard({ member }) {
   const [hovered, setHovered] = useState(false);
