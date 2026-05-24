@@ -15,10 +15,14 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load .env file from either backend folder or root directory
+dotenv_paths = [BASE_DIR / '.env', BASE_DIR.parent / '.env']
+for dotenv_path in dotenv_paths:
+    if dotenv_path.exists():
+        load_dotenv(dotenv_path)
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -27,22 +31,73 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ejse_u3fdp$mcqutl-o5ff%tm#eq9ni%q@*bvd@!ig-_12fh0t'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-ejse_u3fdp$mcqutl-o5ff%tm#eq9ni%q@*bvd@!ig-_12fh0t')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
+if os.environ.get('RENDER') == 'true':
+    DEBUG = False
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-]
+# Ultimate production security safeguard to prevent misconfiguration
+if (os.environ.get('RENDER') == 'true' or not DEBUG) and SECRET_KEY == 'django-insecure-ejse_u3fdp$mcqutl-o5ff%tm#eq9ni%q@*bvd@!ig-_12fh0t':
+    raise ValueError(
+        "CRITICAL SECURITY EXCEPTION: The default insecure SECRET_KEY cannot be used in a production environment! "
+        "Please set a strong, unique SECRET_KEY environment variable in your host panel."
+    )
 
-CORS_ALLOW_ALL_ORIGINS = True
+# Dynamic ALLOWED_HOSTS configuration
+allowed_hosts_env = os.environ.get('ALLOWED_HOSTS')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+# Auto-append Render default domains
+if os.environ.get('RENDER') == 'true':
+    render_external_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+    if render_external_hostname:
+        ALLOWED_HOSTS.append(render_external_hostname)
+    for host in ['*.onrender.com', 'localhost', '127.0.0.1']:
+        if host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(host)
+
+# CORS & CSRF configurations
 CORS_ALLOW_CREDENTIALS = True
+
+cors_allowed_origins_env = os.environ.get('CORS_ALLOWED_ORIGINS')
+if cors_allowed_origins_env:
+    CORS_ALLOWED_ORIGINS = [o.strip() for o in cors_allowed_origins_env.split(',') if o.strip()]
+    CORS_ALLOW_ALL_ORIGINS = False
+else:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+    # In development, we can allow all origins if not specified
+    CORS_ALLOW_ALL_ORIGINS = DEBUG
+
+csrf_trusted_origins_env = os.environ.get('CSRF_TRUSTED_ORIGINS')
+if csrf_trusted_origins_env:
+    CSRF_TRUSTED_ORIGINS = [o.strip() for o in csrf_trusted_origins_env.split(',') if o.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+
+# If deployed on Render, append the default render domain dynamically to trusted origins
+if os.environ.get('RENDER') == 'true':
+    render_external_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+    if render_external_hostname:
+        render_https = f"https://{render_external_hostname}"
+        if render_https not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(render_https)
+        if render_https not in CORS_ALLOWED_ORIGINS:
+            CORS_ALLOWED_ORIGINS.append(render_https)
+    # Also support common wildcards/subdomains for Render
+    if 'https://*.onrender.com' not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append('https://*.onrender.com')
+
 
 # Application definition
 
@@ -124,12 +179,23 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+database_url = os.environ.get('DATABASE_URL')
+if os.environ.get('RENDER') == 'true' or database_url:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=database_url,
+            conn_max_age=600,
+            ssl_require=os.environ.get('RENDER') == 'true'
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -169,8 +235,36 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ─────────────────────────────────────────────
+#  PRODUCTION SECURITY HEADERS & COOKIE POLICIES
+# ─────────────────────────────────────────────
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1', 'yes')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
+CSRF_COOKIE_SAMESITE = 'Lax'
+X_FRAME_OPTIONS = 'DENY'
+
+if not DEBUG or os.environ.get('RENDER') == 'true':
+    # Force production secure settings, overriding any unsafe defaults
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # Full HSTS Protection
+    SECURE_HSTS_SECONDS = 63072000  # 2 years
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # Extra protection
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+    SESSION_COOKIE_SAMESITE = 'Strict'
+    CSRF_COOKIE_SAMESITE = 'Strict'

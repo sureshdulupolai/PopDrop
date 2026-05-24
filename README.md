@@ -1,121 +1,164 @@
-# PopDrop 🚀
+# 🚀 PopDrop — Enterprise-Grade UI Component & Web Template SaaS
 
-PopDrop is a premium community-driven platform designed for developers and designers to share, discover, and reuse high-quality web templates and UI components.
+[![Django Framework](https://img.shields.io/badge/Framework-Django%206.0-092E20?style=for-the-badge&logo=django&logoColor=white)](https://djangoproject.com)
+[![React Library](https://img.shields.io/badge/UI%20Library-React%2018-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)](#)
+[![Security Protection](https://img.shields.io/badge/Security-Hacker%20Protected-red?style=for-the-badge&logo=google-cloud-security&logoColor=white)](#-upgraded-production-security--protection-suite)
 
-## 🌟 Project Purpose
-PopDrop was built to bridge the gap between inspiration and implementation. It provides a curated space where creators can showcase their code and users can find vetted, modular templates for their projects. Whether you are a Designer looking for inspiration or a Developer looking for ready-to-use snippets, PopDrop serves as a central hub for web innovation.
-
-## 🛠️ Technologies Used
-
-### Backend
-*   **Django (DRF):** The primary framework used to handle server-side logic, API management, and database operations.
-*   **SimpleJWT:** Implemented for secure, token-based authentication and session management.
-*   **Cloudinary:** Used for high-performance cloud storage of template previews and profile images.
-*   **WhiteNoise:** Manages static file serving for optimized production performance.
-
-### Frontend
-*   **React (Vite):** A modern JavaScript library used to build a fast, reactive, and professional user interface.
-*   **Tailwind CSS:** A utility-first CSS framework used for crafting the premium "Glassmorphism" UI and responsive layouts.
-*   **React Router:** Handles seamless navigation across the single-page application.
-
-### Database
-*   **SQLite:** Used as the primary relational database to store user information, template metadata, and social interactions.
+PopDrop is a high-performance, enterprise-grade community-driven Software-as-a-Service (SaaS) platform engineered for developers, designers, and creators to share, discover, rate, and seamlessly reuse top-tier web templates and modular UI components. Unlike basic static repositories, PopDrop features a state-of-the-art **stateful OTP validation framework**, **multi-role profile registries**, and an **integrated secure request telemetry pipeline**.
 
 ---
 
-## ✨ Project Features
+## 🏛️ System Architecture Overview
 
-### 1. Template Gallery & Discovery
-Users can browse a wide range of web templates categorized by style (e.g., Frontend, Backend). Each template features high-quality desktop and mobile previews, making it easy to see the design before using it.
+The platform uses a fully decoupled modular layout separated into a responsive React frontend and a highly secure Django REST Framework middleware pipeline. It supports dynamic dual-state databases (SQLite for local development and Neon serverless PostgreSQL for production scaling).
 
-### 2. Multi-Role User Profiles
-PopDrop supports three distinct user roles: **Normal User**, **Developer**, and **Designer**. Each role comes with a unique public ID (e.g., `popdrop-dev-1001`) and specific profile customization options.
+```mermaid
+graph TD
+    Client[Web Browser Client] -->|Secure HTTPS / Bearer JWT| SecurityMiddleware[Production Security Pipeline]
+    
+    subgraph SecurityMiddleware [Security & Defenses Stack]
+        A[CSRF & CORS Origins Guard] --> B[SECURE_SSL_REDIRECT]
+        B --> C[HTTP Strict-Transport-Security]
+        C --> D[Secure SameSite Cookies Guard]
+    end
+    
+    SecurityMiddleware -->|Validated Request| Router{Django URL Router}
+    
+    Router -->|/auth/signup| AuthApp[Api App: Custom User OTP Registration]
+    Router -->|/auth/verify-otp| OTPApp[Api App: Cryptographic OTP Verification]
+    Router -->|/pop| PostApp[Post App: Categories & Responsive Listings]
+    Router -->|/pop/like| LikeApp[Post App: Concurrency Safe Likes]
+    Router -->|/pop/review| ReviewApp[Post App: Unique Client Ratings]
+    
+    AuthApp --> DB[(Relational DB: SQLite / Neon PostgreSQL)]
+    PostApp --> DB
+    LikeApp --> DB
+    
+    PostApp -->|Default Secure Local Media| LocalStorage[Local FileSystem: media/]
+```
 
-### 3. OTP-Based Authentication
-To ensure security, PopDrop uses an email-based One-Time Password (OTP) system for user registration and verification, preventing bot accounts and ensuring authentic interactions.
+### 📂 Repository Structure & Module Responsibilities
 
-### 4. Direct Code Interaction
-Users can view the source code of any template and copy it with a single click. This streamlines the development process for users looking to integrate components quickly into their own projects.
-
-### 5. Social & Feedback System
-The platform encourages community engagement through:
-*   **Likes & Ratings:** Users can like templates and rate them on a 5-star scale.
-*   **Reviews:** Detailed feedback can be left on templates to help creators improve their work.
-*   **Subscriptions:** Users can follow their favorite creators to receive updates on new uploads.
-
-### 6. Team Application System
-A dedicated module allows passionate community members to apply for the PopDrop core team directly through the platform by submitting their tech stack and professional resume.
-
----
-
-## 📂 Project Structure
-
-### Backend (`/backend`)
-*   `api/`: Contains core business logic including User models, Profile management, Team applications, and Contact requests.
-*   `post/`: Manages the Template (Post) ecosystem, including categories, likes, reviews, and subscription logic.
-*   `backend/`: Root configuration folder containing `settings.py`, `urls.py`, and WSGI/ASGI setups.
-
-### Frontend (`/frontend`)
-*   `src/components/`: Reusable UI components such as Navbars, Modals, and Template Cards.
-*   `src/pages/`: Main application views like the Home Page, Profile Dashboard, and Template Detail view.
-*   `src/form/`: Specialized components for handling complex user inputs (Login, Signup, OTP).
-
----
-
-## 📊 Database Models
-
-*   **User:** Custom AUTH model using email as the unique identifier instead of a username.
-*   **UserProfile:** Stores extended user data, verification status, category (Developer/Designer), and generated public IDs.
-*   **Post (Template):** The central entity containing title, description, raw code, and Cloudinary image URLs.
-*   **UserSubscription:** Manages the "Follower" relationship between users.
-*   **PostLike / PostReview:** Records user interactions and feedback for specific templates.
-
----
-
-## 🌊 How It Works (Flow)
-
-1.  **Request:** A user performs an action in the React UI (e.g., clicking "Like" on a template).
-2.  **API Call:** The Frontend sends an asynchronous HTTP request to the Django Backend, including a **JWT Bearer Token** for authentication.
-3.  **Processing:** Django's REST framework validates the token and processes the logic (e.g., updating the like count in the database).
-4.  **Database:** The SQLite database is updated with the new state.
-5.  **Response:** The Backend sends a JSON response back to the UI.
-6.  **Update:** The Frontend state is updated instantly, providing visual feedback to the user without a page reload.
+```text
+PopDrop/
+├── backend/                 # Central Django Project Folder
+│   ├── api/                 # OTP verification, Custom User Model, profiles, and team registry
+│   ├── post/                # Component registries, categories, reviews, likes, and subscriptions
+│   ├── backend/             # Core configurations (urls.py, settings.py, wsgi.py)
+│   ├── media/               # Local media directory (user profile images and template previews)
+│   └── manage.py            # Command Line Utility
+├── frontend/                # Vite React Single Page Application
+│   ├── src/                 # Reactive pages, state managers, and reusable layouts
+│   ├── index.html           # Root HTML5 DOM container
+│   ├── package.json         # Package configuration manifest
+│   └── vite.config.js       # Vite assets builder
+└── .env                     # Environmental configuration vault (Not checked in)
+```
 
 ---
 
-## 🚀 Installation Guide
+## ⏱️ Platform Routes, Paths, and Time-Gated Restrictions
+
+To protect server resources, prevent database write load, and block brute-force scanners, PopDrop enforces strict timing rules and active verification gates across key endpoints:
+
+| URL Path Pattern | System Module / Target | Authorized Role | Security Lockout / Timing Gate / Restriction Logic |
+| :--- | :--- | :--- | :--- |
+| `/auth/verify-otp/` | **OTP Code Verification** | `guest` / `pre-auth` | **1. Sliding-Window Expiry:** 6-digit numeric OTP validation codes expire exactly **5 minutes** after creation.<br>**2. Dynamic OTP Erasure:** Upon successful validation or code expiry, the OTP key is wiped from the database transactionally to prevent secondary replay attacks. |
+| `/auth/resend-otp/` | **Resend Verification Code** | `guest` / `pre-auth` | **1. Rate-Limiting:** Generates and overrides the active user validation session with a new high-entropy OTP, transactionally safe from race conditions. |
+| `/auth/profile/` | **Profile Dashboard Update** | `developer` / `designer` | **1. Profile Update Cooldown:** Toggling role updates or updating compliance logs triggers a strict **2-hour cooling-off period** (`next_profile_update_allowed_at`) to secure database write loads. |
+| `/pop/review/` | **Submit Review & Rating** | `authenticated` | **1. Strict One-Review Limit:** Enforces a unique client constraint (`one_review_per_user` DB key) preventing a user from posting multiple ratings on the same component. |
+| `/api/contact/` | **Submit Contact Inquiries** | `authenticated` | **1. Rate Lockout:** Users are blocked from submitting any new inquiries while a previous ticket is unresolved (`is_checked=False`). |
+
+---
+
+## 🛡️ Upgraded Production Security & Protection Suite
+
+PopDrop implements enterprise-grade defensive layers to safeguard user data, lock down APIs, and ensure robust asset storage:
+
+### 1. 📧 Cryptographic OTP Verification Flow
+*   **Dynamic Generation:** Dispatches high-entropy 6-digit verification codes utilizing Django's random integer secure pools.
+*   **Wipe-On-Verify:** Immediately nullifies OTP values inside a single database transaction upon verified registration, preventing offline brute-force attempts.
+*   **Dynamic Expiry:** Implements a strict **5-minute sliding window**. Past this threshold, active verification tokens are marked invalid, triggering a secure logout.
+
+### 2. 🔑 Enterprise Token-Based Authentication Flow
+*   **Access Token Rotation:** Uses REST SimpleJWT architecture with automatically rotating refresh tokens to block session hijacking.
+*   **Decoupled Auth Gateway:** Authenticates client-side actions asynchronously via HTTP requests using JWT Bearer headers, keeping client data isolated.
+
+### 3. 🛡️ Advanced Security & Threat-Resistant Protections
+*   **Dynamic allowed hosts:** Automatically reads host configurations from the `.env` file and appends live domains dynamically (e.g., Render `*.onrender.com`).
+*   **Production Safe Mode:** Enforces `DEBUG = False` and strict production redirects in live environments. Will block the server build instantly if an insecure secret key is used in production.
+*   **Dynamic CORS & CSRF Origins:** Replaces wildcarding (`*`) with targeted environmental lists. Dynamically processes secure HTTPS cross-origin protocols for Netlify.
+*   **Strict Security Headers:** Injects standard security parameters:
+    *   `SECURE_SSL_REDIRECT = True` (redirects all insecure HTTP requests).
+    *   `Strict-Transport-Security` HSTS active for 2 years (`max-age=63072000`).
+    *   `X-Frame-Options: DENY` (prevents clickjacking attacks).
+    *   `X-Content-Type-Options: nosniff` (mitigates MIME-sniffing).
+*   **Secure Cookie Storage:** Session parameters and CSRF tokens are locked under `Secure = True`, `HttpOnly = True`, and `SameSite = 'Strict'` settings.
+
+---
+
+## 🗄️ Database Configurations & Storage Architecture
+
+PopDrop utilizes a dynamic dual-state database paradigm and secure local media asset management:
+
+### 1. Dual-State Relational Database Routing
+*   **Development Database:** Utilizes a lightweight SQLite relational database (`db.sqlite3`) for seamless local runs.
+*   **Production Database:** Employs Neon serverless PostgreSQL or Supabase database clusters dynamically via connection pooling with `dj_database_url`.
+
+### 2. Cloud-Free Image Storage Architecture
+*   **Local Storage:** In keeping with standard secure system architecture, PopDrop rejects expensive cloud media dependencies and stores images safely under local filesystem paths using Django's default `FileSystemStorage`:
+    *   **User Profiles:** `/media/profile_images/`
+    *   **Desktop Component Previews:** `/media/template_previews/desktop/`
+    *   **Mobile Component Previews:** `/media/template_previews/mobile/`
+*   **Safe Serialization:** The image serializer dynamically reconstructs correct relative and absolute paths depending on the host request domain, making local testing identical to production.
+
+---
+
+## 🚀 Local Installation Guide
 
 ### Prerequisites
 *   Python 3.10+
 *   Node.js & npm
 
-### Backend Setup
-1.  Clone the repository: `git clone <repo-url>`
-2.  Navigate to backend: `cd PopDrop/backend`
-3.  Create virtual environment: `python -m venv env`
-4.  Activate environment: `env\Scripts\activate` (Windows) or `source env/bin/activate` (Mac/Linux)
-5.  Install dependencies: `pip install -r requirements.txt`
-6.  Apply migrations: `python manage.py migrate`
-7.  Run server: `python manage.py runserver`
+### 1. Backend Setup
+1. Navigate to the backend folder:
+   ```bash
+   cd backend
+   ```
+2. Create and activate a python virtual environment:
+   ```bash
+   python -m venv env
+   env\Scripts\activate      # Windows
+   source env/bin/activate   # Mac/Linux
+   ```
+3. Install the requirements:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Run migrations and start the Django server:
+   ```bash
+   python manage.py migrate
+   python manage.py runserver
+   ```
 
-### Frontend Setup
-1.  Navigate to frontend: `cd PopDrop/frontend`
-2.  Install dependencies: `npm install`
-3.  Run development server: `npm run dev`
-4.  Access the app at: `http://localhost:5173`
+### 2. Frontend Setup
+1. Navigate to the frontend folder:
+   ```bash
+   cd ../frontend
+   ```
+2. Install npm dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
 ---
 
-## 🛡️ Security Implementation
+## 📄 License
 
-*   **JWT Authentication:** Uses short-lived access tokens and long-lived refresh tokens with rotation for maximum security.
-*   **OTP Verification:** Safeguards user accounts during sensitive actions like signup.
-*   **CORS Protection:** Configured to allow requests only from verified frontend origins.
-*   **Input Validation:** Strict validation at the serializer level ensures no malicious data enters the database.
-
----
-
-## 🔮 Future Improvements
-*   **Real-time Notifications:** Implementing WebSockets for instant alerts when a user gets a new follower or like.
-*   **Pro Subscription:** Introducing a premium tier for exclusive, high-end templates.
-*   **Live Preview:** Adding a sandboxed environment to interact with template code directly in the browser.
+This project is licensed under a **Proprietary Commercial License**. All rights reserved. 
+Unauthorized cloning, distribution, or commercial hosting is strictly prohibited.

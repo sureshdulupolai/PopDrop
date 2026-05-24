@@ -85,7 +85,7 @@ class PostCardSerializer(serializers.ModelSerializer):
             "slug",
         ]
 
-    # ✅ SAFE Cloudinary URL
+    # ✅ SAFE Local Media URL
     def get_desktop_image(self, obj):
         img = obj.desktop_image
         if not img:

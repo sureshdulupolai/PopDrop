@@ -43,7 +43,7 @@ const DeleteConfirmation = () => {
         navigate(`/template/${slug}`);
     };
 
-    if (verifying) return <div style={{ textAlign: "center", padding: "50px" }}>Loading...</div>;
+    if (verifying) return null;
 
     return (
         <div className="delete-confirm-wrapper">

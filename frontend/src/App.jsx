@@ -22,12 +22,22 @@ import ContactUs from "./pages/ContactUs";
 import TemplateView from "./components/post/TemplateView";
 import DeleteConfirmation from "./components/post/DeleteConfirmation";
 import AuthErrorScreen from "./components/common/AuthErrorScreen";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
-function App() {
+import { LoadingProvider, useLoading } from "./components/common/LoadingContext";
+import GlobalLoader from "./components/common/GlobalLoader";
+import { setLoadingInterceptor } from "./api/axios";
+
+function AppContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const { setLoading } = useLoading();
 
   useEffect(() => {
+    // Connect axios to our global loader
+    setLoadingInterceptor(setLoading);
+
     const refresh = localStorage.getItem("refresh_token");
     const user = localStorage.getItem("user");
 
@@ -37,9 +47,9 @@ function App() {
       const parsedUser = JSON.parse(user);
       setUserRole(parsedUser.category);
     }
-  }, []);
+  }, [setLoading]);
 
-  if (isLoggedIn === null) return <div>Loading...</div>;
+  if (isLoggedIn === null) return <GlobalLoader forceShow />;
 
   const handleLogout = () => {
     localStorage.clear();
@@ -50,6 +60,7 @@ function App() {
 
   return (
     <>
+      <GlobalLoader />
       <Navbar
         isLoggedIn={isLoggedIn}
         onLogout={handleLogout}
@@ -59,21 +70,71 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePageHere isLoggedIn={isLoggedIn} />} />
         <Route path="/verify-otp" element={<OtpVerifyHere />} />
-        <Route path="/review" element={<CustomerReviews isLoggedIn={isLoggedIn} />} />
+        <Route path="/review" element={<PrivateRoute> <CustomerReviews isLoggedIn={isLoggedIn} /> </PrivateRoute>} />
         <Route path="/templates/gallery" element={<TemplateGallery />} />
-        <Route path="/templates/upload" element={<UploadTemplate />} />
+        <Route
+          path="/templates/upload"
+          element={
+            <PrivateRoute>
+              {(userRole === "designer" || userRole === "developer") ? (
+                <UploadTemplate />
+              ) : (
+                <AuthErrorScreen
+                  title="Permission Denied"
+                  message="Only designers and developers can upload templates."
+                />
+              )}
+            </PrivateRoute>
+          }
+        />
         <Route path="/template/:slug" element={<TemplateDetail />} />
-        <Route path="/template/subscriptions" element={<SubscribedTemplates />} />
+        <Route
+          path="/template/subscriptions"
+          element={
+            <PrivateRoute>
+              <SubscribedTemplates />
+            </PrivateRoute>
+          }
+        />
         <Route path="/creator/:publicId/templates" element={<CreatorTemplates />} />
         <Route path="/profile" element={<PrivateRoute> <Profile /> </PrivateRoute>} />
-        <Route path="/template/:slug/edit" element={<UploadTemplate edit />} />
-        <Route path="/my/templates" element={<MyTemplates />} />
+        <Route
+          path="/template/:slug/edit"
+          element={
+            <PrivateRoute>
+              {(userRole === "designer" || userRole === "developer") ? (
+                <UploadTemplate edit />
+              ) : (
+                <AuthErrorScreen
+                  title="Permission Denied"
+                  message="Only the project owner can edit this."
+                />
+              )}
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my/templates"
+          element={
+            <PrivateRoute>
+              <MyTemplates />
+            </PrivateRoute>
+          }
+        />
 
         <Route path="/company" element={<AppCompany />} />
-        <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/contact-us" element={<PrivateRoute> <ContactUs /> </PrivateRoute>} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/template-view/:slug" element={<TemplateView />} />
-        <Route path="/template/:slug/edit" element={<UploadTemplate edit={true} />} />
-        <Route path="/template/:slug/delete" element={<DeleteConfirmation />} />
+        <Route
+          path="/template/:slug/delete"
+          element={
+            <PrivateRoute>
+              <DeleteConfirmation />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/join-team"
           element={
@@ -168,13 +229,18 @@ function App() {
             />
           }
         />
-
-
-
       </Routes>
 
-      <Footer />
+      <Footer isLoggedIn={isLoggedIn} userRole={userRole} />
     </>
+  );
+}
+
+function App() {
+  return (
+    <LoadingProvider>
+      <AppContent />
+    </LoadingProvider>
   );
 }
 

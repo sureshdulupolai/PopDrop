@@ -233,7 +233,7 @@ export default function TemplateDetail() {
     navigate("/templates/gallery");
   };
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) return null;
 
   if (notFound) {
     return (

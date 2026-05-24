@@ -94,13 +94,15 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                     </Link>
                   )}
 
-                  <Link to="/template/subscriptions" className="dropdown-item">
-                    <i className="bi bi-credit-card"></i>
-                    <div className="content-div">
-                      <strong>Subscription</strong>
-                      <span className="ms-2">Subscriber content</span>
-                    </div>
-                  </Link>
+                  {isLoggedIn && (
+                    <Link to="/template/subscriptions" className="dropdown-item">
+                      <i className="bi bi-credit-card"></i>
+                      <div className="content-div">
+                        <strong>Subscription</strong>
+                        <span className="ms-2">Subscriber content</span>
+                      </div>
+                    </Link>
+                  )}
 
                   {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
                     <Link to="/my/templates" className="dropdown-item">
@@ -205,9 +207,11 @@ export default function Navbar({ isLoggedIn, onLogout, userRole }) {
                   </div>
                 )}
 
-                <div onClick={() => handleMobileLinkClick("/template/subscriptions")} className="sub-item">
-                  <i className="bi bi-credit-card me-2"></i> Subscription
-                </div>
+                {isLoggedIn && (
+                  <div onClick={() => handleMobileLinkClick("/template/subscriptions")} className="sub-item">
+                    <i className="bi bi-credit-card me-2"></i> Subscription
+                  </div>
+                )}
 
                 {isLoggedIn && (userRole === "designer" || userRole === "developer") && (
                   <div onClick={() => handleMobileLinkClick("/my/templates")} className="sub-item">

@@ -27,7 +27,7 @@ export default function SubscribedCreators() {
     c.fullname.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return <div className="page-loading">Loading...</div>;
+  if (loading) return null;
 
   return (
     <section className="subscriptions-page mt-3">
